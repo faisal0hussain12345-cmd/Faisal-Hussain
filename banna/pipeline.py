@@ -35,6 +35,8 @@ def render(storyboard_path: Path | None = None) -> Path:
         raise FileNotFoundError("storyboard.json is missing. Prepare a story-specific visual plan before rendering.")
     storyboard=load_storyboard(storyboard_path)
     duration=probe_audio(voice)["duration"]
+    if not 60.0 <= duration <= 1200.0:
+        raise ValueError(f"The documentary skill supports 60 seconds to 20 minutes; voice-over is {duration:.2f} seconds.")
     timeline=narration_timeline(voice,len(storyboard["scenes"]))
     try:
         word_times,detected_language=transcribe_word_timestamps(voice)
@@ -90,7 +92,7 @@ def render(storyboard_path: Path | None = None) -> Path:
     contact=extract_contact_sheet(output,settings.output_dir/"BANNA_QC_contact_sheet.jpg",samples=12)
     report={"voiceover":str(voice),"duration_seconds":duration,"resolution":f'{qc["width"]}x{qc["height"]}',
             "video_codec":qc["codec"],"scene_count":len(photos),"scene_durations":timeline["scene_durations"],
-            "silence_ranges":timeline["silences"],"word_alignment_language":detected_language,"word_alignment_count":len(word_times),"contact_sheet":str(contact),"visual_source":"still photographs and generated still illustrations only"}
+            "silence_ranges":timeline["silences"],"map_grid_inspections":[str(x) for x in sorted(settings.generated_dir.glob("*_map_grid.jpg"))],"word_alignment_language":detected_language,"word_alignment_count":len(word_times),"contact_sheet":str(contact),"visual_source":"still photographs and generated still illustrations only"}
     (settings.output_dir/"BANNA_word_timing.json").write_text(json.dumps({"language":detected_language,"words":word_times},indent=2),encoding="utf-8")
     (settings.output_dir/"BANNA_QC_report.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
     print(f"[BANNA] QC passed: {qc['width']}x{qc['height']} / {qc['duration']:.2f}s",flush=True)
