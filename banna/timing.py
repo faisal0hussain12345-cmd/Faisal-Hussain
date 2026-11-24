@@ -33,3 +33,32 @@ def estimate_word_times(text: str, duration: float) -> list[dict]:
         start=cursor; cursor += duration*weight/total
         out.append({"word":word,"start":start,"end":cursor,"estimated":True})
     return out
+
+def align_scenes_to_words(words: list[dict], scenes: list[dict], duration: float,
+                          fallback_boundaries: list[float]) -> list[float]:
+    """Use spoken cue phrases when available; otherwise preserve pause-based boundaries."""
+    if len(fallback_boundaries) != len(scenes)+1:
+        raise ValueError("Fallback boundaries must bracket every scene.")
+    if not words:
+        return fallback_boundaries
+    tokens=[re.sub(r"[^a-z0-9]+","",w.get("word","").lower()) for w in words]
+    starts=[float(w["start"]) for w in words]
+    result=[0.0]
+    cursor=0
+    for i in range(1,len(scenes)):
+        scene=scenes[i]
+        cue=str(scene.get("trigger_words") or scene.get("narration_cue") or "").lower()
+        phrase=[re.sub(r"[^a-z0-9]+","",x) for x in cue.split()]
+        phrase=[x for x in phrase if x]
+        if len(phrase)>6: phrase=phrase[:6]
+        found=None
+        if phrase:
+            for j in range(cursor,max(cursor,len(tokens)-len(phrase)+1)):
+                if tokens[j:j+len(phrase)]==phrase:
+                    found=starts[j]; cursor=j+len(phrase); break
+        target=float(found if found is not None else fallback_boundaries[i])
+        low=result[-1]+0.5
+        high=duration-(len(scenes)-i)*0.5
+        result.append(min(high,max(low,target)))
+    result.append(duration)
+    return result
