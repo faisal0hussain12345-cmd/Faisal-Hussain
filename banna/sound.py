@@ -5,7 +5,7 @@ import numpy as np
 
 SAMPLE_RATE = 48000
 
-def synthesize_bed(duration: float, scene_starts: list[float], output: Path) -> Path:
+def synthesize_bed(duration: float, scene_starts: list[float], output: Path, film_ranges: list[tuple[float,float]] | None = None) -> Path:
     """Stream a royalty-free synthetic suspense bed and synced editorial SFX."""
     output.parent.mkdir(parents=True, exist_ok=True)
     total = int(math.ceil(duration * SAMPLE_RATE))
@@ -26,6 +26,14 @@ def synthesize_bed(duration: float, scene_starts: list[float], output: Path) -> 
             click_events.append((int((start + j / 22) * SAMPLE_RATE), click))
     whoosh_events = [(int(t * SAMPLE_RATE), whoosh) for t in scene_starts[1:]]
     thud_events = [(int(t * SAMPLE_RATE), thud) for t in scene_starts[1:]]
+    film_click = (rng.normal(0,1,576) * np.exp(-np.arange(576)/180)).astype(np.float32)
+    film_hiss = (rng.normal(0,1,int(SAMPLE_RATE*0.08))).astype(np.float32)
+    for start,end in (film_ranges or []):
+        at=start
+        while at<end:
+            events.append((int(at*SAMPLE_RATE),film_click,0.045))
+            at += 1/24
+        events.append((int(start*SAMPLE_RATE),film_hiss,0.018))
     events = sorted([(i, a, 0.16) for i, a in whoosh_events] +
                     [(i, a, 0.08) for i, a in click_events] +
                     [(i, a, 0.24) for i, a in thud_events], key=lambda x: x[0])
