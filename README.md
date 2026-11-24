@@ -42,7 +42,7 @@ The bundled skill's exact-geometry helpers are available in `banna/annotations.p
 
 ## Requirements and local development
 
-Python 3.11+, FFmpeg/FFprobe, Pillow, NumPy and Requests.
+Python 3.11+, FFmpeg/FFprobe, Pillow, NumPy, Requests and Faster-Whisper (CPU word alignment; optional at runtime with a silence-based fallback).
 
 ```bash
 python -m pip install -r requirements.txt
