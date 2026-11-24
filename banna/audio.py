@@ -9,7 +9,7 @@ def _run(args: list[str]) -> str:
     return p.stdout
 
 def probe_audio(path: Path) -> dict:
-    raw = _run(["ffprobe", "-v", "error", "-show_entries", "format=duration:format_name",
+    raw = _run(["ffprobe", "-v", "error", "-show_entries", "format=duration,format_name",
                 "-of", "json", str(path)])
     data = json.loads(raw)
     duration = float(data["format"]["duration"])
