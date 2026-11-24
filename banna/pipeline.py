@@ -19,8 +19,10 @@ def render(storyboard_path: Path | None = None) -> Path:
     settings=Settings.from_env()
     voice=find_voiceover(settings)
     storyboard_path=storyboard_path or Path("storyboard.json")
+    if not storyboard_path.is_file() and Path("storyboard.example.json").is_file():
+        storyboard_path=Path("storyboard.example.json")
     if not storyboard_path.is_file():
-        raise FileNotFoundError("storyboard.json is missing. Copy storyboard.example.json and add scene descriptions.")
+        raise FileNotFoundError("No storyboard found. Create storyboard.json from storyboard.example.json.")
     storyboard=load_storyboard(storyboard_path)
     info=probe_audio(voice); duration=info["duration"]
     silences=silence_ranges(voice)
