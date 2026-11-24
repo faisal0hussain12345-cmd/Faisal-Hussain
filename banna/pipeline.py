@@ -5,6 +5,7 @@ from .config import Settings, find_voiceover
 from .audio import probe_audio, silence_ranges, scene_boundaries
 from .images import resolve_scene_images
 from .board import render_scene, concat_and_mux
+from .sound import synthesize_bed
 
 def load_storyboard(path: Path) -> dict:
     data=json.loads(path.read_text(encoding="utf-8"))
@@ -37,6 +38,8 @@ def render(storyboard_path: Path | None = None) -> Path:
         segments.append(target)
     if not segments: raise RuntimeError("No valid visual scenes were rendered.")
     output=settings.output_dir/"BANNA_documentary_1080p.mp4"
-    concat_and_mux(segments,voice,output,duration)
+    bed=work/"sound_bed.wav"
+    synthesize_bed(duration,bounds[:-1],bed)
+    concat_and_mux(segments,voice,bed,output,duration)
     print(f"[BANNA] Finished: {output} | voice-over {duration:.2f}s",flush=True)
     return output
