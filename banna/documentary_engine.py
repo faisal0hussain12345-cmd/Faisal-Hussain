@@ -96,15 +96,24 @@ def _card_layer(photo: Path, scene: dict, number: int, total: int, card_w: int =
     return layer
 
 
-def _build_world(photos: list[Path], scenes: list[dict]) -> tuple[Image.Image, list[dict]]:
+def _build_world(photos: list[Path], scenes: list[dict], surface: str="map_board") -> tuple[Image.Image, list[dict]]:
+    palette={
+        "map_board":((16,26,44),(23,37,57),(158,176,196)),
+        "paper_press":((232,236,240),(210,218,226),(45,55,68)),
+        "scrapbook_dossier":((29,30,36),(45,46,54),(205,205,198)),
+        "chalk_case_board":((17,39,32),(28,58,48),(205,220,210)),
+        "digital_coda":((5,8,13),(16,24,38),(150,178,210))
+    }
+    if surface not in palette: raise ValueError(f"Unknown documentary surface: {surface}")
+    bg,grid,header=palette[surface]
     world_h = max(2160, 500 + ((len(scenes) + 2) // 3) * 900)
-    world = Image.new("RGB", (WORLD_W, world_h), NAVY)
+    world = Image.new("RGB", (WORLD_W, world_h), bg)
     d = ImageDraw.Draw(world)
     for x in range(0, WORLD_W, 100):
-        d.line((x, 0, x, world_h), fill=(23, 37, 57), width=1)
+        d.line((x, 0, x, world_h), fill=grid, width=1)
     for y in range(0, world_h, 100):
-        d.line((0, y, WORLD_W, y), fill=(23, 37, 57), width=1)
-    d.text((150, 90), "DOCUMENTARY / EVIDENCE ARCHIVE", font=_font(38, mono=True), fill=(158, 176, 196))
+        d.line((0, y, WORLD_W, y), fill=grid, width=1)
+    d.text((150, 90), "DOCUMENTARY / EVIDENCE ARCHIVE", font=_font(38, mono=True), fill=header)
     d.line((150, 155, WORLD_W - 150, 155), fill=ORANGE, width=4)
     cards = []
     cols = 3
@@ -214,8 +223,8 @@ def _draw_overlay(frame: Image.Image, scene: dict, elapsed: float, scene_duratio
 
 def _render_chunk(photos: list[Path], scenes: list[dict], durations: list[float],
                   start_frame: int, end_frame: int, output: Path,
-                  width: int, height: int, fps: int, quality: int) -> str:
-    world, _ = _build_world(photos, scenes)
+                  width: int, height: int, fps: int, quality: int, surface: str) -> str:
+    world, _ = _build_world(photos, scenes, surface)
     starts=[]; cursor=0.0
     for duration in durations:
         starts.append(cursor); cursor += duration
@@ -267,7 +276,7 @@ def _render_chunk(photos: list[Path], scenes: list[dict], durations: list[float]
 
 def render_continuous_board(photos: list[Path], scenes: list[dict], durations: list[float],
                             output: Path, width: int=1920, height: int=1080,
-                            fps: int=30, quality: int=22, workers: int=1) -> Path:
+                            fps: int=30, quality: int=22, workers: int=1, surface: str="map_board") -> Path:
     if not photos or len(photos)!=len(scenes) or len(scenes)!=len(durations):
         raise ValueError("Photos, scenes and durations must have the same non-zero length.")
     if any(d<=0 for d in durations):
@@ -277,7 +286,7 @@ def render_continuous_board(photos: list[Path], scenes: list[dict], durations: l
     frame_count=int(math.ceil(sum(durations)*fps))
     workers=min(workers,frame_count)
     if workers==1:
-        _render_chunk(photos,scenes,durations,0,frame_count,output,width,height,fps,quality)
+        _render_chunk(photos,scenes,durations,0,frame_count,output,width,height,fps,quality,surface)
         return output
     from concurrent.futures import ProcessPoolExecutor
     import tempfile
@@ -290,7 +299,7 @@ def render_continuous_board(photos: list[Path], scenes: list[dict], durations: l
             jobs.append((start,end,target))
         with ProcessPoolExecutor(max_workers=workers) as pool:
             futures=[pool.submit(_render_chunk,photos,scenes,durations,start,end,target,
-                                 width,height,fps,quality) for start,end,target in jobs]
+                                 width,height,fps,quality,surface) for start,end,target in jobs]
             for future in futures: future.result()
         listing=root/"concat.txt"
         listing.write_text("".join(f"file '{target.resolve().as_posix()}'\n" for _,_,target in jobs),encoding="utf-8")
