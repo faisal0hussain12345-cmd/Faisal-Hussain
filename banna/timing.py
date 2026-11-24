@@ -25,7 +25,7 @@ def narration_timeline(audio: Path, scene_count: int) -> dict:
 
 def estimate_word_times(text: str, duration: float) -> list[dict]:
     """Fallback word timing estimate; explicitly marked approximate, never presented as forced alignment."""
-    words = re.findall(r"\\S+", text)
+    words = re.findall(r"\S+", text)
     if not words: return []
     weights = [max(1, len(re.findall(r"[aeiouy]+", w.lower()))) for w in words]
     total = sum(weights); cursor = 0.0; out=[]
