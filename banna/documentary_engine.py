@@ -93,10 +93,11 @@ def _card_layer(photo: Path, scene: dict, number: int, total: int, card_w: int =
 
 
 def _build_world(photos: list[Path], scenes: list[dict]) -> tuple[Image.Image, list[dict]]:
-    world_h = max(2160, 500 + ((len(scenes) + 2) // 3) * 900)\n    world = Image.new("RGB", (WORLD_W, world_h), NAVY)
+    world_h = max(2160, 500 + ((len(scenes) + 2) // 3) * 900)
+    world = Image.new("RGB", (WORLD_W, world_h), NAVY)
     d = ImageDraw.Draw(world)
     for x in range(0, WORLD_W, 100):
-        d.line((x, 0, x, WORLD_H), fill=(23, 37, 57), width=1)
+        d.line((x, 0, x, world_h), fill=(23, 37, 57), width=1)
     for y in range(0, world_h, 100):
         d.line((0, y, WORLD_W, y), fill=(23, 37, 57), width=1)
     d.text((150, 90), "DOCUMENTARY / EVIDENCE ARCHIVE", font=_font(38, mono=True), fill=(158, 176, 196))
@@ -192,9 +193,10 @@ def render_continuous_board(photos: list[Path], scenes: list[dict], durations: l
             zoom = 0.92 + 0.045 * min(1.0, local / max(2.0, durations[idx]))
             cx += math.sin(local * 0.19) * 16
             cy += math.cos(local * 0.15) * 12
-            world_w, world_h = world.size\n            crop_w, crop_h = int(world_w / zoom), int(world_h / zoom)
+            world_w, world_h = world.size
+            crop_w, crop_h = int(world_w / zoom), int(world_h / zoom)
             left = max(0, min(WORLD_W - crop_w, int(cx - crop_w / 2)))
-            top = max(0, min(WORLD_H - crop_h, int(cy - crop_h / 2)))
+            top = max(0, min(world_h - crop_h, int(cy - crop_h / 2)))
             frame = world.crop((left, top, left + crop_w, top + crop_h)).resize(
                 (width, height), Image.Resampling.LANCZOS)
             _draw_overlay(frame, scenes[idx], local, durations[idx], idx, len(scenes))
