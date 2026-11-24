@@ -14,7 +14,7 @@ BANNA is a Python documentary production system based on the supplied Priyanshu 
 ## Skill-aligned visual direction
 
 - Midnight Navy background, ice-paper cards and Signal Orange (#ff6b00) evidence annotations.
-- A single large evidence-board world with continuous camera pans, pushes and gentle drift.
+- A single large evidence-board world with continuous camera pans, pushes, gentle drift, two-worker parallel rendering and a closing network pullback.
 - Archival-grade still photographs, pinned cards, paper labels, connected evidence strings, typed tags and hand-drawn highlight marks.
 - Schematic map panels with normalized, validated coordinates and a coordinate-grid inspection helper.
 - Cyanotype-blue vintage 2D illustration frames with route graphics, moving silhouettes, film grain and intertitle treatment.
@@ -27,7 +27,7 @@ The bundled skill's exact-geometry helpers are available in `banna/annotations.p
 
 - `main.py` — command-line entry point.
 - `banna/config.py` — environment-driven configuration and voice-over discovery.
-- `banna/audio.py`, `banna/timing.py`, `banna/transcription.py` — media probing, silence detection, optional CPU Whisper word timestamps and spoken-cue alignment. The renderer falls back to silence-based timing if Whisper is unavailable.
+- `banna/audio.py`, `banna/timing.py`, `banna/transcription.py` — media probing, silence detection, optional CPU Whisper word timestamps and spoken-cue alignment. The renderer falls back to silence-based timing if Whisper is unavailable. Scene cues can be aligned to transcribed trigger phrases.
 - `banna/images.py` — user-provided stills and Gemini still-image generation.
 - `banna/documentary_engine.py` — continuous evidence-board world and camera renderer.
 - `banna/annotations.py` — exact paper-line geometry, underlines, circles and orange wobble marks.
@@ -63,4 +63,4 @@ Never commit API keys. Set `GEMINI_API_KEY` in GitHub → Settings → Secrets a
 
 ## Verification status
 
-The CI suite runs on GitHub Actions and checks core timing, sound-bed output, storyboard validation, geometry helpers, map coordinate validation, vintage illustration generation and a small FFmpeg rendering smoke test. A real documentary render still requires a valid story-specific storyboard and configured image-generation credentials. Final acceptance also requires inspecting the generated QC contact sheet; a green unit-test run alone is not proof that every annotation is pixel-perfect for every future story.
+The CI suite runs on GitHub Actions and checks core timing, sound-bed output, storyboard validation, exact annotation geometry, map image generation, vintage insert encoding, parallel chunk assembly and FFmpeg rendering smoke tests. The render artifact also contains the contact sheet, QC report, word timing JSON and map coordinate-grid inspection images. A real documentary render still requires a valid story-specific storyboard and configured image-generation credentials. Final acceptance also requires inspecting the generated QC contact sheet; a green unit-test run alone is not proof that every annotation is pixel-perfect for every future story.
