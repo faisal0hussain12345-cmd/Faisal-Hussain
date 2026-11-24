@@ -88,7 +88,7 @@ def wrap_text(draw, text: str, face, max_width: int) -> list[str]:
 
 def fetch_reference_images() -> dict[int, tuple[Path, dict]]:
     downloaded = {}
-    image_dir = ROOT / "assets" / "archive"
+    image_dir = ROOT / "archive"
     image_dir.mkdir(parents=True, exist_ok=True)
     for scene_id, meta in IMAGE_SOURCES.items():
         target = image_dir / f"scene_{scene_id:02d}.jpg"
