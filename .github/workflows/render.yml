@@ -53,6 +53,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: BANNA-1080p-documentary
-          path: |\n            output/BANNA_documentary_1080p.mp4\n            output/BANNA_QC_contact_sheet.jpg\n            output/BANNA_QC_report.json
+          path: |
+            output/BANNA_documentary_1080p.mp4
+            output/BANNA_QC_contact_sheet.jpg
+            output/BANNA_QC_report.json
+            output/BANNA_word_timing.json
           if-no-files-found: error
           retention-days: 7
