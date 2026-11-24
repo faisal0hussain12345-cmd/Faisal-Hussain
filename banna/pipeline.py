@@ -19,7 +19,7 @@ def load_storyboard(path: Path) -> dict:
     if len(data["scenes"]) > 60:
         raise ValueError("A storyboard may contain at most 60 visual beats.")
     for i,s in enumerate(data["scenes"],1):
-        if not isinstance(s,dict) or not (s.get("image") or s.get("image_prompt")):
+        if not isinstance(s,dict) or not (s.get("image") or s.get("image_prompt") or s.get("map_image") or s.get("map_locations")):
             raise ValueError(f"Scene {i} must contain image or image_prompt.")
     return data
 
