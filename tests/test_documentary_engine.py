@@ -6,7 +6,7 @@ from banna.documentary_engine import card_anchor, _build_world
 from banna.annotations import make_paper_tracked, text_underline_world, text_circle_world, draw_wobble_circle
 from banna.map_board import draw_coordinate_grid, render_map_panel
 from banna.vintage import vintage_frame
-from banna.timing import estimate_word_times, narration_timeline
+from banna.timing import estimate_word_times, narration_timeline, align_scenes_to_words
 from unittest.mock import patch
 
 class DocumentaryEngineTests(unittest.TestCase):
@@ -50,6 +50,13 @@ class DocumentaryEngineTests(unittest.TestCase):
         self.assertEqual(len(result["scene_durations"]),5)
         self.assertAlmostEqual(sum(result["scene_durations"]),10.0)
         self.assertTrue(all(x>=0.5 for x in result["scene_durations"]))
+
+    def test_scene_cues_align_to_exact_transcribed_word(self):
+        words=[{"word":"first","start":0.1,"end":0.4},{"word":"turning","start":4.2,"end":4.5},{"word":"point","start":4.5,"end":4.8},{"word":"after","start":5.0,"end":5.2}]
+        scenes=[{"title":"Opening"},{"title":"Turning Point","trigger_words":"turning point"}]
+        result=align_scenes_to_words(words,scenes,10.0,[0.0,5.0,10.0])
+        self.assertAlmostEqual(result[1],4.2)
+        self.assertEqual(result[-1],10.0)
 
     def test_estimated_word_alignment_is_monotonic(self):
         rows=estimate_word_times("One two three",3)
