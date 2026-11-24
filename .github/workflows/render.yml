@@ -1,0 +1,57 @@
+name: Render Documentary
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "assets/**"
+      - "render.py"
+      - "requirements.txt"
+      - ".github/workflows/render.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: documentary-render
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Verify narration is present
+        run: |
+          if [ ! -f "assets/voiceover.mp3" ]; then
+            echo "::error::Missing assets/voiceover.mp3. Upload the narration file to that exact path."
+            exit 1
+          fi
+
+      - name: Render 1080p documentary draft
+        run: python render.py
+
+      - name: Upload MP4 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: manhattan-project-documentary-draft
+          path: output/manhattan_project_documentary_draft.mp4
+          if-no-files-found: error
+          retention-days: 7
