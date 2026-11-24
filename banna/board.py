@@ -57,7 +57,7 @@ def render_scene(photo: Path, scene: dict, index: int, total: int, duration: flo
     frames=max(1,round(duration*fps))
     # Gentle Ken Burns push with very slight horizontal drift, preserving still-photo-only visual rule.
     vf=(f"zoompan=z='min(zoom+0.00045,1.12)':"
-        f"x='iw/2-(iw/zoom/2)+on*0.08':y='ih/2-(ih/zoom/2)':"
+        f"x='(iw-iw/zoom)*(0.45+0.08*sin(on/180))':y='(ih-ih/zoom)*(0.46+0.06*sin(on/240))':"
         f"d=1:s={width}x{height}:fps={fps},format=yuv420p")
     cmd=["ffmpeg","-y","-hide_banner","-loglevel","error","-loop","1","-i",str(still),
          "-t",f"{duration:.3f}","-vf",vf,"-an","-c:v","libx264","-preset","veryfast",
