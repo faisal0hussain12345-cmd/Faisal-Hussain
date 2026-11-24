@@ -1,7 +1,7 @@
 from __future__ import annotations
 import base64, os, re, time
 from pathlib import Path
-import requests
+import requests\nfrom PIL import Image\nfrom .map_board import render_map_panel, annotate_map_image, draw_coordinate_grid
 
 def generate_gemini_image(prompt: str, destination: Path, model: str) -> Path:
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
@@ -46,6 +46,22 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
     generated_dir.mkdir(parents=True, exist_ok=True)
     paths = []
     for index, scene in enumerate(storyboard["scenes"], 1):
+        if scene.get("map_image") or scene.get("map_locations"):
+            map_title=str(scene.get("map_title") or scene.get("title") or "LOCATION EVIDENCE")
+            locations=scene.get("map_locations",[])
+            if scene.get("map_image"):
+                base_path=Path(scene["map_image"])
+                if not base_path.is_absolute(): base_path=Path.cwd()/base_path
+                if not base_path.is_file(): raise FileNotFoundError(f"Scene {index}: map image not found: {base_path}")
+                panel=annotate_map_image(Image.open(base_path),map_title,locations)
+            else:
+                panel=render_map_panel(map_title,locations)
+            safe_map=re.sub(r"[^a-zA-Z0-9_-]+","-",scene.get("id",f"map-{index}")).strip("-")
+            map_path=generated_dir/f"{safe_map}_map.png"
+            panel.save(map_path)
+            draw_coordinate_grid(panel).save(generated_dir/f"{safe_map}_map_grid.jpg",quality=92)
+            paths.append(map_path)
+            continue
         supplied = scene.get("image")
         if supplied:
             p = Path(supplied)
