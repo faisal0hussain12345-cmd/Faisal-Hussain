@@ -190,7 +190,9 @@ def _draw_overlay(frame: Image.Image, scene: dict, elapsed: float, scene_duratio
         sd.text((34,25),stamp,font=sf,fill=ORANGE+(255,))
         stamp_layer=stamp_layer.rotate(7,resample=Image.Resampling.BICUBIC,expand=True)
         sx=w-stamp_layer.width-110+int(math.sin(elapsed*34)*5)
-        rgba=frame.convert("RGBA")\n        rgba.alpha_composite(stamp_layer,(sx,230))\n        frame.paste(rgba.convert("RGB"))
+        rgba=frame.convert("RGBA")
+        rgba.alpha_composite(stamp_layer,(sx,230))
+        frame.paste(rgba.convert("RGB"))
     if scene.get("thesis") and elapsed>scene_duration*0.55:
         thesis=str(scene["thesis"])[:55]
         d.rounded_rectangle((w//2-500,h-210,w//2+500,h-100),radius=5,fill=(8,14,22,230),outline=ORANGE+(240,),width=2)
