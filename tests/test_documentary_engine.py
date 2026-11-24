@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 from PIL import Image
 from banna.documentary_engine import card_anchor, _build_world
 from banna.annotations import make_paper_tracked, text_underline_world, text_circle_world, draw_wobble_circle
-from banna.map_board import draw_coordinate_grid, render_map_panel
+from banna.map_board import draw_coordinate_grid, render_map_panel, annotate_map_image
 from banna.vintage import vintage_frame
 from banna.timing import estimate_word_times, narration_timeline, align_scenes_to_words
 from unittest.mock import patch
@@ -24,6 +24,19 @@ class DocumentaryEngineTests(unittest.TestCase):
         self.assertLess(a[0],b[0])
         self.assertEqual(len(text_circle_world(card,meta,1)),4)
         draw_wobble_circle(__import__("PIL").ImageDraw.Draw(im), (10,10,300,100))
+    def test_map_image_annotations(self):
+        base=Image.new("RGB",(500,300),(70,80,90))
+        out=annotate_map_image(base,"SARajevo", [{"x":0.3,"y":0.4,"label":"A"},{"x":0.7,"y":0.6,"label":"B"}])
+        self.assertEqual(out.size,(500,300))
+
+    def test_map_scene_resolves_without_gemini(self):
+        from banna.images import resolve_scene_images
+        with TemporaryDirectory() as temp:
+            root=Path(temp)
+            paths=resolve_scene_images({"scenes":[{"id":"map","map_locations":[{"x":0.4,"y":0.5,"label":"CITY"}]}]},root/"photos",root/"generated","unused")
+            self.assertTrue(paths[0].is_file())
+            self.assertTrue((root/"generated"/"map_map_grid.jpg").is_file())
+
     def test_map_grid_and_pin_validation(self):
         im=Image.new("RGB",(300,200),"navy")
         self.assertEqual(draw_coordinate_grid(im).size,(300,200))
