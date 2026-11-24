@@ -33,7 +33,6 @@ def synthesize_bed(duration: float, scene_starts: list[float], output: Path) -> 
         wav.setnchannels(1)
         wav.setsampwidth(2)
         wav.setframerate(SAMPLE_RATE)
-        event_index = 0
         chunk_size = SAMPLE_RATE * 8
         for offset in range(0, total, chunk_size):
             end = min(total, offset + chunk_size)
@@ -46,9 +45,11 @@ def synthesize_bed(duration: float, scene_starts: list[float], output: Path) -> 
             # A restrained low pulse gives scene transitions a documentary rhythm.
             pulse = 0.025 * np.sin(2*np.pi*48*t) * (np.sin(2*np.pi*0.8*t) > 0)
             chunk = (pad + pulse).astype(np.float32)
-            while event_index < len(events) and events[event_index][0] < end:
-                pos, samples, gain = events[event_index]
-                event_index += 1
+            for pos, samples, gain in events:
+                if pos >= end:
+                    break
+                if pos + len(samples) <= offset:
+                    continue
                 left = max(0, pos - offset)
                 src_left = max(0, offset - pos)
                 count = min(len(samples) - src_left, len(chunk) - left)
