@@ -9,6 +9,7 @@ from .board import concat_and_mux
 from .documentary_engine import render_continuous_board
 from .sound import synthesize_bed
 from .qc import validate_final_video, extract_contact_sheet
+from .vintage import render_vintage_clip
 
 def load_storyboard(path: Path) -> dict:
     data=json.loads(path.read_text(encoding="utf-8"))
@@ -42,6 +43,30 @@ def render(storyboard_path: Path | None = None) -> Path:
     print(f"[BANNA] Building one continuous evidence-board world ({len(photos)} stills)",flush=True)
     render_continuous_board(photos,storyboard["scenes"],timeline["scene_durations"],board,
                             settings.width,settings.height,settings.fps,quality=20)
+    # Insert one bespoke cyanotype 2D sequence at the marked dramatic beat.
+    insert_idx=next((i for i,scene in enumerate(storyboard["scenes"]) if scene.get("vintage_insert")),None)
+    if insert_idx is not None:
+        scene_duration=timeline["scene_durations"][insert_idx]
+        insert_duration=min(5.0,scene_duration*0.55)
+        if insert_duration>=2.0:
+            insert_start=sum(timeline["scene_durations"][:insert_idx])+(scene_duration-insert_duration)/2
+            insert=work/"vintage_2d_insert.mp4"
+            render_vintage_clip(str(storyboard["scenes"][insert_idx].get("vintage_title") or storyboard["scenes"][insert_idx].get("title") or "THE TURNING POINT"),
+                                insert_duration,insert,settings.fps,(settings.width,settings.height))
+            spliced=work/"board_with_vintage_insert.mp4"
+            post=insert_start+insert_duration
+            cmd=["ffmpeg","-y","-hide_banner","-loglevel","error","-i",str(board),"-i",str(insert),
+                 "-filter_complex",
+                 f"[0:v]trim=start=0:duration={insert_start:.6f},setpts=PTS-STARTPTS[pre];"
+                 f"[1:v]trim=duration={insert_duration:.6f},setpts=PTS-STARTPTS[ins];"
+                 f"[0:v]trim=start={post:.6f},setpts=PTS-STARTPTS[post];"
+                 "[pre][ins][post]concat=n=3:v=1:a=0[v]",
+                 "-map","[v]","-an","-c:v","libx264","-preset","veryfast","-crf","20",
+                 "-pix_fmt","yuv420p",str(spliced)]
+            result=subprocess.run(cmd,capture_output=True,text=True)
+            if result.returncode: raise RuntimeError(f"Vintage insert splice failed: {result.stderr[-3000:]}")
+            board=spliced
+            print(f"[BANNA] Inserted cyanotype 2D sequence at {insert_start:.2f}s",flush=True)
     bed=work/"sound_bed.wav"
     synthesize_bed(duration,timeline["boundaries"][:-1],bed)
     output=settings.output_dir/"BANNA_documentary_1080p.mp4"
