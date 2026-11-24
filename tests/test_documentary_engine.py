@@ -6,7 +6,7 @@ from banna.documentary_engine import card_anchor, _build_world
 from banna.annotations import make_paper_tracked, text_underline_world, text_circle_world, draw_wobble_circle
 from banna.map_board import draw_coordinate_grid, render_map_panel
 from banna.vintage import vintage_frame
-from banna.timing import estimate_word_times
+from banna.timing import estimate_word_times, narration_timeline\nfrom unittest.mock import patch
 
 class DocumentaryEngineTests(unittest.TestCase):
     def test_rotated_card_anchor(self):
@@ -30,7 +30,13 @@ class DocumentaryEngineTests(unittest.TestCase):
         self.assertEqual(render_map_panel("test",[{"x":.5,"y":.5,"label":"X"}]).size,(1600,900))
     def test_vintage_still_is_1080p(self):
         self.assertEqual(vintage_frame(.2,2,"Turning point").size,(1920,1080))
-    def test_estimated_word_alignment_is_monotonic(self):
+\n    def test_timeline_preserves_requested_scene_count(self):
+        with patch("banna.timing.probe_audio", return_value={"duration": 10.0}), patch("banna.timing.silence_ranges", return_value=[(1.0,1.2),(3.0,3.2),(5.0,5.2),(7.0,7.2)]):
+            result=narration_timeline(Path("unused.mp3"),5)
+        self.assertEqual(len(result["scene_durations"]),5)
+        self.assertAlmostEqual(sum(result["scene_durations"]),10.0)
+        self.assertTrue(all(x>=0.5 for x in result["scene_durations"]))
+\n    def test_estimated_word_alignment_is_monotonic(self):
         rows=estimate_word_times("One two three",3)
         self.assertEqual(len(rows),3)
         self.assertAlmostEqual(rows[0]["start"],0)
