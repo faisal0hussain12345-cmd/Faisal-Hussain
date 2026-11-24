@@ -58,5 +58,6 @@ jobs:
             output/BANNA_QC_contact_sheet.jpg
             output/BANNA_QC_report.json
             output/BANNA_word_timing.json
+            work/generated/*_map_grid.jpg
           if-no-files-found: error
           retention-days: 7
