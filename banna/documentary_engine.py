@@ -248,6 +248,7 @@ def _render_chunk(photos: list[Path], scenes: list[dict], durations: list[float]
                 cx,cy=px+(cx-px)*q,py+(cy-py)*q
             progress=min(1.0,local/max(2.0,durations[idx]))
             zoom=1.85+0.08*progress
+            reveal=0.0
             if idx==len(scenes)-1 and local>max(0.0,durations[idx]-2.5):
                 reveal=min(1.0,(local-max(0.0,durations[idx]-2.5))/2.5)
                 reveal=reveal*reveal*(3-2*reveal)
@@ -260,7 +261,13 @@ def _render_chunk(photos: list[Path], scenes: list[dict], durations: list[float]
             crop_w,crop_h=int(world_w/zoom),int(world_h/zoom)
             left=max(0,min(world_w-crop_w,int(cx-crop_w/2)))
             top=max(0,min(world_h-crop_h,int(cy-crop_h/2)))
-            frame=world.crop((left,top,left+crop_w,top+crop_h)).resize((width,height),Image.Resampling.LANCZOS)
+            if reveal>=0.995 and world_h>world_w*9/16:
+                overview=world.copy()
+                overview.thumbnail((width-100,height-100),Image.Resampling.LANCZOS)
+                frame=Image.new("RGB",(width,height),world.getpixel((50,50)))
+                frame.paste(overview,((width-overview.width)//2,(height-overview.height)//2))
+            else:
+                frame=world.crop((left,top,left+crop_w,top+crop_h)).resize((width,height),Image.Resampling.LANCZOS)
             _draw_overlay(frame,scenes[idx],local,durations[idx],idx,len(scenes))
             proc.stdin.write(frame.tobytes())
     except BrokenPipeError as exc:
