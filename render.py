@@ -5,13 +5,32 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
+from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parent
 AUDIO = ROOT / "Generated Audio November 24, 2026 - 9_33PM.mp3"
 WORK = ROOT / "work"
 OUTPUT = ROOT / "output" / "manhattan_project_documentary_draft.mp4"
 WIDTH, HEIGHT, FPS = 1920, 1080, 30
+
+IMAGE_SOURCES = {
+    3: {
+        "url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/HanfordAerial2VeryLarge1_0.jpg?itok=VAXtUNNY",
+        "caption": "Hanford plutonium production complex, 1945",
+        "credit": "U.S. Department of Energy photo gallery"
+    },
+    4: {
+        "url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/losalamosgate.jpg?itok=6pwHdFQg",
+        "caption": "Los Alamos Project main gate",
+        "credit": "U.S. Department of Energy photo gallery"
+    },
+    6: {
+        "url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/Y12ShiftChangeLarge1_0.jpg?itok=nZsn7-3h",
+        "caption": "Y-12 shift change, Oak Ridge, August 1945",
+        "credit": "U.S. Department of Energy photo gallery"
+    },
+}
 
 SCENES = [
     ("THE SECRET PROJECT", "A wartime race to unlock the power hidden inside the atom.", "1939–1942  /  THE WARNING"),
@@ -67,7 +86,27 @@ def wrap_text(draw, text: str, face, max_width: int) -> list[str]:
     return lines
 
 
-def make_card(index: int, title: str, description: str, stamp: str, path: Path) -> None:
+def fetch_reference_images() -> dict[int, tuple[Path, dict]]:
+    downloaded = {}
+    image_dir = ROOT / "assets" / "archive"
+    image_dir.mkdir(parents=True, exist_ok=True)
+    for scene_id, meta in IMAGE_SOURCES.items():
+        target = image_dir / f"scene_{scene_id:02d}.jpg"
+        try:
+            request = Request(meta["url"], headers={"User-Agent": "DocumentaryResearchRenderer/1.0"})
+            with urlopen(request, timeout=30) as response:
+                target.write_bytes(response.read())
+            with Image.open(target) as check:
+                check.verify()
+            downloaded[scene_id] = (target, meta)
+            print(f"Downloaded historical reference image for scene {scene_id}")
+        except Exception as exc:
+            print(f"NOTICE: Could not download reference image for scene {scene_id}: {exc}")
+    return downloaded
+
+
+def make_card(index: int, title: str, description: str, stamp: str, path: Path,
+              archive_image: tuple[Path, dict] | None = None) -> None:
     image = Image.new("RGB", (WIDTH, HEIGHT), (18, 23, 29))
     draw = ImageDraw.Draw(image)
     for x in range(0, WIDTH, 80):
@@ -79,17 +118,28 @@ def make_card(index: int, title: str, description: str, stamp: str, path: Path) 
     draw.rectangle((105, 95, 1815, 125), fill=(211, 111, 45))
     draw.text((165, 175), f"CASE FILE  /  MP-{index:02d}", font=font(28, True), fill=(93, 82, 65))
     draw.line((165, 235, 1750, 235), fill=(167, 151, 122), width=3)
+    text_width = 820 if archive_image else 1450
     y = 315
-    for line in wrap_text(draw, title, font(76, True), 1450):
-        draw.text((165, y), line, font=font(76, True), fill=(31, 37, 41))
-        y += 96
-    y += 35
-    for line in wrap_text(draw, description, font(39), 1430):
-        draw.text((170, y), line, font=font(39), fill=(65, 66, 62))
-        y += 58
-    draw.ellipse((1540, 680, 1695, 835), outline=(190, 76, 37), width=10)
-    draw.line((1560, 758, 1675, 758), fill=(190, 76, 37), width=8)
-    draw.line((1618, 700, 1618, 815), fill=(190, 76, 37), width=8)
+    for line in wrap_text(draw, title, font(68, True), text_width):
+        draw.text((165, y), line, font=font(68, True), fill=(31, 37, 41))
+        y += 88
+    y += 28
+    for line in wrap_text(draw, description, font(34), text_width):
+        draw.text((170, y), line, font=font(34), fill=(65, 66, 62))
+        y += 52
+
+    if archive_image:
+        image_path, meta = archive_image
+        with Image.open(image_path) as source:
+            photo = ImageOps.fit(source.convert("RGB"), (690, 450))
+        image.paste(photo, (1035, 330))
+        draw.rectangle((1035, 330, 1725, 780), outline=(93, 82, 65), width=5)
+        draw.text((1035, 800), meta["caption"], font=font(22, True), fill=(65, 66, 62))
+        draw.text((1035, 835), meta["credit"], font=font(18), fill=(93, 82, 65))
+    else:
+        draw.ellipse((1540, 680, 1695, 835), outline=(190, 76, 37), width=10)
+        draw.line((1560, 758, 1675, 758), fill=(190, 76, 37), width=8)
+        draw.line((1618, 700, 1618, 815), fill=(190, 76, 37), width=8)
     draw.text((165, 875), stamp, font=font(25, True), fill=(145, 72, 40))
     draw.text((1650, 905), f"FILE {index:02d} / 10", font=font(22, True), fill=(93, 82, 65))
     image.save(path, quality=94)
@@ -107,11 +157,12 @@ def main() -> None:
     total = duration_seconds(AUDIO)
     segment_duration = total / len(SCENES)
     segment_files = []
+    archive_images = fetch_reference_images()
 
     for i, (title, description, stamp) in enumerate(SCENES, start=1):
         still = WORK / f"scene_{i:02d}.jpg"
         segment = WORK / f"scene_{i:02d}.mp4"
-        make_card(i, title, description, stamp, still)
+        make_card(i, title, description, stamp, still, archive_images.get(i))
         frames = max(1, round(segment_duration * FPS))
         zoom_filter = (
             f"zoompan=z='min(1.0+0.00012*on,1.035)':"
@@ -137,6 +188,8 @@ def main() -> None:
     metadata = {
         "voiceover_seconds": round(total, 2),
         "scene_count": len(SCENES),
+        "archival_reference_images_used": sorted(archive_images.keys()),
+        "image_rights_note": "DOE photo gallery sources are credited on-screen; verify item-level rights and usage terms before public/commercial release.",
         "resolution": f"{WIDTH}x{HEIGHT}",
         "fps": FPS,
         "output": str(OUTPUT.relative_to(ROOT)),
