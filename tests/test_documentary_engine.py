@@ -68,7 +68,7 @@ class DocumentaryEngineTests(unittest.TestCase):
         from banna.vintage import render_vintage_clip
         with TemporaryDirectory() as temp:
             out=Path(temp)/"vintage.mp4"
-            render_vintage_clip("TEST INSERT",1.0,out,fps=2,size=(320,180))
+            render_vintage_clip("TEST INSERT",1.0,out,fps=2)
             self.assertTrue(out.is_file())
             self.assertGreater(out.stat().st_size,1000)
 
