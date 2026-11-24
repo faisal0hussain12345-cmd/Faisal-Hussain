@@ -28,7 +28,17 @@ class DocumentaryEngineTests(unittest.TestCase):
         self.assertEqual(draw_coordinate_grid(im).size,(300,200))
         with self.assertRaises(ValueError): render_map_panel("test",[{"x":1.2,"y":.5}])
         self.assertEqual(render_map_panel("test",[{"x":.5,"y":.5,"label":"X"}]).size,(1600,900))
-    def test_vintage_still_is_1080p(self):
+\n    def test_continuous_board_renders_a_video_file(self):
+        from banna.documentary_engine import render_continuous_board
+        with TemporaryDirectory() as temp:
+            root=Path(temp)
+            photo=root/"still.png"
+            Image.new("RGB",(320,180),(80,90,110)).save(photo)
+            out=root/"board.mp4"
+            render_continuous_board([photo],[{"title":"TEST EVIDENCE"}],[1.0],out,320,180,2,quality=30)
+            self.assertTrue(out.is_file())
+            self.assertGreater(out.stat().st_size,1000)
+\n    def test_vintage_still_is_1080p(self):
         self.assertEqual(vintage_frame(.2,2,"Turning point").size,(1920,1080))
 \n    def test_timeline_preserves_requested_scene_count(self):
         with patch("banna.timing.probe_audio", return_value={"duration": 10.0}), patch("banna.timing.silence_ranges", return_value=[(1.0,1.2),(3.0,3.2),(5.0,5.2),(7.0,7.2)]):
