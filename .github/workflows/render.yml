@@ -6,7 +6,7 @@ on:
       storyboard:
         description: Storyboard JSON path
         required: false
-        default: storyboard.example.json
+        default: storyboard.json
 
 permissions:
   contents: read
