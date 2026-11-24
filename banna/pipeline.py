@@ -36,7 +36,11 @@ def render(storyboard_path: Path | None = None) -> Path:
     storyboard=load_storyboard(storyboard_path)
     duration=probe_audio(voice)["duration"]
     timeline=narration_timeline(voice,len(storyboard["scenes"]))
-    word_times,detected_language=transcribe_word_timestamps(voice)
+    try:
+        word_times,detected_language=transcribe_word_timestamps(voice)
+    except Exception as exc:
+        word_times,detected_language=[], "fallback"
+        print(f"[BANNA] Whisper failed; using silence-based timing: {exc}",flush=True)
     if word_times:
         timeline["boundaries"]=align_scenes_to_words(word_times,storyboard["scenes"],duration,timeline["boundaries"])
         timeline["scene_durations"]=[b-a for a,b in zip(timeline["boundaries"],timeline["boundaries"][1:])]
