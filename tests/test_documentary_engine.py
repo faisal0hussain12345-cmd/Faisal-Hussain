@@ -41,6 +41,14 @@ class DocumentaryEngineTests(unittest.TestCase):
             self.assertTrue(out.is_file())
             self.assertGreater(out.stat().st_size,1000)
 
+    def test_vintage_insert_encodes_video(self):
+        from banna.vintage import render_vintage_clip
+        with TemporaryDirectory() as temp:
+            out=Path(temp)/"vintage.mp4"
+            render_vintage_clip("TEST INSERT",1.0,out,fps=2,size=(320,180))
+            self.assertTrue(out.is_file())
+            self.assertGreater(out.stat().st_size,1000)
+
     def test_vintage_still_is_1080p(self):
         self.assertEqual(vintage_frame(.2,2,"Turning point").size,(1920,1080))
 
