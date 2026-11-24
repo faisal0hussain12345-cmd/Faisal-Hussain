@@ -81,11 +81,15 @@ def _card_layer(photo: Path, scene: dict, number: int, total: int, card_w: int =
     layer.paste(im, (pad + 14, pad + 14))
     d = ImageDraw.Draw(layer)
     title = str(scene.get("title") or scene.get("narration_cue") or f"EVIDENCE {number:02d}")
-    d.text((pad + 18, pad + photo_h + 20), title[:68], font=_font(32, True), fill=INK)
+    title_text=title[:68]
+    title_font=_font(32,True)
+    title_pos=(pad+18,pad+photo_h+20)
+    title_box=d.textbbox(title_pos,title_text,font=title_font)
+    d.text(title_pos,title_text,font=title_font,fill=INK)
     caption = str(scene.get("caption") or f"CASE FILE / {number:02d} OF {total:02d}")
     d.text((pad + 18, pad + photo_h + 78), caption[:90], font=_font(20, mono=True), fill=STEEL)
-    d.line((pad + 18, pad + photo_h + 116, pad + min(card_w - 18, 360), pad + photo_h + 116),
-           fill=ORANGE, width=7)
+    # Pixel-anchored underline hugs the exact rendered title baseline.
+    d.line((title_box[0],title_box[3]+9,title_box[2],title_box[3]+9),fill=ORANGE,width=7)
     # Paper pin is fixed to the top-center of the card body.
     d.ellipse((layer.width // 2 - 15, 8, layer.width // 2 + 15, 38),
               fill=ORANGE, outline=PAPER, width=4)
@@ -132,28 +136,71 @@ def _camera_center(index: int, total: int) -> tuple[float, float]:
     return (620 + col * 1120, 570 + row * 900)
 
 
+def _draw_wobble(draw: ImageDraw.ImageDraw, box, color=(255,107,0,245), width=5):
+    x0,y0,x1,y1=box; cx=(x0+x1)/2; cy=(y0+y1)/2
+    rx=max(8,(x1-x0)/2); ry=max(8,(y1-y0)/2); pts=[]
+    for i in range(97):
+        a=2*math.pi*i/96
+        wobble=1+0.018*math.sin(7*a)+0.012*math.sin(13*a)
+        pts.append((cx+rx*wobble*math.cos(a),cy+ry*wobble*math.sin(a)))
+    draw.line(pts,fill=color,width=width)
+
+
 def _draw_overlay(frame: Image.Image, scene: dict, elapsed: float, scene_duration: float,
                   index: int, total: int) -> None:
-    d = ImageDraw.Draw(frame, "RGBA")
-    w, h = frame.size
-    # Typed mono label, orange underline and a hand-drawn target circle.
-    label = str(scene.get("board_label") or scene.get("title") or f"CASE FILE {index + 1:02d}").upper()[:48]
-    reveal = min(1.0, max(0.0, elapsed / 0.75))
-    label = label[:max(1, int(len(label) * reveal))]
-    d.rounded_rectangle((72, 64, min(w - 72, 820), 142), radius=8, fill=(7, 12, 20, 205),
-                        outline=(255, 107, 0, 230), width=2)
-    d.text((96, 82), label, font=_font(30, mono=True), fill=(245, 241, 230, 255))
-    underline_w = int(min(600, 18 * elapsed * 30))
-    d.line((96, 151, 96 + underline_w, 151), fill=ORANGE + (255,), width=5)
-    if elapsed > min(1.2, scene_duration * 0.25):
-        pulse = 1 + 0.035 * math.sin(elapsed * 5)
-        rx, ry = int(100 * pulse), int(64 * pulse)
-        cx, cy = w - 220, 190
-        d.ellipse((cx-rx, cy-ry, cx+rx, cy+ry), outline=ORANGE + (240,), width=5)
-    if index == total - 1 and elapsed > scene_duration - 1.5:
-        title = "THE EVIDENCE CONNECTS"
-        f = _font(42, True)
-        d.text((w - 760, h - 110), title, font=f, fill=ORANGE + (255,))
+    d=ImageDraw.Draw(frame,"RGBA"); w,h=frame.size
+    full_label=str(scene.get("board_label") or scene.get("title") or f"CASE FILE {index+1:02d}").upper()[:48]
+    # Skill guide typewriter speed: 22 characters per second.
+    shown=max(0,min(len(full_label),int(elapsed*22)))
+    label=full_label[:shown]
+    f=_font(30,mono=True); pos=(96,82)
+    d.rounded_rectangle((72,64,min(w-72,900),158),radius=8,fill=(7,12,20,205),
+                        outline=(255,107,0,230),width=2)
+    d.text(pos,label,font=f,fill=(245,241,230,255))
+    bbox=d.textbbox(pos,label or " ",font=f)
+    underline_target=max(0,bbox[2]-bbox[0])
+    underline_w=int(underline_target*min(1.0,elapsed/0.65))
+    d.line((bbox[0],166,bbox[0]+underline_w,166),fill=ORANGE+(255,),width=5)
+    # Draw-on wobble circle frames the exact typed label, not a guessed screen point.
+    if elapsed>0.8 and label:
+        _draw_wobble(d,(bbox[0]-18,69,bbox[2]+18,125),ORANGE+(240,),5)
+    # Typed evidence tags.
+    tags=scene.get("tags",[])
+    for i,tag in enumerate(tags[:3]):
+        if elapsed>1.0+i*0.25:
+            y=190+i*54; text=str(tag)[:34]
+            d.rounded_rectangle((76,y,500,y+40),radius=4,fill=(8,14,22,220),outline=ORANGE+(230,),width=2)
+            d.text((92,y+7),text,font=_font(21,mono=True),fill=PAPER+(255,))
+    # Optional year card with serif typography and animated orange rules.
+    if scene.get("year") and elapsed>0.35:
+        year=str(scene["year"])[:12]
+        card=(w//2-250,h//2-130,w//2+250,h//2+130)
+        d.rounded_rectangle(card,radius=6,fill=(8,14,22,235),outline=ORANGE+(255,),width=3)
+        d.line((card[0]+35,card[1]+48,card[2]-35,card[1]+48),fill=ORANGE+(255,),width=4)
+        d.text((w//2-115,h//2-48),year,font=_font(76,True),fill=PAPER+(255,))
+        d.line((card[0]+35,card[3]-48,card[2]-35,card[3]-48),fill=ORANGE+(255,),width=4)
+    # Optional dossier stamp: slam-in with overshoot and a brief shake.
+    if scene.get("stamp") and elapsed>1.0:
+        stamp=str(scene["stamp"]).upper()[:22]
+        sf=_font(42,True,mono=True); bb=sf.getbbox(stamp)
+        sw,sh=bb[2]-bb[0]+44,bb[3]-bb[1]+34
+        stamp_layer=Image.new("RGBA",(sw+30,sh+30),(0,0,0,0))
+        sd=ImageDraw.Draw(stamp_layer)
+        sd.rectangle((12,12,sw+12,sh+12),outline=ORANGE+(255,),width=5)
+        sd.text((34,25),stamp,font=sf,fill=ORANGE+(255,))
+        stamp_layer=stamp_layer.rotate(7,resample=Image.Resampling.BICUBIC,expand=True)
+        sx=w-stamp_layer.width-110+int(math.sin(elapsed*34)*5)
+        frame.alpha_composite(stamp_layer,(sx,230))
+    if scene.get("thesis") and elapsed>scene_duration*0.55:
+        thesis=str(scene["thesis"])[:95]
+        d.rounded_rectangle((w//2-500,h-210,w//2+500,h-100),radius=5,fill=(8,14,22,230),outline=ORANGE+(240,),width=2)
+        d.text((w//2-465,h-178),thesis,font=_font(28,True),fill=PAPER+(255,))
+    # Finale: return all cards to view and glitch the closing title.
+    if index==total-1 and elapsed>scene_duration-1.5:
+        title="THE EVIDENCE CONNECTS"; f2=_font(42,True); x=w-760; y=h-110
+        d.text((x+4,y),title,font=f2,fill=(255,107,0,120))
+        d.text((x-3,y+2),title,font=f2,fill=(220,235,245,255))
+        d.text((x,y),title,font=f2,fill=ORANGE+(255,))
 
 
 def _render_chunk(photos: list[Path], scenes: list[dict], durations: list[float],
