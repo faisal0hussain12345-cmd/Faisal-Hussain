@@ -39,3 +39,24 @@ def vintage_frame(t: float, duration: float, title: str, size=(1920,1080)) -> Im
     for _ in range(140):
         x=rng.randrange(w); y=rng.randrange(h); d.point((x,y),fill=(rng.randrange(100,180),rng.randrange(140,210),rng.randrange(160,230)))
     return im
+
+
+def render_vintage_clip(title: str, duration: float, output, fps: int=30, size=(1920,1080)):
+    """Render the vintage illustrated sequence to a temporary silent video."""
+    import subprocess
+    from pathlib import Path
+    output=Path(output); output.parent.mkdir(parents=True,exist_ok=True)
+    cmd=["ffmpeg","-y","-hide_banner","-loglevel","error","-f","rawvideo","-pix_fmt","rgb24","-s",f"{size[0]}x{size[1]}","-r",str(fps),"-i","-","-an","-c:v","libx264","-preset","veryfast","-crf","22","-pix_fmt","yuv420p",str(output)]
+    proc=subprocess.Popen(cmd,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+    assert proc.stdin is not None
+    try:
+        for fi in range(max(1,round(duration*fps))):
+            proc.stdin.write(vintage_frame(fi/fps,duration,title,size).tobytes())
+    except BrokenPipeError as exc:
+        raise RuntimeError("FFmpeg stopped during vintage insert rendering.") from exc
+    finally:
+        proc.stdin.close()
+    err=proc.stderr.read().decode("utf-8","replace") if proc.stderr else ""
+    code=proc.wait()
+    if code: raise RuntimeError(f"Vintage insert encoding failed: {err[-3000:]}")
+    return output
