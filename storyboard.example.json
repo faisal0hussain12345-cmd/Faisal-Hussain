@@ -26,7 +26,9 @@
       "title": "The Turning Point",
       "narration_cue": "Then one event changed everything",
       "caption": "THE TURNING POINT",
-      "image_prompt": "A dramatic but non-graphic archival documentary still photograph representing a historical turning point, atmospheric smoke and silhouettes, realistic photography, no gore, no text"
+      "image_prompt": "A dramatic but non-graphic archival documentary still photograph representing a historical turning point, atmospheric smoke and silhouettes, realistic photography, no gore, no text",
+      "vintage_insert": true,
+      "vintage_title": "THE TURNING POINT"
     }
   ]
 }
