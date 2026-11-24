@@ -27,12 +27,12 @@ The bundled skill's exact-geometry helpers are available in `banna/annotations.p
 
 - `main.py` — command-line entry point.
 - `banna/config.py` — environment-driven configuration and voice-over discovery.
-- `banna/audio.py`, `banna/timing.py` — media probing, silence detection and narration-led scene timing.
+- `banna/audio.py`, `banna/timing.py`, `banna/transcription.py` — media probing, silence detection, optional CPU Whisper word timestamps and spoken-cue alignment. The renderer falls back to silence-based timing if Whisper is unavailable.
 - `banna/images.py` — user-provided stills and Gemini still-image generation.
 - `banna/documentary_engine.py` — continuous evidence-board world and camera renderer.
 - `banna/annotations.py` — exact paper-line geometry, underlines, circles and orange wobble marks.
 - `banna/map_board.py` — coordinate grid and schematic map panels.
-- `banna/vintage.py` — cyanotype silent-film-style animated still illustrations.
+- `banna/vintage.py` — cyanotype silent-film-style animated still illustrations and optional storyboard-triggered inserts.
 - `banna/sound.py` — synthesized music bed and synchronized editorial SFX.
 - `banna/board.py` — audio ducking, loudness normalization and H.264/AAC mux.
 - `banna/qc.py` — final resolution/duration validation and contact-sheet extraction.
