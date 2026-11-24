@@ -53,10 +53,19 @@ def render_vintage_clip(title: str, duration: float, output, fps: int=30, size=(
         for fi in range(max(1,round(duration*fps))):
             proc.stdin.write(vintage_frame(fi/fps,duration,title,size).tobytes())
     except BrokenPipeError as exc:
-        raise RuntimeError("FFmpeg stopped during vintage insert rendering.") from exc
-    finally:
         proc.stdin.close()
+        proc.wait()
+        if proc.stderr: proc.stderr.close()
+        raise RuntimeError("FFmpeg stopped during vintage insert rendering.") from exc
+    except Exception:
+        proc.stdin.close()
+        proc.wait()
+        if proc.stderr: proc.stderr.close()
+        raise
+    finally:
+        if not proc.stdin.closed: proc.stdin.close()
     err=proc.stderr.read().decode("utf-8","replace") if proc.stderr else ""
+    if proc.stderr: proc.stderr.close()
     code=proc.wait()
     if code: raise RuntimeError(f"Vintage insert encoding failed: {err[-3000:]}")
     return output
