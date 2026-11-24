@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from PIL import Image
-from banna.documentary_engine import card_anchor, _build_world
+from banna.documentary_engine import card_anchor, _build_world, _draw_overlay
 from banna.annotations import make_paper_tracked, text_underline_world, text_circle_world, draw_wobble_circle
 from banna.map_board import draw_coordinate_grid, render_map_panel, annotate_map_image
 from banna.vintage import vintage_frame
@@ -10,6 +10,12 @@ from banna.timing import estimate_word_times, narration_timeline, align_scenes_t
 from unittest.mock import patch
 
 class DocumentaryEngineTests(unittest.TestCase):
+    def test_overlay_draws_skill_annotations_without_error(self):
+        frame=Image.new("RGB",(1920,1080),(16,26,44))
+        scene={"title":"THE ARCHIVE","year":"1914","stamp":"TOP SECRET","tags":["SARAJEVO","CASE FILE"],"thesis":"The chain reaction mattered"}
+        _draw_overlay(frame,scene,1.5,5.0,0,3)
+        self.assertEqual(frame.size,(1920,1080))
+
     def test_rotated_card_anchor(self):
         card={"x":100,"y":100,"w":200,"h":100,"rotation":0}
         self.assertEqual(card_anchor(card,0,-0.5),(100.0,50.0))
