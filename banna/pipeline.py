@@ -3,7 +3,8 @@ import json, subprocess
 from pathlib import Path
 from .config import Settings, find_voiceover
 from .audio import probe_audio
-from .timing import narration_timeline
+from .timing import narration_timeline, align_scenes_to_words
+from .transcription import transcribe_word_timestamps
 from .images import resolve_scene_images
 from .board import concat_and_mux
 from .documentary_engine import render_continuous_board
@@ -35,6 +36,14 @@ def render(storyboard_path: Path | None = None) -> Path:
     storyboard=load_storyboard(storyboard_path)
     duration=probe_audio(voice)["duration"]
     timeline=narration_timeline(voice,len(storyboard["scenes"]))
+    word_times,detected_language=transcribe_word_timestamps(voice)
+    if word_times:
+        timeline["boundaries"]=align_scenes_to_words(word_times,storyboard["scenes"],duration,timeline["boundaries"])
+        timeline["scene_durations"]=[b-a for a,b in zip(timeline["boundaries"],timeline["boundaries"][1:])]
+        print(f"[BANNA] Whisper word alignment active ({detected_language}, {len(word_times)} words)",flush=True)
+    else:
+        detected_language="unknown"
+        print("[BANNA] Whisper unavailable; using FFmpeg silence-based scene timing",flush=True)
     photos=resolve_scene_images(storyboard,settings.photos_dir,settings.generated_dir,settings.image_model)
     if len(photos)!=len(storyboard["scenes"]):
         raise RuntimeError("Every scene must resolve to exactly one still image.")
@@ -77,7 +86,8 @@ def render(storyboard_path: Path | None = None) -> Path:
     contact=extract_contact_sheet(output,settings.output_dir/"BANNA_QC_contact_sheet.jpg",samples=12)
     report={"voiceover":str(voice),"duration_seconds":duration,"resolution":f'{qc["width"]}x{qc["height"]}',
             "video_codec":qc["codec"],"scene_count":len(photos),"scene_durations":timeline["scene_durations"],
-            "silence_ranges":timeline["silences"],"contact_sheet":str(contact),"visual_source":"still photographs and generated still illustrations only"}
+            "silence_ranges":timeline["silences"],"word_alignment_language":detected_language,"word_alignment_count":len(word_times),"contact_sheet":str(contact),"visual_source":"still photographs and generated still illustrations only"}
+    (settings.output_dir/"BANNA_word_timing.json").write_text(json.dumps({"language":detected_language,"words":word_times},indent=2),encoding="utf-8")
     (settings.output_dir/"BANNA_QC_report.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
     print(f"[BANNA] QC passed: {qc['width']}x{qc['height']} / {qc['duration']:.2f}s",flush=True)
     print(f"[BANNA] Contact sheet: {contact}",flush=True)
