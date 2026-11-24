@@ -57,7 +57,7 @@ def render(storyboard_path: Path | None = None) -> Path:
     board=work/"continuous_evidence_board.mp4"
     print(f"[BANNA] Building one continuous evidence-board world ({len(photos)} stills)",flush=True)
     render_continuous_board(photos,storyboard["scenes"],timeline["scene_durations"],board,
-                            settings.width,settings.height,settings.fps,quality=20,workers=2,surface=storyboard.get("project",{}).get("surface","map_board"))
+                            settings.width,settings.height,settings.fps,quality=20,workers=2,surface=(storyboard.get("project") or {}).get("surface","map_board"))
     # Insert one bespoke cyanotype 2D sequence at the marked dramatic beat.
     film_ranges=[]
     insert_idx=next((i for i,scene in enumerate(storyboard["scenes"]) if scene.get("vintage_insert")),None)
