@@ -190,7 +190,15 @@ def render_continuous_board(photos: list[Path], scenes: list[dict], durations: l
                 q = min(1.0, local / 1.2)
                 q = q * q * (3 - 2 * q)
                 cx, cy = px + (cx - px) * q, py + (cy - py) * q
-            zoom = 0.92 + 0.045 * min(1.0, local / max(2.0, durations[idx]))
+            progress = min(1.0, local / max(2.0, durations[idx]))
+            zoom = 1.85 + 0.08 * progress
+            # Pull back to the complete evidence network for the closing reveal.
+            if idx == len(scenes) - 1 and local > max(0.0, durations[idx] - 2.5):
+                reveal = min(1.0, (local - max(0.0, durations[idx] - 2.5)) / 2.5)
+                reveal = reveal * reveal * (3 - 2 * reveal)
+                cx = cx + (WORLD_W / 2 - cx) * reveal
+                cy = cy + (world.size[1] / 2 - cy) * reveal
+                zoom = zoom + (1.0 - zoom) * reveal
             cx += math.sin(local * 0.19) * 16
             cy += math.cos(local * 0.15) * 12
             world_w, world_h = world.size
