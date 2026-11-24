@@ -25,7 +25,7 @@ class SoundBedTests(unittest.TestCase):
     def test_sound_bed_duration_and_format(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "bed.wav"
-            synthesize_bed(1.2, [0.0, 0.6], path)
+            synthesize_bed(1.2, [0.0, 0.6], path, film_ranges=[(0.2,0.8)])
             with wave.open(str(path), "rb") as audio:
                 self.assertEqual(audio.getframerate(), 48000)
                 self.assertEqual(audio.getnchannels(), 1)
