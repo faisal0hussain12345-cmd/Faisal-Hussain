@@ -16,6 +16,20 @@ class DocumentaryEngineTests(unittest.TestCase):
         _draw_overlay(frame,scene,1.5,5.0,0,3)
         self.assertEqual(frame.size,(1920,1080))
 
+    def test_all_five_documentary_surfaces(self):
+        with TemporaryDirectory() as temp:
+            photo=Path(temp)/"still.png"
+            Image.new("RGB",(160,90),(100,110,120)).save(photo)
+            expected={
+                "map_board":(16,26,44),"paper_press":(232,236,240),
+                "scrapbook_dossier":(29,30,36),"chalk_case_board":(17,39,32),
+                "digital_coda":(5,8,13)
+            }
+            for surface,color in expected.items():
+                world,_=_build_world([photo],[{"title":"SURFACE"}],surface)
+                self.assertEqual(world.getpixel((50,50)),color)
+            with self.assertRaises(ValueError): _build_world([photo],[{}],"unknown")
+
     def test_rotated_card_anchor(self):
         card={"x":100,"y":100,"w":200,"h":100,"rotation":0}
         self.assertEqual(card_anchor(card,0,-0.5),(100.0,50.0))
