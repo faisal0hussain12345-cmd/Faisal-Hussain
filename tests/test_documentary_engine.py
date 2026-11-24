@@ -41,6 +41,16 @@ class DocumentaryEngineTests(unittest.TestCase):
             self.assertTrue(out.is_file())
             self.assertGreater(out.stat().st_size,1000)
 
+    def test_parallel_board_render_assembles_chunks(self):
+        from banna.documentary_engine import render_continuous_board
+        with TemporaryDirectory() as temp:
+            root=Path(temp); photo=root/"still.png"
+            Image.new("RGB",(320,180),(90,80,70)).save(photo)
+            out=root/"parallel.mp4"
+            render_continuous_board([photo],[{"title":"PARALLEL"}],[1.0],out,320,180,2,quality=30,workers=2)
+            self.assertTrue(out.is_file())
+            self.assertGreater(out.stat().st_size,1000)
+
     def test_vintage_insert_encodes_video(self):
         from banna.vintage import render_vintage_clip
         with TemporaryDirectory() as temp:
