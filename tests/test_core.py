@@ -3,11 +3,23 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from banna.audio import scene_boundaries
+from banna.audio import scene_boundaries, probe_audio
 from banna.pipeline import load_storyboard
 from banna.images import generate_gemini_image
 from banna.sound import synthesize_bed
 import wave
+
+
+class AudioProbeTests(unittest.TestCase):
+    def test_probe_audio_reads_duration_and_format(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path=Path(temp)/"probe.wav"
+            with wave.open(str(path),"wb") as wav:
+                wav.setnchannels(1); wav.setsampwidth(2); wav.setframerate(8000)
+                wav.writeframes(b"\x00\x00"*8000)
+            info=probe_audio(path)
+            self.assertAlmostEqual(info["duration"],1.0,delta=0.02)
+            self.assertIn("wav",info["format"])
 
 
 class SceneTimingTests(unittest.TestCase):
