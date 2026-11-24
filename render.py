@@ -8,7 +8,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent
-AUDIO = ROOT / "assets" / "voiceover.mp3"
+AUDIO = ROOT / "Generated Audio November 24, 2026 - 9_33PM.mp3"
 WORK = ROOT / "work"
 OUTPUT = ROOT / "output" / "manhattan_project_documentary_draft.mp4"
 WIDTH, HEIGHT, FPS = 1920, 1080, 30
