@@ -5,6 +5,7 @@ from pathlib import Path
 
 from banna.audio import scene_boundaries
 from banna.pipeline import load_storyboard
+from banna.images import generate_gemini_image
 from banna.sound import synthesize_bed
 import wave
 
@@ -52,6 +53,27 @@ class StoryboardTests(unittest.TestCase):
             path = Path(temp) / "storyboard.json"
             path.write_text(json.dumps({"scenes": [{"id": "one", "image_prompt": "A historical archive photo"}]}), encoding="utf-8")
             self.assertEqual(len(load_storyboard(path)["scenes"]), 1)
+
+
+class GeminiImageAdapterTests(unittest.TestCase):
+    def test_extracts_generated_image_bytes_from_gemini_response(self):
+        import base64
+        from unittest.mock import Mock, patch
+        with tempfile.TemporaryDirectory() as temp:
+            target=Path(temp)/"still.png"
+            payload={"candidates":[{"content":{"parts":[{"inlineData":{"mimeType":"image/png","data":base64.b64encode(b"png-test").decode()}}]}}]}
+            response=Mock(status_code=200)
+            response.json.return_value=payload
+            with patch.dict("os.environ",{"GEMINI_API_KEY":"test-key"}), patch("banna.images.requests.post",return_value=response) as post:
+                result=generate_gemini_image("archival train station",target,"gemini-2.5-flash-image")
+            self.assertEqual(result.read_bytes(),b"png-test")
+            self.assertEqual(post.call_args.kwargs["params"],{"key":"test-key"})
+
+    def test_gemini_adapter_requires_api_key(self):
+        from unittest.mock import patch
+        with patch.dict("os.environ",{},clear=True):
+            with self.assertRaises(RuntimeError):
+                generate_gemini_image("test",Path("missing.png"),"gemini-2.5-flash-image")
 
 
 if __name__ == "__main__":
