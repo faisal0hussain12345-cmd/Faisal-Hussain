@@ -97,7 +97,7 @@ def _build_world(photos: list[Path], scenes: list[dict]) -> tuple[Image.Image, l
     d = ImageDraw.Draw(world)
     for x in range(0, WORLD_W, 100):
         d.line((x, 0, x, WORLD_H), fill=(23, 37, 57), width=1)
-    for y in range(0, WORLD_H, 100):
+    for y in range(0, world_h, 100):
         d.line((0, y, WORLD_W, y), fill=(23, 37, 57), width=1)
     d.text((150, 90), "DOCUMENTARY / EVIDENCE ARCHIVE", font=_font(38, mono=True), fill=(158, 176, 196))
     d.line((150, 155, WORLD_W - 150, 155), fill=ORANGE, width=4)
