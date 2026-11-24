@@ -237,7 +237,7 @@ def render_continuous_board(photos: list[Path], scenes: list[dict], durations: l
                                  width,height,fps,quality) for start,end,target in jobs]
             for future in futures: future.result()
         listing=root/"concat.txt"
-        listing.write_text("".join(f"file '{target.resolve().as_posix()}'\\n" for _,_,target in jobs),encoding="utf-8")
+        listing.write_text("".join(f"file '{target.resolve().as_posix()}'\n" for _,_,target in jobs),encoding="utf-8")
         cmd=["ffmpeg","-y","-hide_banner","-loglevel","error","-f","concat","-safe","0",
              "-i",str(listing),"-c","copy","-an",str(output)]
         result=subprocess.run(cmd,capture_output=True,text=True)
