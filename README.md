@@ -14,6 +14,7 @@ BANNA is a Python documentary production system based on the supplied Priyanshu 
 ## Skill-aligned visual direction
 
 - Midnight Navy background, ice-paper cards and Signal Orange (#ff6b00) evidence annotations.
+- Five selectable surfaces: Map Board, Paper Press, Scrapbook Dossier, Chalk Case Board and Digital Coda.
 - A single large evidence-board world with continuous camera pans, pushes, gentle drift, two-worker parallel rendering and a closing network pullback.
 - Archival-grade still photographs, pinned cards, paper labels, connected evidence strings, typed tags and hand-drawn highlight marks.
 - Schematic map panels with normalized, validated coordinates and a coordinate-grid inspection helper.
