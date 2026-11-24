@@ -149,7 +149,7 @@ def _draw_wobble(draw: ImageDraw.ImageDraw, box, color=(255,107,0,245), width=5)
 def _draw_overlay(frame: Image.Image, scene: dict, elapsed: float, scene_duration: float,
                   index: int, total: int) -> None:
     d=ImageDraw.Draw(frame,"RGBA"); w,h=frame.size
-    full_label=str(scene.get("board_label") or scene.get("title") or f"CASE FILE {index+1:02d}").upper()[:48]
+    full_label=str(scene.get("board_label") or scene.get("title") or f"CASE FILE {index+1:02d}").upper()[:40]
     # Skill guide typewriter speed: 22 characters per second.
     shown=max(0,min(len(full_label),int(elapsed*22)))
     label=full_label[:shown]
@@ -168,7 +168,7 @@ def _draw_overlay(frame: Image.Image, scene: dict, elapsed: float, scene_duratio
     tags=scene.get("tags",[])
     for i,tag in enumerate(tags[:3]):
         if elapsed>1.0+i*0.25:
-            y=190+i*54; text=str(tag)[:34]
+            y=190+i*54; text=str(tag)[:30]
             d.rounded_rectangle((76,y,500,y+40),radius=4,fill=(8,14,22,220),outline=ORANGE+(230,),width=2)
             d.text((92,y+7),text,font=_font(21,mono=True),fill=PAPER+(255,))
     # Optional year card with serif typography and animated orange rules.
@@ -190,9 +190,9 @@ def _draw_overlay(frame: Image.Image, scene: dict, elapsed: float, scene_duratio
         sd.text((34,25),stamp,font=sf,fill=ORANGE+(255,))
         stamp_layer=stamp_layer.rotate(7,resample=Image.Resampling.BICUBIC,expand=True)
         sx=w-stamp_layer.width-110+int(math.sin(elapsed*34)*5)
-        frame.alpha_composite(stamp_layer,(sx,230))
+        rgba=frame.convert("RGBA")\n        rgba.alpha_composite(stamp_layer,(sx,230))\n        frame.paste(rgba.convert("RGB"))
     if scene.get("thesis") and elapsed>scene_duration*0.55:
-        thesis=str(scene["thesis"])[:95]
+        thesis=str(scene["thesis"])[:55]
         d.rounded_rectangle((w//2-500,h-210,w//2+500,h-100),radius=5,fill=(8,14,22,230),outline=ORANGE+(240,),width=2)
         d.text((w//2-465,h-178),thesis,font=_font(28,True),fill=PAPER+(255,))
     # Finale: return all cards to view and glitch the closing title.
