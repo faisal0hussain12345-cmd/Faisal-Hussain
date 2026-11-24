@@ -1,0 +1,32 @@
+{
+  "project": {
+    "name": "BANNA Documentary",
+    "audience": "usa",
+    "language": "en-US",
+    "category": "historical",
+    "visual_rule": "still photographs only; no stock video clips"
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "title": "The First Clue",
+      "narration_cue": "The story begins with one overlooked detail",
+      "caption": "EVIDENCE 01",
+      "image_prompt": "A cinematic archival documentary still photograph of a weathered evidence folder on a dark investigator desk, realistic paper texture, dramatic practical lighting, no readable text, no people identifiable"
+    },
+    {
+      "id": "location",
+      "title": "The Location",
+      "narration_cue": "At the center of the story was a place",
+      "caption": "LOCATION / TIMELINE",
+      "image_prompt": "A period-accurate cinematic documentary still photograph of an old city street seen from above, archival silver gelatin texture, realistic historical architecture, no text, no watermark"
+    },
+    {
+      "id": "reveal",
+      "title": "The Turning Point",
+      "narration_cue": "Then one event changed everything",
+      "caption": "THE TURNING POINT",
+      "image_prompt": "A dramatic but non-graphic archival documentary still photograph representing a historical turning point, atmospheric smoke and silhouettes, realistic photography, no gore, no text"
+    }
+  ]
+}
