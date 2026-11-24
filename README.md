@@ -22,6 +22,7 @@ The final MP4 runtime follows the voice-over duration. Scene boundaries are dist
 - `banna/audio.py` — duration probing, silence detection and scene timing
 - `banna/images.py` — supplied-photo handling and Gemini still-image generation
 - `banna/board.py` — evidence-board cards, camera movement, FFmpeg rendering and audio mux
+- `banna/sound.py` — streamed synthetic music bed and scene-transition SFX
 - `banna/pipeline.py` — end-to-end orchestration
 - `storyboard.example.json` — starter storyboard
 - `media/photos/` — optional user-supplied still photographs
