@@ -66,7 +66,7 @@ def render_scene(photo: Path, scene: dict, index: int, total: int, duration: flo
     if p.returncode: raise RuntimeError(p.stderr[-3000:])
     still.unlink(missing_ok=True)
 
-def concat_and_mux(segments: list[Path], voice: Path, output: Path, duration: float) -> None:
+def concat_and_mux(segments: list[Path], voice: Path, bed: Path, output: Path, duration: float) -> None:
     output.parent.mkdir(parents=True,exist_ok=True)
     listfile=output.parent/"segments.txt"
     listfile.write_text("".join(f"file '{p.resolve().as_posix()}'\n" for p in segments),encoding="utf-8")
@@ -75,11 +75,11 @@ def concat_and_mux(segments: list[Path], voice: Path, output: Path, duration: fl
                       "-i",str(listfile),"-c","copy","-an",str(silent)],capture_output=True,text=True)
     if p.returncode: raise RuntimeError(p.stderr[-3000:])
     # Loop-safe audio bed: low-volume dark drone, ducked beneath narration.
-    cmd=["ffmpeg","-y","-hide_banner","-loglevel","error","-i",str(silent),"-i",str(voice),
+    cmd=["ffmpeg","-y","-hide_banner","-loglevel","error","-i",str(silent),"-i",str(voice),"-i",str(bed),
          "-filter_complex",
          "[1:a]aresample=48000,asplit=2[voice][side];"
-         "sine=frequency=55:sample_rate=48000,volume=0.018,aloop=loop=-1:size=48000[drone];"
-         "[drone][side]sidechaincompress=threshold=0.025:ratio=8:attack=25:release=500[duck];"
+         "[2:a]aresample=48000,volume=0.85[bed];"
+         "[bed][side]sidechaincompress=threshold=0.025:ratio=8:attack=25:release=500[duck];"
          "[voice][duck]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-14:TP=-1.5[a]",
          "-map","0:v:0","-map","[a]","-t",f"{duration:.3f}","-c:v","libx264","-preset","veryfast",
          "-crf","24","-pix_fmt","yuv420p","-c:a","aac","-b:a","192k","-movflags","+faststart",str(output)]
