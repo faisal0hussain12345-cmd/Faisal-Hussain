@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "assets/**"
+      - "*.mp3"
       - "render.py"
       - "requirements.txt"
       - ".github/workflows/render.yml"
@@ -40,8 +40,8 @@ jobs:
 
       - name: Verify narration is present
         run: |
-          if [ ! -f "assets/voiceover.mp3" ]; then
-            echo "::error::Missing assets/voiceover.mp3. Upload the narration file to that exact path."
+          if [ ! -f "Generated Audio November 24, 2026 - 9_33PM.mp3" ]; then
+            echo "::error::Missing Generated Audio November 24, 2026 - 9_33PM.mp3. The narration file should be present in the repository root."
             exit 1
           fi
 
