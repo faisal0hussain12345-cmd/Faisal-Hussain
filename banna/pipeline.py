@@ -44,12 +44,14 @@ def render(storyboard_path: Path | None = None) -> Path:
     render_continuous_board(photos,storyboard["scenes"],timeline["scene_durations"],board,
                             settings.width,settings.height,settings.fps,quality=20)
     # Insert one bespoke cyanotype 2D sequence at the marked dramatic beat.
+    film_ranges=[]
     insert_idx=next((i for i,scene in enumerate(storyboard["scenes"]) if scene.get("vintage_insert")),None)
     if insert_idx is not None:
         scene_duration=timeline["scene_durations"][insert_idx]
         insert_duration=min(5.0,scene_duration*0.55)
         if insert_duration>=2.0:
             insert_start=sum(timeline["scene_durations"][:insert_idx])+(scene_duration-insert_duration)/2
+            film_ranges.append((insert_start,insert_start+insert_duration))
             insert=work/"vintage_2d_insert.mp4"
             render_vintage_clip(str(storyboard["scenes"][insert_idx].get("vintage_title") or storyboard["scenes"][insert_idx].get("title") or "THE TURNING POINT"),
                                 insert_duration,insert,settings.fps,(settings.width,settings.height))
@@ -68,7 +70,7 @@ def render(storyboard_path: Path | None = None) -> Path:
             board=spliced
             print(f"[BANNA] Inserted cyanotype 2D sequence at {insert_start:.2f}s",flush=True)
     bed=work/"sound_bed.wav"
-    synthesize_bed(duration,timeline["boundaries"][:-1],bed)
+    synthesize_bed(duration,timeline["boundaries"][:-1],bed,film_ranges=film_ranges)
     output=settings.output_dir/"BANNA_documentary_1080p.mp4"
     concat_and_mux([board],voice,bed,output,duration)
     qc=validate_final_video(output,duration)
