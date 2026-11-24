@@ -214,6 +214,7 @@ def render_continuous_board(photos: list[Path], scenes: list[dict], durations: l
     finally:
         proc.stdin.close()
     stderr = proc.stderr.read().decode("utf-8", "replace") if proc.stderr else ""
+    if proc.stderr: proc.stderr.close()
     code = proc.wait()
     if code:
         raise RuntimeError(f"FFmpeg board render failed: {stderr[-4000:]}")
