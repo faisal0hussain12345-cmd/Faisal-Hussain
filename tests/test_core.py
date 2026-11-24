@@ -5,6 +5,8 @@ from pathlib import Path
 
 from banna.audio import scene_boundaries
 from banna.pipeline import load_storyboard
+from banna.sound import synthesize_bed
+import wave
 
 
 class SceneTimingTests(unittest.TestCase):
@@ -17,6 +19,17 @@ class SceneTimingTests(unittest.TestCase):
 
     def test_single_scene(self):
         self.assertEqual(scene_boundaries(42.0, 1, []), [0.0, 42.0])
+
+
+class SoundBedTests(unittest.TestCase):
+    def test_sound_bed_duration_and_format(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "bed.wav"
+            synthesize_bed(1.2, [0.0, 0.6], path)
+            with wave.open(str(path), "rb") as audio:
+                self.assertEqual(audio.getframerate(), 48000)
+                self.assertEqual(audio.getnchannels(), 1)
+                self.assertAlmostEqual(audio.getnframes() / audio.getframerate(), 1.2, places=2)
 
 
 class StoryboardTests(unittest.TestCase):
