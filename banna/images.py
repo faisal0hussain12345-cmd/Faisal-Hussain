@@ -1,7 +1,9 @@
 from __future__ import annotations
 import base64, os, re, time
 from pathlib import Path
-import requests\nfrom PIL import Image\nfrom .map_board import render_map_panel, annotate_map_image, draw_coordinate_grid
+import requests
+from PIL import Image
+from .map_board import render_map_panel, annotate_map_image, draw_coordinate_grid
 
 def generate_gemini_image(prompt: str, destination: Path, model: str) -> Path:
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
