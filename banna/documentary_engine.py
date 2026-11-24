@@ -19,7 +19,7 @@ PAPER = (232, 236, 240)
 INK = (22, 30, 46)
 ORANGE = (255, 107, 0)
 STEEL = (62, 84, 110)
-WORLD_W, WORLD_H = 3840, 2160
+WORLD_W = 3840
 
 
 def _font(size: int, bold: bool = False, mono: bool = False):
@@ -93,7 +93,7 @@ def _card_layer(photo: Path, scene: dict, number: int, total: int, card_w: int =
 
 
 def _build_world(photos: list[Path], scenes: list[dict]) -> tuple[Image.Image, list[dict]]:
-    world = Image.new("RGB", (WORLD_W, WORLD_H), NAVY)
+    world_h = max(2160, 500 + ((len(scenes) + 2) // 3) * 900)\n    world = Image.new("RGB", (WORLD_W, world_h), NAVY)
     d = ImageDraw.Draw(world)
     for x in range(0, WORLD_W, 100):
         d.line((x, 0, x, WORLD_H), fill=(23, 37, 57), width=1)
@@ -192,7 +192,7 @@ def render_continuous_board(photos: list[Path], scenes: list[dict], durations: l
             zoom = 0.92 + 0.045 * min(1.0, local / max(2.0, durations[idx]))
             cx += math.sin(local * 0.19) * 16
             cy += math.cos(local * 0.15) * 12
-            crop_w, crop_h = int(WORLD_W / zoom), int(WORLD_H / zoom)
+            world_w, world_h = world.size\n            crop_w, crop_h = int(world_w / zoom), int(world_h / zoom)
             left = max(0, min(WORLD_W - crop_w, int(cx - crop_w / 2)))
             top = max(0, min(WORLD_H - crop_h, int(cy - crop_h / 2)))
             frame = world.crop((left, top, left + crop_w, top + crop_h)).resize(
