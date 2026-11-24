@@ -1,60 +1,66 @@
 # BANNA — AI Photo Documentary Production Studio
 
-BANNA is a Python-based, photo-only documentary renderer. It follows the supplied Priyanshu Web Documentary skill's visual direction: midnight-navy evidence board, ice-paper photo cards, Signal Orange annotations, camera movement, vintage-inspired inserts, and narration-led sound design.
+BANNA is a Python documentary production system based on the supplied Priyanshu Web Documentary skill. Its delivery target is a 1920×1080, 30 fps MP4 whose duration follows the uploaded narration. It uses still photographs and generated still illustrations only; it does not use stock video clips.
 
-## Audience and story workflow
+## Production workflow
 
-- **Hindi / Indian audience** — Hindi narration and India-relevant story selection.
-- **USA audience** — US English narration and US-relevant story selection.
+1. Select an audience profile: Indian/Hindi or USA/US English. Both profiles support Recent News, Historical Documentaries and UFO Documentaries.
+2. Research and verify the selected story, then prepare the clean narration script and a scene-by-scene visual plan.
+3. Record or generate the narration and provide the MP3/WAV plus the approved `storyboard.json`.
+4. Add the Gemini API key as a GitHub Actions secret named `GEMINI_API_KEY`.
+5. Run **Actions → BANNA Documentary Render**. GitHub-hosted runners perform the rendering; a local GPU is not required.
+6. Download the MP4 and the QC contact sheet/report from the workflow artifact.
 
-Each profile supports **Recent News**, **Historical Documentaries**, and **UFO Documentaries**. Research and script preparation happen before rendering; the renderer starts when the voice-over and a story-specific `storyboard.json` are ready.
+## Skill-aligned visual direction
 
-## Rendering architecture
+- Midnight Navy background, ice-paper cards and Signal Orange (#ff6b00) evidence annotations.
+- A single large evidence-board world with continuous camera pans, pushes and gentle drift.
+- Archival-grade still photographs, pinned cards, paper labels, connected evidence strings, typed tags and hand-drawn highlight marks.
+- Schematic map panels with normalized, validated coordinates and a coordinate-grid inspection helper.
+- Cyanotype-blue vintage 2D illustration frames with route graphics, moving silhouettes, film grain and intertitle treatment.
+- Synthetic suspense bed, transition whooshes, typing clicks and thuds; voice-over is kept as the timing master and mixed to the final MP4.
+- Non-graphic treatment of violent historical events.
 
-Python 3.11+, FFmpeg/FFprobe, Pillow, NumPy and Requests. Gemini image generation is accessed through `GEMINI_API_KEY`. GitHub Actions performs cloud rendering so the user's 8 GB laptop is not required to render 1080p.
+The bundled skill's exact-geometry helpers are available in `banna/annotations.py`: `card_anchor`, `make_paper_tracked`, `text_underline_world`, and `text_circle_world`. Map inspection helpers are in `banna/map_board.py`.
 
-The final MP4 runtime follows the voice-over duration. Scene boundaries are distributed across narration and nudged toward detected silence boundaries. Visuals are still photographs only; movement comes from Ken Burns zoom/pan and evidence-board composition. No stock video clips are used.
+## Architecture
 
-## Repository layout
+- `main.py` — command-line entry point.
+- `banna/config.py` — environment-driven configuration and voice-over discovery.
+- `banna/audio.py`, `banna/timing.py` — media probing, silence detection and narration-led scene timing.
+- `banna/images.py` — user-provided stills and Gemini still-image generation.
+- `banna/documentary_engine.py` — continuous evidence-board world and camera renderer.
+- `banna/annotations.py` — exact paper-line geometry, underlines, circles and orange wobble marks.
+- `banna/map_board.py` — coordinate grid and schematic map panels.
+- `banna/vintage.py` — cyanotype silent-film-style animated still illustrations.
+- `banna/sound.py` — synthesized music bed and synchronized editorial SFX.
+- `banna/board.py` — audio ducking, loudness normalization and H.264/AAC mux.
+- `banna/qc.py` — final resolution/duration validation and contact-sheet extraction.
+- `banna/pipeline.py` — production orchestration.
+- `tests/` — unit and FFmpeg smoke tests.
 
-- `main.py` — command-line entry point
-- `banna/config.py` — runtime configuration and voice-over discovery
-- `banna/audio.py` — duration probing, silence detection and scene timing
-- `banna/images.py` — supplied-photo handling and Gemini still-image generation
-- `banna/board.py` — evidence-board cards, camera movement, FFmpeg rendering and audio mux
-- `banna/sound.py` — streamed synthetic music bed and scene-transition SFX
-- `banna/pipeline.py` — end-to-end orchestration
-- `storyboard.example.json` — starter storyboard
-- `media/photos/` — optional user-supplied still photographs
-- `output/` — final MP4 artifact
+## Requirements and local development
 
-## Prepare a documentary
-
-1. Copy `storyboard.example.json` to `storyboard.json`.
-2. Set audience, language, category, title and source notes in project metadata.
-3. Add scenes. Each scene needs either an `image` path to a supplied still or a detailed `image_prompt` for Gemini.
-4. Keep image prompts factual, period-aware and non-graphic.
-5. Add `GEMINI_API_KEY` under GitHub → Settings → Secrets and variables → Actions. Never commit API keys.
-6. Run Actions → BANNA Documentary Render → Run workflow, then download the MP4 artifact.
-
-A root-level MP3/WAV voice-over is discovered automatically. Set `BANNA_VOICEOVER` to select another file.
-
-## Local run
-
-Install FFmpeg and Python 3.11+, then:
+Python 3.11+, FFmpeg/FFprobe, Pillow, NumPy and Requests.
 
 ```bash
 python -m pip install -r requirements.txt
+python -m unittest discover -s tests -v
+```
+
+Local rendering:
+
+```bash
 copy storyboard.example.json storyboard.json
 python main.py render
 ```
 
-Use `cp` instead of `copy` on macOS/Linux.
+Use `cp` instead of `copy` on macOS/Linux. Put optional user-supplied photos in `media/photos/` and reference their paths in the storyboard.
 
-## API cost and limits
+## Secrets, cost and limits
 
-The Python renderer does not need a paid local GPU. Gemini image generation is a separate API service: availability, free quota, rate limits and billing depend on the Google AI account and model access. GitHub Actions minutes and artifact retention are subject to GitHub plan limits. BANNA does not promise unlimited free generation or cloud rendering.
+Never commit API keys. Set `GEMINI_API_KEY` in GitHub → Settings → Secrets and variables → Actions. Image-generation availability, model access, free quota, rate limits and billing are controlled by the provider. GitHub Actions runtime and artifact retention are subject to GitHub plan limits; BANNA does not promise unlimited free usage.
 
-## Implementation status
+## Verification status
 
-This is the first working application core: still-photo scene cards, motion, narration-length timing and MP4 muxing. Advanced skill features—precision map pins/strings, word-level annotation timing, custom vintage 2D action inserts, layered SFX cue authoring and automated contact-sheet QC—remain further engineering work and are not claimed as complete.
+The CI suite runs on GitHub Actions and checks core timing, sound-bed output, storyboard validation, geometry helpers, map coordinate validation, vintage illustration generation and a small FFmpeg rendering smoke test. A real documentary render still requires a valid story-specific storyboard and configured image-generation credentials. Final acceptance also requires inspecting the generated QC contact sheet; a green unit-test run alone is not proof that every annotation is pixel-perfect for every future story.
