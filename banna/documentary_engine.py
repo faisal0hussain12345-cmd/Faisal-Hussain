@@ -156,66 +156,90 @@ def _draw_overlay(frame: Image.Image, scene: dict, elapsed: float, scene_duratio
         d.text((w - 760, h - 110), title, font=f, fill=ORANGE + (255,))
 
 
-def render_continuous_board(photos: list[Path], scenes: list[dict], durations: list[float],
-                            output: Path, width: int = 1920, height: int = 1080,
-                            fps: int = 30, quality: int = 22) -> Path:
-    if not photos or len(photos) != len(scenes) or len(scenes) != len(durations):
-        raise ValueError("Photos, scenes and durations must have the same non-zero length.")
-    if any(d <= 0 for d in durations):
-        raise ValueError("Every scene duration must be positive.")
+def _render_chunk(photos: list[Path], scenes: list[dict], durations: list[float],
+                  start_frame: int, end_frame: int, output: Path,
+                  width: int, height: int, fps: int, quality: int) -> str:
     world, _ = _build_world(photos, scenes)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-f", "rawvideo",
-           "-pix_fmt", "rgb24", "-s", f"{width}x{height}", "-r", str(fps), "-i", "-",
-           "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", str(quality),
-           "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(output)]
-    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-    assert proc.stdin is not None
-    total_duration = sum(durations)
-    starts = []
-    cursor = 0.0
+    starts=[]; cursor=0.0
     for duration in durations:
-        starts.append(cursor)
-        cursor += duration
+        starts.append(cursor); cursor += duration
+    total_duration=cursor
+    cmd=["ffmpeg","-y","-hide_banner","-loglevel","error","-f","rawvideo",
+         "-pix_fmt","rgb24","-s",f"{width}x{height}","-r",str(fps),"-i","-",
+         "-an","-c:v","libx264","-preset","veryfast","-crf",str(quality),
+         "-pix_fmt","yuv420p","-g",str(fps*2),"-keyint_min",str(fps*2),
+         "-sc_threshold","0",str(output)]
+    proc=subprocess.Popen(cmd,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+    assert proc.stdin is not None
     try:
-        frame_count = int(math.ceil(total_duration * fps))
-        for fi in range(frame_count):
-            t = min(total_duration - 1 / fps, fi / fps)
-            idx = max(i for i, start in enumerate(starts) if start <= t)
-            local = t - starts[idx]
-            cx, cy = _camera_center(idx, len(scenes))
-            # Ease from the previous scene's camera position, then drift gently.
-            if idx > 0 and local < 1.2:
-                px, py = _camera_center(idx - 1, len(scenes))
-                q = min(1.0, local / 1.2)
-                q = q * q * (3 - 2 * q)
-                cx, cy = px + (cx - px) * q, py + (cy - py) * q
-            progress = min(1.0, local / max(2.0, durations[idx]))
-            zoom = 1.85 + 0.08 * progress
-            # Pull back to the complete evidence network for the closing reveal.
-            if idx == len(scenes) - 1 and local > max(0.0, durations[idx] - 2.5):
-                reveal = min(1.0, (local - max(0.0, durations[idx] - 2.5)) / 2.5)
-                reveal = reveal * reveal * (3 - 2 * reveal)
-                cx = cx + (WORLD_W / 2 - cx) * reveal
-                cy = cy + (world.size[1] / 2 - cy) * reveal
-                zoom = zoom + (1.0 - zoom) * reveal
-            cx += math.sin(local * 0.19) * 16
-            cy += math.cos(local * 0.15) * 12
-            world_w, world_h = world.size
-            crop_w, crop_h = int(world_w / zoom), int(world_h / zoom)
-            left = max(0, min(WORLD_W - crop_w, int(cx - crop_w / 2)))
-            top = max(0, min(world_h - crop_h, int(cy - crop_h / 2)))
-            frame = world.crop((left, top, left + crop_w, top + crop_h)).resize(
-                (width, height), Image.Resampling.LANCZOS)
-            _draw_overlay(frame, scenes[idx], local, durations[idx], idx, len(scenes))
+        for fi in range(start_frame,end_frame):
+            t=min(total_duration-1/fps,fi/fps)
+            idx=max(i for i,start in enumerate(starts) if start<=t)
+            local=t-starts[idx]
+            cx,cy=_camera_center(idx,len(scenes))
+            if idx>0 and local<1.2:
+                px,py=_camera_center(idx-1,len(scenes))
+                q=min(1.0,local/1.2); q=q*q*(3-2*q)
+                cx,cy=px+(cx-px)*q,py+(cy-py)*q
+            progress=min(1.0,local/max(2.0,durations[idx]))
+            zoom=1.85+0.08*progress
+            if idx==len(scenes)-1 and local>max(0.0,durations[idx]-2.5):
+                reveal=min(1.0,(local-max(0.0,durations[idx]-2.5))/2.5)
+                reveal=reveal*reveal*(3-2*reveal)
+                cx=cx+(WORLD_W/2-cx)*reveal
+                cy=cy+(world.size[1]/2-cy)*reveal
+                zoom=zoom+(1.0-zoom)*reveal
+            cx+=math.sin(local*0.19)*16
+            cy+=math.cos(local*0.15)*12
+            world_w,world_h=world.size
+            crop_w,crop_h=int(world_w/zoom),int(world_h/zoom)
+            left=max(0,min(world_w-crop_w,int(cx-crop_w/2)))
+            top=max(0,min(world_h-crop_h,int(cy-crop_h/2)))
+            frame=world.crop((left,top,left+crop_w,top+crop_h)).resize((width,height),Image.Resampling.LANCZOS)
+            _draw_overlay(frame,scenes[idx],local,durations[idx],idx,len(scenes))
             proc.stdin.write(frame.tobytes())
     except BrokenPipeError as exc:
         raise RuntimeError("FFmpeg stopped while rendering the continuous board.") from exc
     finally:
         proc.stdin.close()
-    stderr = proc.stderr.read().decode("utf-8", "replace") if proc.stderr else ""
+    stderr=proc.stderr.read().decode("utf-8","replace") if proc.stderr else ""
     if proc.stderr: proc.stderr.close()
-    code = proc.wait()
-    if code:
-        raise RuntimeError(f"FFmpeg board render failed: {stderr[-4000:]}")
+    code=proc.wait()
+    if code: raise RuntimeError(f"FFmpeg board render failed: {stderr[-4000:]}")
+    return str(output)
+
+
+def render_continuous_board(photos: list[Path], scenes: list[dict], durations: list[float],
+                            output: Path, width: int=1920, height: int=1080,
+                            fps: int=30, quality: int=22, workers: int=1) -> Path:
+    if not photos or len(photos)!=len(scenes) or len(scenes)!=len(durations):
+        raise ValueError("Photos, scenes and durations must have the same non-zero length.")
+    if any(d<=0 for d in durations):
+        raise ValueError("Every scene duration must be positive.")
+    if workers<1: raise ValueError("workers must be at least one.")
+    output.parent.mkdir(parents=True,exist_ok=True)
+    frame_count=int(math.ceil(sum(durations)*fps))
+    workers=min(workers,frame_count)
+    if workers==1:
+        _render_chunk(photos,scenes,durations,0,frame_count,output,width,height,fps,quality)
+        return output
+    from concurrent.futures import ProcessPoolExecutor
+    import tempfile
+    with tempfile.TemporaryDirectory(prefix="banna_chunks_",dir=str(output.parent)) as temp:
+        root=Path(temp); jobs=[]
+        for i in range(workers):
+            start=frame_count*i//workers
+            end=frame_count*(i+1)//workers
+            target=root/f"chunk_{i:03d}.mp4"
+            jobs.append((start,end,target))
+        with ProcessPoolExecutor(max_workers=workers) as pool:
+            futures=[pool.submit(_render_chunk,photos,scenes,durations,start,end,target,
+                                 width,height,fps,quality) for start,end,target in jobs]
+            for future in futures: future.result()
+        listing=root/"concat.txt"
+        listing.write_text("".join(f"file '{target.resolve().as_posix()}'\\n" for _,_,target in jobs),encoding="utf-8")
+        cmd=["ffmpeg","-y","-hide_banner","-loglevel","error","-f","concat","-safe","0",
+             "-i",str(listing),"-c","copy","-an",str(output)]
+        result=subprocess.run(cmd,capture_output=True,text=True)
+        if result.returncode: raise RuntimeError(f"Parallel render assembly failed: {result.stderr[-4000:]}")
     return output
