@@ -120,13 +120,20 @@ def _build_world(photos: list[Path], scenes: list[dict]) -> tuple[Image.Image, l
         rotated = layer.rotate(rotation, resample=Image.Resampling.BICUBIC, expand=True)
         world.paste(rotated, (int(cx - rotated.width / 2), int(cy - rotated.height / 2)), rotated)
         cards.append(card)
-    # Connect card-edge pins, not photo faces, with orange evidence strings.
-    for i in range(len(cards) - 1):
-        a = card_anchor(cards[i], 0.0, -0.46)
-        b = card_anchor(cards[i + 1], 0.0, -0.46)
-        d.line((a, b), fill=ORANGE, width=5)
-        for px, py in (a, b):
-            d.ellipse((px - 9, py - 9, px + 9, py + 9), fill=ORANGE, outline=PAPER, width=2)
+    # Connect exact card-edge pins; row-wrap strings travel only through the empty gutter.
+    for i in range(len(cards)-1):
+        current,next_card=cards[i],cards[i+1]
+        if i//cols==(i+1)//cols:
+            a=card_anchor(current,0.48,0.0)
+            b=card_anchor(next_card,-0.48,0.0)
+            d.line((a,b),fill=ORANGE,width=5)
+        else:
+            a=card_anchor(current,0.0,0.46)
+            b=card_anchor(next_card,0.0,-0.46)
+            gutter_y=(a[1]+b[1])/2
+            d.line((a,(a[0],gutter_y),(b[0],gutter_y),b),fill=ORANGE,width=5)
+        for px,py in (a,b):
+            d.ellipse((px-9,py-9,px+9,py+9),fill=ORANGE,outline=PAPER,width=2)
     return world, cards
 
 
