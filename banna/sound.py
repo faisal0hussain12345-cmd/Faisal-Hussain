@@ -28,15 +28,15 @@ def synthesize_bed(duration: float, scene_starts: list[float], output: Path, fil
     thud_events = [(int(t * SAMPLE_RATE), thud) for t in scene_starts[1:]]
     film_click = (rng.normal(0,1,576) * np.exp(-np.arange(576)/180)).astype(np.float32)
     film_hiss = (rng.normal(0,1,int(SAMPLE_RATE*0.08))).astype(np.float32)
-    for start,end in (film_ranges or []):
+    events = []\n    for start,end in (film_ranges or []):
         at=start
         while at<end:
             events.append((int(at*SAMPLE_RATE),film_click,0.045))
             at += 1/24
         events.append((int(start*SAMPLE_RATE),film_hiss,0.018))
-    events = sorted([(i, a, 0.16) for i, a in whoosh_events] +
+    events.extend([(i, a, 0.16) for i, a in whoosh_events] +
                     [(i, a, 0.08) for i, a in click_events] +
-                    [(i, a, 0.24) for i, a in thud_events], key=lambda x: x[0])
+                    [(i, a, 0.24) for i, a in thud_events])\n    events.sort(key=lambda x: x[0])
     with wave.open(str(output), "wb") as wav:
         wav.setnchannels(1)
         wav.setsampwidth(2)
