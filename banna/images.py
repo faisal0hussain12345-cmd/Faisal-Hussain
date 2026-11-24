@@ -11,8 +11,8 @@ def generate_gemini_image(prompt: str, destination: Path, model: str) -> Path:
         raise RuntimeError("GEMINI_API_KEY is missing. Add it under GitHub Settings > Secrets and variables > Actions.")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
     payload = {
-        "contents": [{"parts": [{"text": prompt + " Create one documentary still photograph, landscape 16:9, no captions, no watermark."}]}],
-        "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]}
+        "contents": [{"parts": [{"text": prompt + " Create one highly realistic archival documentary still photograph in landscape 16:9. Preserve period-accurate objects, architecture, clothing and lighting. Editorial silver-gelatin archival finish where historically appropriate; natural documentary realism, fine film grain, clear subject separation. No captions, no typography, no watermark, no collage, no video frames."}]}],
+        "generationConfig": {"responseModalities": ["TEXT", "IMAGE"], "imageConfig": {"aspectRatio": "16:9"}}
     }
     response = None
     for attempt in range(3):
