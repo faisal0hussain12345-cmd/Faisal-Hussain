@@ -343,7 +343,7 @@ def _extract_pdf_photo(pdf_url: str, match_text: str, image_index: int, destinat
     """Extract one embedded archival photograph from an official DOE PDF page."""
     try:
         import fitz
-        response = requests.get(pdf_url, timeout=60, headers={"User-Agent": USER_AGENT})
+        response = requests.get(pdf_url, timeout=60, headers=HEADERS)
         response.raise_for_status()
         document = fitz.open(stream=response.content, filetype="pdf")
         target = match_text.casefold()
