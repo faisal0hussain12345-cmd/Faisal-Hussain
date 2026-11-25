@@ -1,5 +1,5 @@
 from __future__ import annotations
-import base64, os, re, time
+import base64, hashlib, os, re, time
 from pathlib import Path
 import requests
 from PIL import Image
@@ -51,7 +51,7 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
     generated_dir.mkdir(parents=True, exist_ok=True)
     paths = []
     source_records = []
-    used_sources: set[str] = set()
+    used_sources: set[str] = set()\n    used_image_hashes: set[str] = set()
     for index, scene in enumerate(storyboard["scenes"], 1):
         if scene.get("map_image") or scene.get("map_locations"):
             map_title=str(scene.get("map_title") or scene.get("title") or "LOCATION EVIDENCE")
@@ -99,9 +99,12 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
             source = download_commons_photo(scene, commons_path, used_sources)
             source_page = str(source.get("source_page") or "")
             image_url = str(source.get("image_url") or "")
-            if not source_page or source_page in used_sources or (image_url and image_url in used_sources):
+            image_hash = hashlib.sha256(commons_path.read_bytes()).hexdigest()
+            if (not source_page or source_page in used_sources or
+                    (image_url and image_url in used_sources) or image_hash in used_image_hashes):
                 raise RuntimeError(f"Duplicate or untraceable archival image for scene {scene.get('id', safe)}.")
             used_sources.add(source_page)
+            used_image_hashes.add(image_hash)
             if image_url:
                 used_sources.add(image_url)
             paths.append(commons_path)
