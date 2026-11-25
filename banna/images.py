@@ -94,7 +94,7 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
         elif image_generation_enabled:
             paths.append(generate_gemini_image(prompt, generated_dir / f"{safe}.png", model))
         else:
-            # Zero-cost default: retrieve a reusable still from Wikimedia Commons and save attribution.
+            # Zero-cost default: use curated LOC/NOAA stills first, then public-archive search; save attribution.
             commons_path = generated_dir / f"{safe}_commons.jpg"
             source = download_commons_photo(scene, commons_path)
             paths.append(commons_path)
