@@ -16,6 +16,7 @@ on:
       - 'banna/images.py'
       - 'banna/titanic_graphics.py'
       - 'banna/sound.py'
+      - 'banna/qc.py'
       - 'tests/test_titanic_graphics.py'
 
 permissions:
