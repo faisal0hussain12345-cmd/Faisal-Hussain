@@ -5,7 +5,8 @@
     "language": "en-US",
     "category": "historical",
     "visual_rule": "licensed archival still photographs only; no stock video clips",
-    "surface": "scrapbook_dossier"
+    "surface": "scrapbook_dossier",
+    "photo_search_strategy": "Wikimedia Commons: short title/caption queries with broad fallback"
   },
   "scenes": [
     {
