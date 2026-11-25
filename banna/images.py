@@ -5,6 +5,7 @@ import requests
 from PIL import Image
 from .map_board import render_map_panel, annotate_map_image, draw_coordinate_grid
 from .free_photos import download_commons_photo
+from .titanic_graphics import render_titanic_graphic
 
 def generate_gemini_image(prompt: str, destination: Path, model: str) -> Path:
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
@@ -65,6 +66,14 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
             panel.save(map_path)
             draw_coordinate_grid(panel).save(generated_dir/f"{safe_map}_map_grid.jpg",quality=92)
             paths.append(map_path)
+            continue
+        graphic_type = scene.get("graphic_type")
+        if graphic_type:
+            safe_graphic = re.sub(r"[^a-zA-Z0-9_-]+", "-", scene.get("id", f"graphic-{index}")).strip("-")
+            graphic_path = generated_dir / f"{safe_graphic}_original_graphic.jpg"
+            render_titanic_graphic(str(graphic_type), str(scene.get("title") or "TITANIC / EVIDENCE"), graphic_path)
+            paths.append(graphic_path)
+            source_records.append({"scene_id": scene.get("id", safe_graphic), "file_title": f"BANNA original vector reconstruction: {graphic_type}", "license": "Original BANNA-generated illustration", "destination": str(graphic_path)})
             continue
         supplied = scene.get("image")
         if supplied:
