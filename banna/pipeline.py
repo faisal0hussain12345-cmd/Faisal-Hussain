@@ -50,7 +50,7 @@ def render(storyboard_path: Path | None = None) -> Path:
     else:
         detected_language="unknown"
         print("[BANNA] Whisper unavailable; using FFmpeg silence-based scene timing",flush=True)
-    photos=resolve_scene_images(storyboard,settings.photos_dir,settings.generated_dir,settings.image_model)
+    photos=resolve_scene_images(storyboard,settings.photos_dir,settings.generated_dir,settings.image_model,settings.image_generation_enabled)
     if len(photos)!=len(storyboard["scenes"]):
         raise RuntimeError("Every scene must resolve to exactly one still image.")
     work=Path("work/render"); work.mkdir(parents=True,exist_ok=True)
