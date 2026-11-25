@@ -42,6 +42,26 @@ def extract_contact_sheet(video: Path, output: Path, samples: int=8) -> Path:
         d.text((x+10,y+273),f"QC FRAME {i+1}",font=_font(18,mono=True),fill=(255,107,0))
     sheet.save(output,quality=92); return output
 
+
+def extract_photo_contact_sheet(photos: list[Path], scenes: list[dict], output: Path,
+                                columns: int = 4) -> Path:
+    """Create a review sheet proving each narration beat has its own source photograph."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    cell_w, cell_h, label_h = 480, 300, 66
+    rows = (len(photos) + columns - 1) // columns
+    sheet = Image.new("RGB", (columns * cell_w, rows * (cell_h + label_h)), (16, 26, 44))
+    draw = ImageDraw.Draw(sheet)
+    for i, (photo_path, scene) in enumerate(zip(photos, scenes)):
+        image = Image.open(photo_path).convert("RGB")
+        image = ImageOps.fit(image, (cell_w - 16, cell_h - 16), method=Image.Resampling.LANCZOS)
+        x = (i % columns) * cell_w + 8
+        y = (i // columns) * (cell_h + label_h) + 8
+        sheet.paste(image, (x, y))
+        title = str(scene.get("title") or scene.get("id") or f"BEAT {i+1:02d}")[:52]
+        draw.text((x + 4, y + cell_h + 4), f"{i+1:02d}  {title}", font=_font(18, mono=True), fill=(245, 241, 230))
+    sheet.save(output, quality=92)
+    return output
+
 def validate_final_video(video: Path, expected_duration: float, tolerance: float=0.35) -> dict:
     info=probe_video(video)
     if info["width"]!=1920 or info["height"]!=1080: raise ValueError(f"Expected 1920x1080, got {info['width']}x{info['height']}")
