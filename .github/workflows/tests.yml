@@ -22,10 +22,22 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      - name: Verify FFmpeg
-        run: ffmpeg -version
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
+      - name: Setup portable FFmpeg
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          python - <<'PY'
+          import imageio_ffmpeg, os
+          from pathlib import Path
+          source = Path(imageio_ffmpeg.get_ffmpeg_exe())
+          target = Path.home() / ".local" / "bin" / "ffmpeg"
+          target.unlink(missing_ok=True)
+          target.symlink_to(source)
+          with open(os.environ["GITHUB_PATH"], "a", encoding="utf-8") as handle:
+              handle.write(str(target.parent) + "\\n")
+          PY
+          "$HOME/.local/bin/ffmpeg" -version
       - name: Compile all Python modules
         run: python -m compileall -q banna main.py tests
       - name: Run unit tests
