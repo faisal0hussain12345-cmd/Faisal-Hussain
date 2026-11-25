@@ -1,6 +1,7 @@
 from __future__ import annotations
-import json, re, subprocess
+import re, subprocess
 from pathlib import Path
+from .media_probe import probe_media
 
 def _run(args: list[str]) -> str:
     p = subprocess.run(args, capture_output=True, text=True)
@@ -9,13 +10,13 @@ def _run(args: list[str]) -> str:
     return p.stdout
 
 def probe_audio(path: Path) -> dict:
-    raw = _run(["ffprobe", "-v", "error", "-show_entries", "format=duration,format_name",
-                "-of", "json", str(path)])
-    data = json.loads(raw)
-    duration = float(data["format"]["duration"])
+    data = probe_media(path)
+    if not data.get("audio"):
+        raise ValueError("Voice-over contains no readable audio stream.")
+    duration = float(data["duration"])
     if duration <= 0:
         raise ValueError("Voice-over duration is empty or invalid.")
-    return {"duration": duration, "format": data["format"].get("format_name", "unknown")}
+    return {"duration": duration, "format": data.get("format", "unknown")}
 
 def silence_ranges(path: Path, noise_db: str = "-35dB", min_silence: float = 0.25) -> list[tuple[float,float]]:
     p = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(path), "-af",
