@@ -451,8 +451,6 @@ def _download_loc_photo(scene: dict, destination: Path, used_sources: set[str] |
             continue
         for item in results:
             source_page = str(item.get("url") or item.get("id") or "https://www.loc.gov/")
-            if source_page in used_sources:
-                continue
             ok, rights_label = _loc_rights_ok(item)
             if not ok:
                 continue
@@ -480,8 +478,13 @@ def download_commons_photo(scene: dict, destination: Path, used_sources: set[str
     """Find a reusable Wikimedia Commons still and preserve attribution metadata."""
     errors: list[str] = []
     used_sources = used_sources or set()
+    if "manhattan project" in str(scene.get("project_name") or "").casefold():
+        archival = _download_static_manhattan_photo(scene, destination)
+        if archival and archival.get("image_url") not in used_sources:
+            return archival
+
     curated = _download_curated_titanic(scene, destination) if _is_titanic_scene(scene) and str(scene.get("id", "")) in STATIC_TITANIC_ARCHIVE else None
-    if curated and curated.get("source_page") not in used_sources:
+    if curated and curated.get("image_url") not in used_sources:
         return curated
 
     # Search the Library of Congress catalog with this scene's own subject.
@@ -509,7 +512,7 @@ def download_commons_photo(scene: dict, destination: Path, used_sources: set[str
                 continue
             page_title = str(page.get("title") or "")
             source_page = "https://commons.wikimedia.org/wiki/" + page_title.replace(" ", "_")
-            if source_page in used_sources or image_url in used_sources:
+            if image_url in used_sources:
                 continue
             if not _download_verified_image(image_url, destination):
                 continue
