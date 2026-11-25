@@ -1,6 +1,6 @@
 import unittest
 
-from banna.free_photos import _allowed_license, _query_for_scene
+from banna.free_photos import _allowed_license, _query_for_scene, STATIC_TITANIC_ARCHIVE
 
 
 class FreePhotoTests(unittest.TestCase):
@@ -13,6 +13,15 @@ class FreePhotoTests(unittest.TestCase):
     def test_rejects_noncommercial_and_no_derivatives(self):
         self.assertFalse(_allowed_license({"LicenseShortName": {"value": "CC BY-NC 4.0"}})[0])
         self.assertFalse(_allowed_license({"LicenseShortName": {"value": "CC BY-ND 4.0"}})[0])
+
+    def test_curated_titanic_scenes_have_verified_archive_sources(self):
+        for scene_id in ("opening", "shipyard", "luxury", "lifeboats", "rescue", "aftermath", "wreck"):
+            self.assertIn(scene_id, STATIC_TITANIC_ARCHIVE)
+            image_url, source_page, title, rights = STATIC_TITANIC_ARCHIVE[scene_id]
+            self.assertTrue(image_url.startswith("https://"))
+            self.assertTrue(source_page.startswith("https://"))
+            self.assertTrue(title)
+            self.assertTrue(rights)
 
     def test_prefers_explicit_search_phrase(self):
         self.assertEqual(
