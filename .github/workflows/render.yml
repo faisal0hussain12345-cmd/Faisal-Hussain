@@ -14,6 +14,9 @@ on:
       - 'banna/pipeline.py'
       - 'banna/vintage.py'
       - 'banna/images.py'
+      - 'banna/titanic_graphics.py'
+      - 'banna/sound.py'
+      - 'tests/test_titanic_graphics.py'
 
 permissions:
   contents: read
@@ -64,6 +67,8 @@ jobs:
             output/BANNA_QC_contact_sheet.jpg
             output/BANNA_QC_report.json
             output/BANNA_word_timing.json
+            output/BANNA_sound_cues.json
+            output/BANNA_voiceover_transcript.txt
             work/generated/*_map_grid.jpg
             work/generated/BANNA_photo_sources.json
           if-no-files-found: error
