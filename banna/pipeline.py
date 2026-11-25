@@ -1,5 +1,5 @@
 from __future__ import annotations
-import json, subprocess
+import json, subprocess, os
 from pathlib import Path
 from .config import Settings, find_voiceover
 from .audio import probe_audio
@@ -46,10 +46,26 @@ def render(storyboard_path: Path | None = None) -> Path:
     if settings.fps != 30:
         raise ValueError("The skill delivery profile is fixed at 30 fps.")
     voice=find_voiceover(settings)
+    # Optional short-preview mode: render only the first N seconds of the original narration.
+    max_duration=float(os.getenv("BANNA_MAX_DURATION_SECONDS","0") or 0)
+    if max_duration>0:
+        preview_voice=Path("work/render/preview_voiceover.mp3")
+        preview_voice.parent.mkdir(parents=True,exist_ok=True)
+        result=subprocess.run(["ffmpeg","-y","-hide_banner","-loglevel","error","-i",str(voice),
+                               "-t",str(max_duration),"-vn","-c:a","libmp3lame","-q:a","3",str(preview_voice)],
+                              capture_output=True,text=True)
+        if result.returncode:
+            raise RuntimeError(f"Could not trim preview narration: {result.stderr[-2000:]}")
+        voice=preview_voice
     storyboard_path=storyboard_path or Path("storyboard.json")
     if not storyboard_path.is_file():
         raise FileNotFoundError("storyboard.json is missing. Prepare a story-specific visual plan before rendering.")
     storyboard=load_storyboard(storyboard_path)
+    max_scenes=int(os.getenv("BANNA_MAX_SCENES","0") or 0)
+    if max_scenes>0:
+        storyboard["scenes"]=storyboard["scenes"][:max_scenes]
+        if not storyboard["scenes"]:
+            raise ValueError("Preview mode requires at least one storyboard scene.")
     duration=probe_audio(voice)["duration"]
     print(f"[BANNA] Original voice-over duration: {duration:.2f}s ({duration/60:.2f} min)",flush=True)
     if not 60.0 <= duration <= 1200.0:
