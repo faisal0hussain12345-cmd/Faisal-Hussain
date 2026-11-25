@@ -115,7 +115,7 @@ def render(storyboard_path: Path | None = None) -> Path:
     qc=validate_final_video(output,duration)
     contact=extract_contact_sheet(output,settings.output_dir/"BANNA_QC_contact_sheet.jpg",samples=12)
     report={"voiceover":str(voice),"duration_seconds":duration,"resolution":f'{qc["width"]}x{qc["height"]}',
-            "video_codec":qc["codec"],"scene_count":len(photos),"scene_durations":timeline["scene_durations"],
+            "video_codec":qc["codec"],"fps":qc["fps"],"audio_codec":qc["audio_codec"],"audio_duration":qc["audio_duration"],"audio_channels":qc["audio_channels"],"scene_count":len(photos),"scene_durations":timeline["scene_durations"],
             "silence_ranges":timeline["silences"],"map_grid_inspections":[str(x) for x in sorted(settings.generated_dir.glob("*_map_grid.jpg"))],"word_alignment_language":detected_language,"word_alignment_count":len(word_times),"contact_sheet":str(contact),"visual_source":"still photographs and generated still illustrations only"}
     (settings.output_dir/"BANNA_word_timing.json").write_text(json.dumps({"language":detected_language,"words":word_times},indent=2),encoding="utf-8")
     (settings.output_dir/"BANNA_sound_cues.json").write_text(json.dumps(sound_cues,indent=2),encoding="utf-8")
