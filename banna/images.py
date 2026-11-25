@@ -107,7 +107,7 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
             if (not source_page or source_page in used_sources or
                     (image_url and image_url in used_sources) or image_hash in used_image_hashes):
                 raise RuntimeError(f"Duplicate or untraceable archival image for scene {scene.get('id', safe)}.")
-            used_sources.add(source_page)
+            used_sources.add(image_url)
             used_image_hashes.add(image_hash)
             if image_url:
                 used_sources.add(image_url)
