@@ -44,7 +44,7 @@ def align_scenes_to_words(words: list[dict], scenes: list[dict], duration: float
 
     tokens = [re.sub(r"[^a-z0-9]+", "", w.get("word", "").lower()) for w in words]
     starts = [float(w["start"]) for w in words]
-    min_scene_seconds = max(8.0, min(14.0, duration / (len(scenes) * 2.0)))
+    min_scene_seconds = max(1.0, min(12.0, duration / (len(scenes) * 2.0)))
     result = [0.0]
     cursor = 0
 
