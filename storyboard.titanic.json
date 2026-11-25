@@ -1,0 +1,250 @@
+{
+  "project": {
+    "name": "Titanic: The Night the Unsinkable Ship Sank",
+    "audience": "usa",
+    "language": "en-US",
+    "category": "historical",
+    "visual_rule": "licensed archival still photographs only; no stock video clips",
+    "surface": "scrapbook_dossier"
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "title": "The Night the Titanic Sank",
+      "year": "April 14th, 1912",
+      "caption": "RMS Titanic at sea historical photograph",
+      "photo_search": "A cinematic authentic archival photograph of RMS Titanic underway at sea in 1912, starboard side, overcast North Atlantic, black and white glass plate photography",
+      "narration_cue": "The Night the Titanic Sank April 14th, 1912",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "April 14th, 1912",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "shipyard",
+      "title": "Building a Giant",
+      "year": "Belfast / 1909–1912",
+      "caption": "Harland and Wolff Titanic shipyard construction",
+      "photo_search": "Historic 1910 archival photograph of the Titanic under construction at Harland and Wolff shipyard Belfast, massive hull and workers for scale",
+      "narration_cue": "Building a Giant Belfast / 1909–1912",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "Belfast / 1909–1912",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "launch",
+      "title": "The Launch",
+      "year": "May 31, 1911",
+      "caption": "Titanic launch Belfast 1911",
+      "photo_search": "Authentic historical photograph of RMS Titanic being launched at Belfast shipyard in 1911, crowds and shipyard",
+      "narration_cue": "The Launch May 31, 1911",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "May 31, 1911",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "luxury",
+      "title": "A Floating Palace",
+      "year": "First Class",
+      "caption": "Titanic grand staircase interior archival photograph",
+      "photo_search": "Authentic 1912 archival photograph of Titanic grand staircase or first class interior, period accurate luxurious Edwardian decor",
+      "narration_cue": "A Floating Palace First Class",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "First Class",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "maiden",
+      "title": "The Maiden Voyage",
+      "year": "April 10, 1912",
+      "caption": "Titanic Southampton departure 1912",
+      "photo_search": "Archival photograph of RMS Titanic departing Southampton on April 10 1912, crowds on dock",
+      "narration_cue": "The Maiden Voyage April 10, 1912",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "April 10, 1912",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "passengers",
+      "title": "More Than 2,200 People",
+      "year": "Southampton to New York",
+      "caption": "Titanic passengers boarding 1912",
+      "photo_search": "Historical photograph of Titanic passengers and crew on deck or boarding, 1912 period clothing",
+      "narration_cue": "More Than 2,200 People Southampton to New York",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "Southampton to New York",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "warnings",
+      "title": "Warnings from the Atlantic",
+      "year": "April 14, 1912",
+      "caption": "Titanic iceberg warning wireless 1912",
+      "photo_search": "Archival image of 1912 wireless telegraph operator room or iceberg warning context, period accurate",
+      "narration_cue": "Warnings from the Atlantic April 14, 1912",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "April 14, 1912",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "lookout",
+      "title": "The Lookouts",
+      "year": "11:40 PM",
+      "caption": "Titanic crow's nest lookouts",
+      "photo_search": "Historical photograph of Titanic crow's nest or ship lookout, archival black and white",
+      "narration_cue": "The Lookouts 11:40 PM",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "11:40 PM",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "collision",
+      "title": "The Collision",
+      "year": "11:40 PM / April 14",
+      "caption": "Titanic iceberg collision illustration",
+      "photo_search": "Period-accurate historical illustration of Titanic passing iceberg at night, restrained documentary reconstruction, no text",
+      "narration_cue": "The Collision 11:40 PM / April 14",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "11:40 PM / April 14",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "flooding",
+      "title": "Water Below Deck",
+      "year": "Forward compartments",
+      "caption": "Titanic watertight compartments engineering plan",
+      "photo_search": "Original-style Titanic ship cross section technical diagram showing watertight compartments and flooding, legible labels optional",
+      "narration_cue": "Water Below Deck Forward compartments",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "Forward compartments",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "lifeboats",
+      "title": "Too Few Lifeboats",
+      "year": "20 lifeboats",
+      "caption": "Titanic lifeboat deck archival photograph",
+      "photo_search": "Authentic archival photograph of Titanic lifeboats on deck before departure, 1912",
+      "narration_cue": "Too Few Lifeboats 20 lifeboats",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "20 lifeboats",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "evacuation",
+      "title": "Women and Children First",
+      "year": "After midnight",
+      "caption": "Titanic lifeboat evacuation 1912 illustration",
+      "photo_search": "Historical illustration of Titanic lifeboats being lowered at night, respectful non-graphic depiction",
+      "narration_cue": "Women and Children First After midnight",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "After midnight",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "distress",
+      "title": "The Distress Calls",
+      "year": "CQD / SOS",
+      "caption": "Titanic Marconi wireless room",
+      "photo_search": "Archival photograph of Marconi wireless telegraph equipment or Titanic wireless room, 1912",
+      "narration_cue": "The Distress Calls CQD / SOS",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "CQD / SOS",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "final_hours",
+      "title": "The Final Hours",
+      "year": "April 15, 1912 / 2:20 AM",
+      "caption": "Titanic sinking 1912 painting",
+      "photo_search": "Historically grounded painting of Titanic sinking at night, lifeboats in foreground, non-graphic",
+      "narration_cue": "The Final Hours April 15, 1912 / 2:20 AM",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "April 15, 1912 / 2:20 AM",
+        "TITANIC / HISTORICAL RECORD"
+      ],
+      "vintage_insert": true,
+      "vintage_title": "THE SHIP GOES DOWN"
+    },
+    {
+      "id": "rescue",
+      "title": "Carpathia Arrives",
+      "year": "April 15, 1912",
+      "caption": "RMS Carpathia Titanic survivors rescue",
+      "photo_search": "Historical photograph of RMS Carpathia or Titanic survivors arriving in New York, 1912",
+      "narration_cue": "Carpathia Arrives April 15, 1912",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "April 15, 1912",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "aftermath",
+      "title": "The Aftermath",
+      "year": "Investigations and reforms",
+      "caption": "Titanic inquiry 1912 Senate hearing",
+      "photo_search": "Archival photograph of 1912 US Senate Titanic inquiry hearing or British inquiry, period accurate",
+      "narration_cue": "The Aftermath Investigations and reforms",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "Investigations and reforms",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "wreck",
+      "title": "The Wreck Is Found",
+      "year": "September 1, 1985",
+      "caption": "Titanic wreck discovery 1985",
+      "photo_search": "Underwater exploration photograph of the Titanic wreck discovered in 1985, deep ocean, authentic expedition imagery",
+      "narration_cue": "The Wreck Is Found September 1, 1985",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "September 1, 1985",
+        "TITANIC / HISTORICAL RECORD"
+      ]
+    },
+    {
+      "id": "legacy",
+      "title": "A Warning That Remains",
+      "year": "The legacy of Titanic",
+      "caption": "Titanic bow wreck underwater",
+      "photo_search": "Iconic underwater photograph of Titanic bow on ocean floor, 1985 expedition, documentary photography",
+      "narration_cue": "A Warning That Remains The legacy of Titanic",
+      "image_prompt": "Authentic historically accurate archival still photograph for a 1912 RMS Titanic documentary, black and white or period-correct color, cinematic documentary restoration, no modern objects, no watermark, no added text",
+      "tags": [
+        "The legacy of Titanic",
+        "TITANIC / HISTORICAL RECORD"
+      ],
+      "stamp": "NEVER FORGOTTEN",
+      "thesis": "A tragedy that transformed maritime safety"
+    }
+  ]
+}
