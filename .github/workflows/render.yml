@@ -10,6 +10,8 @@ on:
   push:
     paths:
       - 'storyboard.manhattan.json'
+      - 'requirements.txt'
+      - '.github/workflows/render.yml'
       - 'banna/manhattan_graphics.py'
       - 'banna/manhattan_vintage.py'
       - 'banna/free_photos.py'
@@ -41,9 +43,8 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      - name: Install FFmpeg
-        run: |
-          if command -v ffmpeg >/dev/null 2>&1; then ffmpeg -version; else sudo apt-get update && sudo apt-get install -y ffmpeg; fi
+      - name: Verify FFmpeg
+        run: ffmpeg -version
       - name: Install BANNA dependencies
         run: |
           python -m pip install --upgrade pip
