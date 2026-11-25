@@ -153,6 +153,250 @@ def _loc_image_urls(item: dict) -> list[str]:
     return result
 
 
+
+STATIC_MANHATTAN_ARCHIVE = {
+    "opening": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/2024-02/1.jpg?itok=KKJRGZ2C",
+        "source_page": "https://www.energy.gov/em/photos/manhattan-project-photo-gallery",
+        "file_title": "Hanford construction camp, 1944",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "fission": {
+        "pdf_url": "https://www.energy.gov/sites/prod/files/DOENevadaTestSite.pdf",
+        "pdf_match": "Lise Meitner and Otto Hahn in their laboratory",
+        "pdf_image_index": 1,
+        "image_url": "https://www.energy.gov/sites/prod/files/DOENevadaTestSite.pdf#page=23&image=2",
+        "source_page": "https://www.energy.gov/management/articles/fehner-and-gosling-origins-nevada-test-site",
+        "file_title": "Lise Meitner and Otto Hahn in their laboratory",
+        "credit": "Argonne National Laboratory / U.S. Department of Energy",
+        "license": "U.S. Department of Energy historical publication; attribution retained",
+    },
+    "chain-reaction": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/full_article_width/public/Metallurgical-Laboratory_0.jpg?itok=UaQt7IIW",
+        "source_page": "https://www.energy.gov/lm/metallurgical-laboratory-university-chicago",
+        "file_title": "Metallurgical Laboratory and Stagg Field bleachers",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "german-threat": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/full_article_width/public/TE-EinsteinSzilard.jpg?itok=jQhlXAJs",
+        "source_page": "https://www.energy.gov/management/august-2-1939-einsteins-letter",
+        "file_title": "Albert Einstein and Leo Szilard",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "einstein-letter": {
+        "image_url": "https://i0.wp.com/prologue.blogs.archives.gov/wp-content/uploads/sites/9/2019/08/document007_Page_1-813x1024.jpg?resize=685%2C863&ssl=1",
+        "source_page": "https://prologue.blogs.archives.gov/2019/11/01/facial-hair-friday-mmustache/",
+        "file_title": "First page of Einstein's August 2, 1939 letter to President Roosevelt",
+        "credit": "Franklin D. Roosevelt Library and Museum / U.S. National Archives",
+        "license": "U.S. National Archives primary-source document; attribution retained",
+    },
+    "pearl-harbor": {
+        "image_url": "https://www.archives.gov/files/research/still-pictures/080-g-0032420-28-1274m.jpg",
+        "source_page": "https://www.archives.gov/research/still-pictures/highlights/uss-arizona-burning",
+        "file_title": "USS Arizona burning after the attack on Pearl Harbor, December 7, 1941",
+        "credit": "U.S. Navy / National Archives",
+        "license": "U.S. Government photograph held by the National Archives",
+    },
+    "district": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/2023-11/k25%20construction.jpg?itok=NCe1jUu2",
+        "source_page": "https://www.energy.gov/em/photos/manhattan-project-photo-gallery",
+        "file_title": "K-25 construction at Oak Ridge",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "groves": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/full_article_width/public/2025-06/Photo-Groves.jpg?itok=stQzUg1C",
+        "source_page": "https://www.energy.gov/nnsa/articles/army-and-origins-nuclear-security-enterprise",
+        "file_title": "General Leslie R. Groves portrait",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "oppenheimer": {
+        "image_url": "https://www.nps.gov/articles/000/images/Opp-new.jpg?autorotate=false&maxwidth=650",
+        "source_page": "https://www.nps.gov/mapr/learn/historyculture/oppenheimer.htm",
+        "file_title": "J. Robert Oppenheimer",
+        "credit": "Manhattan Project National Historical Park / National Park Service",
+        "license": "U.S. National Park Service image; retain individual image credit",
+    },
+    "oak-ridge": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/2023-11/Oak-Ridge-looking-east-from-Jefferson-Square-c.jpg?itok=ecgs5apK",
+        "source_page": "https://www.energy.gov/em/photos/manhattan-project-photo-gallery",
+        "file_title": "Oak Ridge looking east from Jefferson Square",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "calutron-workers": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/34786721743_1e6e7aec26_o.jpg?itok=porNBZYZ",
+        "source_page": "https://www.energy.gov/photos/women-manhattan-project",
+        "file_title": "A Calutron Girl at her station",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "hanford": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/2024-02/4.jpg?itok=IAWAAKx3",
+        "source_page": "https://www.energy.gov/em/photos/manhattan-project-photo-gallery",
+        "file_title": "Hanford B Reactor complex",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "los-alamos": {
+        "image_url": "https://www.nps.gov/articles/000/images/Main-Gate-new.jpg?autorotate=false&maxwidth=650",
+        "source_page": "https://www.nps.gov/mapr/learn/historyculture/los-alamos.htm",
+        "file_title": "Los Alamos Main Gate",
+        "credit": "Manhattan Project National Historical Park / National Park Service",
+        "license": "U.S. National Park Service image; retain individual image credit",
+    },
+    "chicago-pile": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/10556202784_c601291401_o.jpg?itok=Wfz1Ayv3",
+        "source_page": "https://www.energy.gov/photos/women-manhattan-project",
+        "file_title": "Leona Woods Marshall, member of Enrico Fermi's Chicago Pile-1 team",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "workforce": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/full_article_width/public/2025-06/Photo%20-%20WACs.jpg?itok=FNaeiseq",
+        "source_page": "https://www.energy.gov/nnsa/articles/army-and-origins-nuclear-security-enterprise",
+        "file_title": "Women Army Corps members associated with the Manhattan Project",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "secrecy": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/2023-11/OR%20sign.jpg?itok=9DuH7-Y0",
+        "source_page": "https://www.energy.gov/em/photos/manhattan-project-photo-gallery",
+        "file_title": "Oak Ridge secrecy sign",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+    "bomb-designs": {
+        "image_url": "https://www.nps.gov/articles/000/images/19278887165_11b63aa668_k.jpg?autorotate=false&maxwidth=650",
+        "source_page": "https://www.nps.gov/mapr/learn/historyculture/trinity-test.htm",
+        "file_title": "Trinity device being prepared",
+        "credit": "Manhattan Project National Historical Park / National Park Service",
+        "license": "U.S. National Park Service image; retain individual image credit",
+    },
+    "truman": {
+        "image_url": "https://catalog.archives.gov/medialz/presidential-libraries/truman/photographs/58/58-1.jpg",
+        "source_page": "https://www.trumanlibrary.gov/photograph-records/58-1",
+        "file_title": "Churchill, Truman, and Stalin at Potsdam",
+        "credit": "U.S. Army Signal Corps / Harry S. Truman Library and Museum",
+        "license": "Public Domain, as identified by the Harry S. Truman Library",
+    },
+    "trinity-tower": {
+        "pdf_url": "https://www.energy.gov/sites/default/files/Manhattan_Project_2010.pdf",
+        "pdf_match": "Tower For Trinity Test",
+        "pdf_image_index": 0,
+        "image_url": "https://www.energy.gov/sites/default/files/Manhattan_Project_2010.pdf#page=90&image=1",
+        "source_page": "https://www.energy.gov/sites/default/files/Manhattan_Project_2010.pdf",
+        "file_title": "Tower for the Trinity test",
+        "credit": "U.S. Department of Energy",
+        "license": "U.S. Department of Energy historical publication; attribution retained",
+    },
+    "trinity-fireball": {
+        "image_url": "https://npgallery.nps.gov/GetAsset/c212b977-b0e2-4736-9759-8ed40caf0405/original.jpg",
+        "source_page": "https://npgallery.nps.gov/AssetDetail/c212b977-b0e2-4736-9759-8ed40caf0405",
+        "file_title": "Trinity test explosion",
+        "credit": "Manhattan Project National Historical Park / National Park Service",
+        "license": "U.S. National Park Service image; retain individual image credit",
+    },
+    "potsdam": {
+        "image_url": "https://catalog.archives.gov/medialz/presidential-libraries/truman/photographs/62/62-770.jpg",
+        "source_page": "https://www.trumanlibrary.gov/photograph-records/62-770",
+        "file_title": "Stalin, Truman, and Churchill at Potsdam",
+        "credit": "U.S. Army Signal Corps / Harry S. Truman Library and Museum",
+        "license": "Public Domain, as identified by the Harry S. Truman Library",
+    },
+    "hiroshima": {
+        "image_url": "https://www.archives.gov/files/news/images/hiroshima-after-atomic-bomb-crop-243-hp-i-31-2.jpg",
+        "source_page": "https://www.archives.gov/research/japanese-war-crimes/atomic-bombing",
+        "file_title": "Hiroshima after the atomic bombing",
+        "credit": "U.S. National Archives",
+        "license": "U.S. Government archival photograph; attribution retained",
+    },
+    "nagasaki": {
+        "image_url": "https://www.archives.gov/files/news/images/atomic-cloud-nagasaki-535795-crop-b.png",
+        "source_page": "https://www.archives.gov/research/japanese-war-crimes/atomic-bombing",
+        "file_title": "Atomic cloud over Nagasaki",
+        "credit": "U.S. National Archives",
+        "license": "U.S. Government archival photograph; attribution retained",
+    },
+    "surrender": {
+        "image_url": "https://docsteach.org/wp-content/uploads/documents/265416113580/primary_12655_20211029090129.jpg",
+        "source_page": "https://docsteach.org/document/surrender-ceremony-uss-missouri/",
+        "file_title": "Surrender ceremony aboard USS Missouri, September 2, 1945",
+        "credit": "General Records of the Department of the Navy / National Archives",
+        "license": "Public Domain, Free of Known Copyright Restrictions",
+    },
+    "legacy": {
+        "image_url": "https://www.energy.gov/sites/default/files/styles/photo_gallery_515_x_325_/public/2024-02/6_0.jpg?itok=yK22vzIu",
+        "source_page": "https://www.energy.gov/em/photos/manhattan-project-photo-gallery",
+        "file_title": "Los Alamos laboratory scientists",
+        "credit": "U.S. Department of Energy",
+        "license": "Official U.S. Department of Energy archival photograph; retain source credit",
+    },
+}
+
+
+def _extract_pdf_photo(pdf_url: str, match_text: str, image_index: int, destination: Path) -> bool:
+    """Extract one embedded archival photograph from an official DOE PDF page."""
+    try:
+        import fitz
+        response = requests.get(pdf_url, timeout=60, headers={"User-Agent": USER_AGENT})
+        response.raise_for_status()
+        document = fitz.open(stream=response.content, filetype="pdf")
+        target = match_text.casefold()
+        for page in document:
+            if target not in page.get_text("text").casefold():
+                continue
+            images = page.get_images(full=True)
+            if image_index >= len(images):
+                continue
+            xref = images[image_index][0]
+            extracted = document.extract_image(xref)
+            payload = extracted.get("image", b"")
+            if not payload:
+                continue
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(payload)
+            try:
+                with Image.open(destination) as check:
+                    check.verify()
+            except Exception:
+                destination.unlink(missing_ok=True)
+                continue
+            return True
+    except Exception:
+        return False
+    return False
+
+
+def _download_static_manhattan_photo(scene: dict, destination: Path) -> dict | None:
+    entry = STATIC_MANHATTAN_ARCHIVE.get(str(scene.get("id") or ""))
+    if not entry:
+        return None
+    if entry.get("pdf_url"):
+        ok = _extract_pdf_photo(
+            entry["pdf_url"], entry["pdf_match"], int(entry.get("pdf_image_index", 0)), destination
+        )
+    else:
+        ok = _download_verified_image(entry["image_url"], destination)
+    if not ok:
+        return None
+    return {
+        "query": scene.get("photo_search") or scene.get("title") or "Manhattan Project archival photograph",
+        "file_title": entry["file_title"],
+        "source_page": entry["source_page"],
+        "image_url": entry["image_url"],
+        "license": entry["license"],
+        "artist": "",
+        "credit": entry["credit"],
+        "attribution": f"{entry['credit']} — {entry['file_title']}",
+        "destination": str(destination),
+    }
+
+
 STATIC_TITANIC_ARCHIVE = {
     "opening": ("https://cdn.loc.gov/service/pnp/cph/3b00000/3b04000/3b04400/3b04419r.jpg", "https://www.loc.gov/pictures/item/2001704335/", "The TITANIC, 1911", "Library of Congress — no known restrictions on reproduction"),
     "shipyard": ("https://cdn.loc.gov/service/pnp/cph/3b10000/3b14000/3b14800/3b14835r.jpg", "https://www.loc.gov/item/2002721382/", "OLYMPIC and TITANIC — shipyard construction, 1909–1911", "Library of Congress — no known restrictions on reproduction"),
