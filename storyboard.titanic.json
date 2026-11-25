@@ -5,10 +5,49 @@
     "language": "en-US",
     "category": "historical",
     "visual_rule": "licensed archival still photographs only; no stock video clips",
-    "surface": "scrapbook_dossier",
+    "surface": "map_board",
     "photo_search_strategy": "Wikimedia Commons: short title/caption queries with broad fallback"
   },
   "scenes": [
+    {
+      "id": "route_map",
+      "title": "The Atlantic Crossing",
+      "year": "April 1912",
+      "caption": "Southampton to New York — the Titanic's first and final voyage",
+      "map_title": "NORTH ATLANTIC / TITANIC ROUTE RECONSTRUCTION",
+      "map_locations": [
+        {
+          "x": 0.8,
+          "y": 0.34,
+          "label": "SOUTHAMPTON"
+        },
+        {
+          "x": 0.77,
+          "y": 0.38,
+          "label": "CHERBOURG"
+        },
+        {
+          "x": 0.7,
+          "y": 0.43,
+          "label": "QUEENSTOWN"
+        },
+        {
+          "x": 0.48,
+          "y": 0.56,
+          "label": "LAST POSITION"
+        },
+        {
+          "x": 0.18,
+          "y": 0.68,
+          "label": "NEW YORK"
+        }
+      ],
+      "trigger_words": "On April 10th 1912 the Titanic began its maiden voyage",
+      "tags": [
+        "NORTH ATLANTIC",
+        "APRIL 1912"
+      ]
+    },
     {
       "id": "opening",
       "title": "The Night the Titanic Sank",
@@ -20,7 +59,8 @@
       "tags": [
         "April 14th, 1912",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "April 14th 1912"
     },
     {
       "id": "shipyard",
@@ -33,7 +73,8 @@
       "tags": [
         "Belfast / 1909–1912",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "The story began years before"
     },
     {
       "id": "launch",
@@ -46,7 +87,8 @@
       "tags": [
         "May 31, 1911",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "Construction began in 1909"
     },
     {
       "id": "luxury",
@@ -59,7 +101,8 @@
       "tags": [
         "First Class",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "Its interiors were designed"
     },
     {
       "id": "maiden",
@@ -72,7 +115,8 @@
       "tags": [
         "April 10, 1912",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "On April 10th 1912"
     },
     {
       "id": "passengers",
@@ -85,7 +129,8 @@
       "tags": [
         "Southampton to New York",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "More than 2200 passengers"
     },
     {
       "id": "warnings",
@@ -98,7 +143,8 @@
       "tags": [
         "April 14, 1912",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "During April 14th the Titanic received"
     },
     {
       "id": "lookout",
@@ -111,7 +157,8 @@
       "tags": [
         "11:40 PM",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "Lookouts Frederick Fleet and Reginald Lee"
     },
     {
       "id": "collision",
@@ -124,7 +171,9 @@
       "tags": [
         "11:40 PM / April 14",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "At approximately 11 40 PM",
+      "graphic_type": "iceberg_collision"
     },
     {
       "id": "flooding",
@@ -137,7 +186,9 @@
       "tags": [
         "Forward compartments",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "Water was entering the forward compartments",
+      "graphic_type": "ship_cross_section"
     },
     {
       "id": "lifeboats",
@@ -150,7 +201,8 @@
       "tags": [
         "20 lifeboats",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "The Titanic carried only 20 lifeboats"
     },
     {
       "id": "evacuation",
@@ -163,7 +215,8 @@
       "tags": [
         "After midnight",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "The evacuation was conducted"
     },
     {
       "id": "distress",
@@ -176,7 +229,8 @@
       "tags": [
         "CQD / SOS",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "wireless operators Jack Phillips and Harold Bride"
     },
     {
       "id": "final_hours",
@@ -191,7 +245,9 @@
         "TITANIC / HISTORICAL RECORD"
       ],
       "vintage_insert": true,
-      "vintage_title": "THE SHIP GOES DOWN"
+      "vintage_title": "THE SHIP GOES DOWN",
+      "trigger_words": "At approximately 2 20 AM",
+      "graphic_type": "sinking_ship"
     },
     {
       "id": "rescue",
@@ -204,7 +260,8 @@
       "tags": [
         "April 15, 1912",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "The RMS Carpathia had raced"
     },
     {
       "id": "aftermath",
@@ -217,7 +274,8 @@
       "tags": [
         "Investigations and reforms",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "Investigations followed"
     },
     {
       "id": "wreck",
@@ -230,7 +288,8 @@
       "tags": [
         "September 1, 1985",
         "TITANIC / HISTORICAL RECORD"
-      ]
+      ],
+      "trigger_words": "On September 1st 1985"
     },
     {
       "id": "legacy",
@@ -245,7 +304,8 @@
         "TITANIC / HISTORICAL RECORD"
       ],
       "stamp": "NEVER FORGOTTEN",
-      "thesis": "A tragedy that transformed maritime safety"
+      "thesis": "A tragedy that transformed maritime safety",
+      "trigger_words": "Today the Titanic is more than a famous shipwreck"
     }
   ]
 }
