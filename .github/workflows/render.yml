@@ -11,6 +11,9 @@ on:
     paths:
       - 'storyboard.titanic.json'
       - 'banna/free_photos.py'
+      - 'banna/pipeline.py'
+      - 'banna/vintage.py'
+      - 'banna/images.py'
 
 permissions:
   contents: read
