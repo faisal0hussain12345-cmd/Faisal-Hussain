@@ -5,11 +5,26 @@ from PIL import Image, ImageDraw
 from .documentary_engine import _font
 
 def probe_video(path: Path) -> dict:
-    p=subprocess.run(["ffprobe","-v","error","-show_entries","format=duration:stream=width,height,codec_name","-of","json",str(path)],capture_output=True,text=True)
+    p=subprocess.run(["ffprobe","-v","error","-show_entries","format=duration:stream=codec_type,codec_name,width,height,duration,r_frame_rate,sample_rate,channels","-of","json",str(path)],capture_output=True,text=True)
     if p.returncode: raise RuntimeError(p.stderr[-2000:])
-    data=json.loads(p.stdout); video=next((s for s in data.get("streams",[]) if s.get("width")),None)
+    data=json.loads(p.stdout)
+    streams=data.get("streams",[])
+    video=next((s for s in streams if s.get("codec_type")=="video"),None)
+    audio=next((s for s in streams if s.get("codec_type")=="audio"),None)
     if not video: raise ValueError("Output has no video stream")
-    return {"duration":float(data["format"]["duration"]),"width":video["width"],"height":video["height"],"codec":video.get("codec_name")}
+    fps_text=str(video.get("r_frame_rate","0/1"))
+    try:
+        numerator,denominator=map(int,fps_text.split("/"))
+        fps=numerator/denominator if denominator else 0.0
+    except Exception:
+        fps=0.0
+    return {
+        "duration":float(data["format"]["duration"]),
+        "width":video["width"],"height":video["height"],"codec":video.get("codec_name"),
+        "fps":fps,"audio_codec":audio.get("codec_name") if audio else None,
+        "audio_duration":float(audio.get("duration",data["format"]["duration"])) if audio else None,
+        "audio_channels":audio.get("channels") if audio else None,
+    }
 
 def extract_contact_sheet(video: Path, output: Path, samples: int=8) -> Path:
     info=probe_video(video); output.parent.mkdir(parents=True,exist_ok=True)
@@ -30,6 +45,12 @@ def extract_contact_sheet(video: Path, output: Path, samples: int=8) -> Path:
 def validate_final_video(video: Path, expected_duration: float, tolerance: float=0.35) -> dict:
     info=probe_video(video)
     if info["width"]!=1920 or info["height"]!=1080: raise ValueError(f"Expected 1920x1080, got {info['width']}x{info['height']}")
+    if info["codec"]!="h264": raise ValueError(f"Expected H.264 video, got {info['codec']}")
+    if abs(info["fps"]-30.0)>0.05: raise ValueError(f"Expected 30 fps, got {info['fps']:.3f}")
     if abs(info["duration"]-expected_duration)>tolerance:
         raise ValueError(f"Voiceover/video duration mismatch: {expected_duration:.2f}s vs {info['duration']:.2f}s")
+    if not info["audio_codec"]: raise ValueError("Output is missing the narration/audio stream")
+    if info["audio_codec"]!="aac": raise ValueError(f"Expected AAC audio, got {info['audio_codec']}")
+    if info["audio_duration"] is not None and abs(info["audio_duration"]-expected_duration)>tolerance:
+        raise ValueError(f"Voiceover/audio duration mismatch: {expected_duration:.2f}s vs {info['audio_duration']:.2f}s")
     return info
