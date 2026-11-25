@@ -480,8 +480,12 @@ def download_commons_photo(scene: dict, destination: Path, used_sources: set[str
     used_sources = used_sources or set()
     if "manhattan project" in str(scene.get("project_name") or "").casefold():
         archival = _download_static_manhattan_photo(scene, destination)
-        if archival and archival.get("image_url") not in used_sources:
-            return archival
+        if not archival:
+            raise RuntimeError(
+                f"No verified curated archival photograph could be resolved for Manhattan Project scene "
+                f"{scene.get('id', 'unknown')}; refusing to substitute a generic or repeated image."
+            )
+        return archival
 
     curated = _download_curated_titanic(scene, destination) if _is_titanic_scene(scene) and str(scene.get("id", "")) in STATIC_TITANIC_ARCHIVE else None
     if curated and curated.get("image_url") not in used_sources:
