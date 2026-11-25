@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 import requests
 
+from .api_check import _extract_openrouter_text
+
 
 def review_script(script: str, model: str | None = None) -> tuple[str, str]:
     """Review a narration using OpenRouter's zero-cost free-model router only."""
@@ -34,23 +36,26 @@ def review_script(script: str, model: str | None = None) -> tuple[str, str]:
         json={
             "model": selected,
             "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 4096,
             "temperature": 0.2,
         },
-        timeout=180,
+        timeout=240,
     )
     if response.status_code >= 400:
         raise RuntimeError(
-            f"OpenRouter free-model request failed ({response.status_code}): {response.text[:1200]}"
+            f"OpenRouter free-model request failed ({response.status_code}): {response.text[:1000]}"
         )
     data = response.json()
-    choices = data.get("choices") or []
-    text = choices[0].get("message", {}).get("content") if choices else None
-    if isinstance(text, list):
-        text = "\n".join(part.get("text", "") for part in text if isinstance(part, dict))
-    if not isinstance(text, str) or not text.strip():
-        raise RuntimeError("OpenRouter returned no review text.")
+    result = _extract_openrouter_text(data)
+    if not result:
+        choice = (data.get("choices") or [{}])[0]
+        finish = choice.get("finish_reason", "unknown")
+        raise RuntimeError(
+            f"OpenRouter returned no review text (finish_reason={finish}). "
+            "Retry later or choose a currently available model ending in :free."
+        )
     actual_model = str(data.get("model") or selected)
-    return text.strip(), actual_model
+    return result, actual_model
 
 
 def review_file(source: Path, destination: Path, model: str | None = None) -> Path:
