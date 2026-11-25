@@ -44,6 +44,7 @@ def render(storyboard_path: Path | None = None) -> Path:
     except Exception as exc:
         word_times,detected_language=[], "fallback"
         print(f"[BANNA] Whisper failed; using silence-based timing: {exc}",flush=True)
+    transcript_path=Path("work/render/voiceover_transcript.txt")
     if word_times:
         transcript_text=" ".join(str(item.get("word","")).strip() for item in word_times if item.get("word")).strip()
         transcript_path=Path("work/render/voiceover_transcript.txt")
