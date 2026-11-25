@@ -43,7 +43,6 @@ jobs:
       - name: Render BANNA documentary
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           BANNA_IMAGE_GENERATION_ENABLED: "false"
           BANNA_IMAGE_PROVIDER: local
           BANNA_WIDTH: "1920"
