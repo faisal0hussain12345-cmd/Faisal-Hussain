@@ -10,7 +10,7 @@ class Settings:
     width: int = 1920
     height: int = 1080
     fps: int = 30
-    image_model: str = "gemini-2.5-flash-image"
+    image_model: str = "disabled-in-free-mode"
     image_provider: str = "gemini"
     image_generation_enabled: bool = False
     output_dir: Path = ROOT / "output"
@@ -25,7 +25,7 @@ class Settings:
             width=int(os.getenv("BANNA_WIDTH", "1920")),
             height=int(os.getenv("BANNA_HEIGHT", "1080")),
             fps=int(os.getenv("BANNA_FPS", "30")),
-            image_model=os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image"),
+            image_model=os.getenv("GEMINI_IMAGE_MODEL", "disabled-in-free-mode"),
             image_provider=os.getenv("BANNA_IMAGE_PROVIDER", "gemini").lower(),
             image_generation_enabled=os.getenv("BANNA_IMAGE_GENERATION_ENABLED", "false").lower() in {"1", "true", "yes", "on"},
             output_dir=Path(os.getenv("BANNA_OUTPUT_DIR", str(ROOT / "output"))),
