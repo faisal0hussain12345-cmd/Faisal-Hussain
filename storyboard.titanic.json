@@ -7,7 +7,7 @@
     "visual_rule": "licensed archival still photographs only; no stock video clips",
     "surface": "map_board",
     "photo_search_strategy": "Wikimedia Commons: short title/caption queries with broad fallback",
-    "render_revision": "final-skill-aligned-review-2"
+    "render_revision": "final-skill-aligned-review-3"
   },
   "scenes": [
     {
@@ -174,7 +174,8 @@
         "TITANIC / HISTORICAL RECORD"
       ],
       "trigger_words": "At approximately 11 40 PM",
-      "graphic_type": "iceberg_collision"
+      "graphic_type": "iceberg_collision",
+      "highlight_sfx": true
     },
     {
       "id": "flooding",
@@ -203,7 +204,8 @@
         "20 lifeboats",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "The Titanic carried only 20 lifeboats"
+      "trigger_words": "The Titanic carried only 20 lifeboats",
+      "highlight_sfx": true
     },
     {
       "id": "evacuation",
@@ -231,7 +233,8 @@
         "CQD / SOS",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "wireless operators Jack Phillips and Harold Bride"
+      "trigger_words": "wireless operators Jack Phillips and Harold Bride",
+      "wireless_sfx": true
     },
     {
       "id": "final_hours",
@@ -290,7 +293,8 @@
         "September 1, 1985",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "On September 1st 1985"
+      "trigger_words": "On September 1st 1985",
+      "highlight_sfx": true
     },
     {
       "id": "legacy",
@@ -306,7 +310,8 @@
       ],
       "stamp": "NEVER FORGOTTEN",
       "thesis": "A tragedy that transformed maritime safety",
-      "trigger_words": "Today the Titanic is more than a famous shipwreck"
+      "trigger_words": "Today the Titanic is more than a famous shipwreck",
+      "highlight_sfx": true
     }
   ]
 }
