@@ -172,6 +172,12 @@ STATIC_TITANIC_ARCHIVE = {
 }
 
 
+def _is_titanic_scene(scene: dict) -> bool:
+    project_name = str(scene.get("project_name") or "").casefold()
+    scene_query = str(scene.get("photo_search") or "").casefold()
+    return "titanic" in project_name or "titanic" in scene_query
+
+
 def _download_curated_titanic(scene: dict, destination: Path) -> dict | None:
     item = STATIC_TITANIC_ARCHIVE.get(str(scene.get("id") or ""))
     if not item:
@@ -230,10 +236,7 @@ def download_commons_photo(scene: dict, destination: Path, used_sources: set[str
     """Find a reusable Wikimedia Commons still and preserve attribution metadata."""
     errors: list[str] = []
     used_sources = used_sources or set()
-    project_name = str(scene.get("project_name") or "").casefold()
-    scene_query = str(scene.get("photo_search") or "").casefold()
-    is_titanic_scene = "titanic" in project_name or "titanic" in scene_query
-    curated = _download_curated_titanic(scene, destination) if is_titanic_scene and str(scene.get("id", "")) in STATIC_TITANIC_ARCHIVE else None
+    curated = _download_curated_titanic(scene, destination) if _is_titanic_scene(scene) and str(scene.get("id", "")) in STATIC_TITANIC_ARCHIVE else None
     if curated and curated.get("source_page") not in used_sources:
         return curated
 
