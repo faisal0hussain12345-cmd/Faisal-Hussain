@@ -7,7 +7,7 @@
     "visual_rule": "licensed archival still photographs only; no stock video clips",
     "surface": "map_board",
     "photo_search_strategy": "Wikimedia Commons: short title/caption queries with broad fallback",
-    "render_revision": "final-skill-aligned-review-6"
+    "render_revision": "final-skill-aligned-review-7"
   },
   "scenes": [
     {
@@ -178,7 +178,9 @@
       ],
       "trigger_words": "At approximately 11 40 PM",
       "graphic_type": "iceberg_collision",
-      "highlight_sfx": true
+      "highlight_sfx": true,
+      "vintage_insert": true,
+      "vintage_title": "THE ICEBERG STRIKE"
     },
     {
       "id": "flooding",
@@ -251,8 +253,6 @@
         "April 15, 1912 / 2:20 AM",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "vintage_insert": true,
-      "vintage_title": "THE SHIP GOES DOWN",
       "trigger_words": "At approximately 2 20 AM",
       "graphic_type": "sinking_ship"
     },
