@@ -1,16 +1,16 @@
-name: BANNA OpenAI Script Review
+name: BANNA Free Script Review
 
 on:
   workflow_dispatch:
     inputs:
       script_path:
-        description: Repository path to a UTF-8 narration script
+        description: Repository path to UTF-8 narration script
         required: true
         default: script.txt
       model:
-        description: OpenAI model ID (default is the low-cost GPT-6 Luna)
+        description: Use openrouter/free or a model ending in :free
         required: false
-        default: gpt-6-luna
+        default: openrouter/free
 
 permissions:
   contents: read
@@ -25,22 +25,22 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      - name: Install BANNA dependencies
+      - name: Install dependencies
         run: python -m pip install -r requirements.txt
-      - name: Review narration with OpenAI
+      - name: Review with OpenRouter free models
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ inputs.model }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_FREE_MODEL: ${{ inputs.model }}
         run: |
-          if [ -z "$OPENAI_API_KEY" ]; then
-            echo "::error::Add OPENAI_API_KEY in repository Actions secrets."
+          if [ -z "$OPENROUTER_API_KEY" ]; then
+            echo "::error::Add OPENROUTER_API_KEY under repository Actions secrets."
             exit 1
           fi
           python main.py review-script --input "${{ inputs.script_path }}" --output output/BANNA_script_review.md
-      - name: Upload reviewed script
+      - name: Upload review
         uses: actions/upload-artifact@v4
         with:
-          name: BANNA-OpenAI-Script-Review
+          name: BANNA-Free-Script-Review
           path: output/BANNA_script_review.md
           if-no-files-found: error
           retention-days: 7
