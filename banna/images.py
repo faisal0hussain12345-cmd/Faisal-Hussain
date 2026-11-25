@@ -43,7 +43,7 @@ def generate_gemini_image(prompt: str, destination: Path, model: str) -> Path:
                 return destination
     raise RuntimeError("Gemini returned no image bytes. Check the configured image model and API access.")
 
-def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path, model: str) -> list[Path]:
+def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path, model: str, image_generation_enabled: bool = False) -> list[Path]:
     photos_dir.mkdir(parents=True, exist_ok=True)
     generated_dir.mkdir(parents=True, exist_ok=True)
     paths = []
@@ -78,5 +78,14 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
             raise ValueError(f"Scene {index} needs either image or image_prompt.")
         safe = re.sub(r"[^a-zA-Z0-9_-]+", "-", scene.get("id", f"scene-{index}")).strip("-")
         cached = next((p for p in (generated_dir / f"{safe}.png", generated_dir / f"{safe}.jpg", generated_dir / f"{safe}.jpeg") if p.is_file()), None)
-        paths.append(cached or generate_gemini_image(prompt, generated_dir / f"{safe}.png", model))
+        if cached:
+            paths.append(cached)
+        elif image_generation_enabled:
+            paths.append(generate_gemini_image(prompt, generated_dir / f"{safe}.png", model))
+        else:
+            raise RuntimeError(
+                f"Scene {index} ({safe}) has only an image_prompt. BANNA zero-cost mode will not call a paid image API. "
+                "Add a licensed still image path, or use map_locations for a locally generated map. "
+                "To knowingly enable paid Gemini image generation, set BANNA_IMAGE_GENERATION_ENABLED=true."
+            )
     return paths
