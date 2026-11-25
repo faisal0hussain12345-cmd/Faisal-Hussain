@@ -92,3 +92,8 @@ python main.py render --storyboard storyboard.json
 ## Verification status
 
 The CI suite runs on GitHub Actions and checks core timing, sound-bed output, storyboard validation, Gemini response parsing (mocked), exact annotation geometry, map image generation, vintage insert encoding, parallel chunk assembly and FFmpeg rendering smoke tests. It also runs a 60-second audio-to-MP4 pipeline integration test using fixture audio and mocked visual-render providers, then verifies 1080p resolution, duration and QC outputs. The render artifact contains the final contact sheet, QC report, word timing JSON and map coordinate-grid inspection images. A real documentary render still requires a story-specific storyboard with supplied/licensed still-photo files or local map panels. The zero-cost renderer does not require image-generation credentials. Final acceptance also requires inspecting the generated QC contact sheet; automated tests do not prove pixel-perfect results for every future story.
+
+
+## One-minute visual acceptance test
+
+The **BANNA 60-Second Documentary Preview** workflow is a short acceptance render. It uses only the first 60 seconds of the selected narration and the first seven storyboard beats, with one large, individually framed archival photograph per beat. The evidence-board camera crop preserves the 16:9 frame so each selected photo is presented as a distinct full-screen documentary shot rather than a distant thumbnail in a multi-photo collage. The workflow uploads a 1080p MP4 and QC contact sheets. This preview cap is separate from the normal full-length documentary render.
