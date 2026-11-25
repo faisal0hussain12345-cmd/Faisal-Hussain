@@ -20,6 +20,7 @@ on:
       - 'banna/sound.py'
       - 'banna/qc.py'
       - 'tests/test_titanic_graphics.py'
+      - 'tests/test_manhattan_graphics.py'
 
 permissions:
   contents: read
