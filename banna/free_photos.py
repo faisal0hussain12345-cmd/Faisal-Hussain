@@ -44,7 +44,7 @@ def _query_for_scene(scene: dict) -> str:
         return explicit
     title = _clean_query(scene.get("title"))
     caption = _clean_query(scene.get("caption"))
-    return title or caption or "RMS Titanic 1912"
+    return title or caption or "historical archival photograph"
 
 
 def _query_candidates(scene: dict) -> list[str]:
@@ -59,13 +59,11 @@ def _query_candidates(scene: dict) -> list[str]:
     if explicit:
         candidates.append(explicit)
     if title:
-        candidates.extend([f"Titanic {title}", title])
+        candidates.append(title)
     if caption:
-        candidates.extend([caption, f"Titanic {caption}"])
+        candidates.append(caption)
     if cue:
-        candidates.append(f"Titanic {cue}")
-    # Generic Titanic archive searches are a last resort, not the first query.
-    candidates.extend(["RMS Titanic 1912", "Titanic ship 1912"])
+        candidates.append(cue)
     unique: list[str] = []
     seen: set[str] = set()
     for item in candidates:
@@ -194,20 +192,17 @@ def _download_curated_titanic(scene: dict, destination: Path) -> dict | None:
     }
 
 
-def _download_loc_photo(scene: dict, destination: Path) -> dict | None:
-    queries = []
-    title = _clean_query(scene.get("title"))
-    caption = _clean_query(scene.get("caption"))
-    explicit = _clean_query(scene.get("photo_search"))
-    for query in (f"Titanic {title}" if title else "", f"Titanic {caption}" if caption else "", "Titanic ship 1912"):
-        if query and query not in queries:
-            queries.append(query)
-    for query in queries:
+def _download_loc_photo(scene: dict, destination: Path, used_sources: set[str] | None = None) -> dict | None:
+    used_sources = used_sources or set()
+    for query in _query_candidates(scene):
         try:
             results = _loc_search(query)
         except requests.RequestException:
             continue
         for item in results:
+            source_page = str(item.get("url") or item.get("id") or "https://www.loc.gov/")
+            if source_page in used_sources:
+                continue
             ok, rights_label = _loc_rights_ok(item)
             if not ok:
                 continue
@@ -218,7 +213,7 @@ def _download_loc_photo(scene: dict, destination: Path) -> dict | None:
                 return {
                     "query": query,
                     "file_title": title_text,
-                    "source_page": str(item.get("url") or item.get("id") or "https://www.loc.gov/"),
+                    "source_page": source_page,
                     "image_url": image_url,
                     "license": rights_label,
                     "artist": "",
@@ -229,17 +224,16 @@ def _download_loc_photo(scene: dict, destination: Path) -> dict | None:
     return None
 
 
-def download_commons_photo(scene: dict, destination: Path) -> dict:
+def download_commons_photo(scene: dict, destination: Path, used_sources: set[str] | None = None) -> dict:
     """Find a reusable Wikimedia Commons still and preserve attribution metadata."""
     errors: list[str] = []
-    # Curated, verified Titanic-specific LOC/NOAA records first; avoids search API
-    # rate limits and keeps each scene tied to a relevant primary-source image.
-    curated = _download_curated_titanic(scene, destination)
-    if curated:
+    used_sources = used_sources or set()
+    curated = _download_curated_titanic(scene, destination) if str(scene.get("id", "")) in STATIC_TITANIC_ARCHIVE else None
+    if curated and curated.get("source_page") not in used_sources:
         return curated
 
-    # Then search the Library of Congress public photo catalog.
-    loc_result = _download_loc_photo(scene, destination)
+    # Search the Library of Congress catalog with this scene's own subject.
+    loc_result = _download_loc_photo(scene, destination, used_sources)
     if loc_result:
         return loc_result
 
@@ -261,11 +255,13 @@ def download_commons_photo(scene: dict, destination: Path) -> dict:
             image_url = info.get("thumburl") or info.get("url")
             if not allowed or not image_url:
                 continue
+            page_title = str(page.get("title") or "")
+            source_page = "https://commons.wikimedia.org/wiki/" + page_title.replace(" ", "_")
+            if source_page in used_sources:
+                continue
             if not _download_verified_image(image_url, destination):
                 continue
 
-            page_title = str(page.get("title") or "")
-            source_page = "https://commons.wikimedia.org/wiki/" + page_title.replace(" ", "_")
             return {
                 "query": active_query,
                 "file_title": page_title,
@@ -284,6 +280,6 @@ def download_commons_photo(scene: dict, destination: Path) -> dict:
     detail = (" Search errors: " + " | ".join(errors[:3])) if errors else ""
     raise RuntimeError(
         f"No reusable archival still found for scene '{scene.get('title', 'untitled')}'. "
-        "Wikimedia Commons and the Library of Congress fallback returned no image with "
+        "Wikimedia Commons and the Library of Congress returned no distinct image with "
         "a usable rights statement." + detail
     )
