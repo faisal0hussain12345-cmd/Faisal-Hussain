@@ -9,7 +9,7 @@ from .images import resolve_scene_images
 from .board import concat_and_mux
 from .documentary_engine import render_continuous_board
 from .sound import synthesize_bed
-from .qc import validate_final_video, extract_contact_sheet
+from .qc import validate_final_video, extract_contact_sheet, extract_photo_contact_sheet
 from .vintage import render_vintage_clip
 
 def load_storyboard(path: Path) -> dict:
@@ -77,7 +77,25 @@ def render(storyboard_path: Path | None = None) -> Path:
     photos=resolve_scene_images(storyboard,settings.photos_dir,settings.generated_dir,settings.image_model,settings.image_generation_enabled)
     if len(photos)!=len(storyboard["scenes"]):
         raise RuntimeError("Every scene must resolve to exactly one still image.")
+    expected_photos = int((storyboard.get("project") or {}).get("minimum_unique_archival_photos", 0))
+    photo_manifest = settings.generated_dir / "BANNA_photo_sources.json"
+    photo_records = json.loads(photo_manifest.read_text(encoding="utf-8")) if photo_manifest.is_file() else []
+    if expected_photos:
+        if len(photos) < expected_photos or len(photo_records) < expected_photos:
+            raise RuntimeError(
+                f"Archival-photo QC failed: expected at least {expected_photos} source photographs, "
+                f"but resolved {len(photos)} images and {len(photo_records)} source records."
+            )
+        source_pages = [str(item.get("source_page") or "") for item in photo_records]
+        image_urls = [str(item.get("image_url") or "") for item in photo_records]
+        if len(set(source_pages)) != len(source_pages) or len(set(image_urls)) != len(image_urls):
+            raise RuntimeError("Archival-photo QC failed: duplicate source records or image URLs were detected.")
+        if any(not item for item in source_pages + image_urls):
+            raise RuntimeError("Archival-photo QC failed: every photograph must have a traceable source and image URL.")
+    if min(timeline["scene_durations"]) < 8.0:
+        raise RuntimeError("Narration timing QC failed: a visual beat is shorter than eight seconds.")
     work=Path("work/render"); work.mkdir(parents=True,exist_ok=True)
+    photo_contact=extract_photo_contact_sheet(photos,storyboard["scenes"],settings.output_dir/"BANNA_Photo_Assets_Contact_Sheet.jpg")
     board=work/"continuous_evidence_board.mp4"
     print(f"[BANNA] Building one continuous evidence-board world ({len(photos)} stills)",flush=True)
     render_continuous_board(photos,storyboard["scenes"],timeline["scene_durations"],board,
@@ -135,10 +153,10 @@ def render(storyboard_path: Path | None = None) -> Path:
     output=settings.output_dir/"BANNA_documentary_1080p.mp4"
     concat_and_mux([board],voice,bed,output,duration)
     qc=validate_final_video(output,duration)
-    contact=extract_contact_sheet(output,settings.output_dir/"BANNA_QC_contact_sheet.jpg",samples=12)
+    contact=extract_contact_sheet(output,settings.output_dir/"BANNA_QC_contact_sheet.jpg",samples=24)
     report={"voiceover":str(voice),"duration_seconds":duration,"resolution":f'{qc["width"]}x{qc["height"]}',
             "video_codec":qc["codec"],"fps":qc["fps"],"audio_codec":qc["audio_codec"],"audio_duration":qc["audio_duration"],"audio_channels":qc["audio_channels"],"scene_count":len(photos),"scene_durations":timeline["scene_durations"],
-            "silence_ranges":timeline["silences"],"map_grid_inspections":[str(x) for x in sorted(settings.generated_dir.glob("*_map_grid.jpg"))],"word_alignment_language":detected_language,"word_alignment_count":len(word_times),"contact_sheet":str(contact),"visual_source":"still photographs and generated still illustrations only"}
+            "silence_ranges":timeline["silences"],"map_grid_inspections":[str(x) for x in sorted(settings.generated_dir.glob("*_map_grid.jpg"))],"word_alignment_language":detected_language,"word_alignment_count":len(word_times),"contact_sheet":str(contact),"photo_contact_sheet":str(photo_contact),"unique_archival_photo_count":len(photo_records),"visual_source":"distinct archival still photographs with brief bespoke cyanotype insert"}
     (settings.output_dir/"BANNA_word_timing.json").write_text(json.dumps({"language":detected_language,"words":word_times},indent=2),encoding="utf-8")
     (settings.output_dir/"BANNA_sound_cues.json").write_text(json.dumps(sound_cues,indent=2),encoding="utf-8")
     if transcript_path.is_file():
