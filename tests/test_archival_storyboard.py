@@ -32,7 +32,7 @@ class ArchivalStoryboardTests(unittest.TestCase):
         ]
         scenes = [{"id": f"scene-{i}"} for i in range(5)]
         bounds = [0.0, 10.0, 20.0, 30.0, 40.0, 50.0]
-        result = align_scenes_to_words(words, scenes, 50.0, bounds)
+        result = align_scenes_to_words(words, scenes, 100.0, [0.0, 20.0, 40.0, 60.0, 80.0, 100.0])
         self.assertEqual(len(result), 6)
         self.assertTrue(all((b - a) >= 8.0 for a, b in zip(result, result[1:])))
 
