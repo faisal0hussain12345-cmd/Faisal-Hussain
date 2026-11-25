@@ -15,6 +15,7 @@ on:
       - 'banna/manhattan_graphics.py'
       - 'banna/manhattan_vintage.py'
       - 'banna/free_photos.py'
+      - 'banna/media_probe.py'
       - 'banna/pipeline.py'
       - 'banna/timing.py'
       - 'banna/vintage.py'
