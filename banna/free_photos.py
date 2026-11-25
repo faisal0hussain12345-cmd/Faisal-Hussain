@@ -37,6 +37,16 @@ def _clean_query(value: object) -> str:
     return query[:100]
 
 
+def _query_for_scene(scene: dict) -> str:
+    """Backward-compatible primary query selector used by tests and callers."""
+    explicit = _clean_query(scene.get("photo_search"))
+    if explicit:
+        return explicit
+    title = _clean_query(scene.get("title"))
+    caption = _clean_query(scene.get("caption"))
+    return title or caption or "RMS Titanic 1912"
+
+
 def _query_candidates(scene: dict) -> list[str]:
     """Build short Commons-friendly searches instead of sending image-prompt prose."""
     candidates: list[str] = []
