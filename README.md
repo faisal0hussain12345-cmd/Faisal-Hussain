@@ -2,6 +2,10 @@
 
 BANNA is a Python documentary production system based on the supplied Priyanshu Web Documentary skill. Its delivery target is a 1920×1080, 30 fps MP4 whose duration follows the uploaded narration. It uses still photographs and generated still illustrations only; it does not use stock video clips.
 
+## Current production: The Manhattan Project
+
+The default workflow uses the existing root MP3 and `storyboard.manhattan.json`. The recording is approximately 11 minutes 15 seconds and narrates the Manhattan Project. Original programmatic diagrams cover fission, the Einstein–Szilard letter, Chicago Pile-1, Oak Ridge, Hanford, Los Alamos, Trinity, Hiroshima, Nagasaki and the project's legacy. These are explicitly treated as illustrations, not fabricated archival photographs.
+
 ## Production workflow
 
 1. Select an audience profile: Indian/Hindi or USA/US English. Both profiles support Recent News, Historical Documentaries and UFO Documentaries.
