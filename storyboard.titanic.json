@@ -11,45 +11,6 @@
   },
   "scenes": [
     {
-      "id": "route_map",
-      "title": "The Atlantic Crossing",
-      "year": "April 1912",
-      "caption": "Southampton to New York — the Titanic's first and final voyage",
-      "map_title": "NORTH ATLANTIC / TITANIC ROUTE RECONSTRUCTION",
-      "map_locations": [
-        {
-          "x": 0.8,
-          "y": 0.34,
-          "label": "SOUTHAMPTON"
-        },
-        {
-          "x": 0.77,
-          "y": 0.38,
-          "label": "CHERBOURG"
-        },
-        {
-          "x": 0.7,
-          "y": 0.43,
-          "label": "QUEENSTOWN"
-        },
-        {
-          "x": 0.48,
-          "y": 0.56,
-          "label": "LAST POSITION"
-        },
-        {
-          "x": 0.18,
-          "y": 0.68,
-          "label": "NEW YORK"
-        }
-      ],
-      "trigger_words": "On April 10th 1912 the Titanic began its maiden voyage",
-      "tags": [
-        "NORTH ATLANTIC",
-        "APRIL 1912"
-      ]
-    },
-    {
       "id": "opening",
       "title": "The Night the Titanic Sank",
       "year": "April 14th, 1912",
@@ -118,6 +79,45 @@
         "TITANIC / HISTORICAL RECORD"
       ],
       "trigger_words": "On April 10th 1912"
+    },
+    {
+      "id": "route_map",
+      "title": "The Atlantic Crossing",
+      "year": "April 1912",
+      "caption": "Southampton to New York — the Titanic's first and final voyage",
+      "map_title": "NORTH ATLANTIC / TITANIC ROUTE RECONSTRUCTION",
+      "map_locations": [
+        {
+          "x": 0.8,
+          "y": 0.34,
+          "label": "SOUTHAMPTON"
+        },
+        {
+          "x": 0.77,
+          "y": 0.38,
+          "label": "CHERBOURG"
+        },
+        {
+          "x": 0.7,
+          "y": 0.43,
+          "label": "QUEENSTOWN"
+        },
+        {
+          "x": 0.48,
+          "y": 0.56,
+          "label": "LAST POSITION"
+        },
+        {
+          "x": 0.18,
+          "y": 0.68,
+          "label": "NEW YORK"
+        }
+      ],
+      "trigger_words": "It stopped at Cherbourg France and Queenstown Ireland",
+      "tags": [
+        "NORTH ATLANTIC",
+        "APRIL 1912"
+      ]
     },
     {
       "id": "passengers",
