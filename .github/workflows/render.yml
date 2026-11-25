@@ -43,6 +43,10 @@ jobs:
       - name: Render BANNA documentary
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: gpt-6-luna
+          BANNA_OPENAI_ENABLED: "false"
+          BANNA_IMAGE_GENERATION_ENABLED: "false"
           BANNA_IMAGE_PROVIDER: gemini
           BANNA_WIDTH: "1920"
           BANNA_HEIGHT: "1080"
