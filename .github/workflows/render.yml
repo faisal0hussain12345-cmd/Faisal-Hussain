@@ -14,6 +14,7 @@ on:
       - 'banna/manhattan_vintage.py'
       - 'banna/free_photos.py'
       - 'banna/pipeline.py'
+      - 'banna/timing.py'
       - 'banna/vintage.py'
       - 'banna/images.py'
       - 'banna/titanic_graphics.py'
@@ -21,6 +22,7 @@ on:
       - 'banna/qc.py'
       - 'tests/test_titanic_graphics.py'
       - 'tests/test_manhattan_graphics.py'
+      - 'tests/test_archival_storyboard.py'
 
 permissions:
   contents: read
@@ -69,6 +71,7 @@ jobs:
           path: |
             output/BANNA_documentary_1080p.mp4
             output/BANNA_QC_contact_sheet.jpg
+            output/BANNA_Photo_Assets_Contact_Sheet.jpg
             output/BANNA_QC_report.json
             output/BANNA_word_timing.json
             output/BANNA_sound_cues.json
