@@ -5,7 +5,7 @@ import numpy as np
 
 SAMPLE_RATE = 48000
 
-def synthesize_bed(duration: float, scene_starts: list[float], output: Path, film_ranges: list[tuple[float,float]] | None = None) -> Path:
+def synthesize_bed(duration: float, scene_starts: list[float], output: Path, film_ranges: list[tuple[float,float]] | None = None, cues: list[dict] | None = None) -> Path:
     """Stream a royalty-free synthetic suspense bed and synced editorial SFX."""
     output.parent.mkdir(parents=True, exist_ok=True)
     total = int(math.ceil(duration * SAMPLE_RATE))
@@ -29,6 +29,29 @@ def synthesize_bed(duration: float, scene_starts: list[float], output: Path, fil
     film_click = (rng.normal(0,1,576) * np.exp(-np.arange(576)/180)).astype(np.float32)
     film_hiss = (rng.normal(0,1,int(SAMPLE_RATE*0.08))).astype(np.float32)
     events = []
+    # Purpose-built editorial sounds: low stamp slam, short impact hit,
+    # scratch-circle accent and Morse-like wireless ticks.
+    stamp = (thud * 1.45).astype(np.float32)
+    impact = (thud * 1.9 + np.pad(rng.normal(0, 0.12, int(0.18*SAMPLE_RATE)).astype(np.float32),
+                                  (0, max(0, thud_len-int(0.18*SAMPLE_RATE))))[:thud_len]).astype(np.float32)
+    scratch_len = int(0.42*SAMPLE_RATE)
+    scratch_noise = rng.normal(0,1,scratch_len).astype(np.float32)
+    scratch = np.convolve(scratch_noise, np.ones(18,dtype=np.float32)/18, mode="same")
+    scratch *= np.linspace(1.0,0.0,scratch_len,dtype=np.float32)
+    beep_t = np.arange(int(0.09*SAMPLE_RATE),dtype=np.float32)/SAMPLE_RATE
+    beep = (np.sin(2*np.pi*740*beep_t)*np.exp(-beep_t*24)).astype(np.float32)
+    for cue in (cues or []):
+        at = max(0.0, float(cue.get("time", 0.0)))
+        kind = str(cue.get("type", ""))
+        if kind == "stamp":
+            events.append((int(at*SAMPLE_RATE), stamp, 0.34))
+        elif kind == "impact":
+            events.append((int(at*SAMPLE_RATE), impact, 0.28))
+        elif kind == "circle":
+            events.append((int(at*SAMPLE_RATE), scratch, 0.055))
+        elif kind == "wireless":
+            for offset in (0.0,0.18,0.36,0.72,0.90,1.08):
+                events.append((int((at+offset)*SAMPLE_RATE), beep, 0.07))
     for start,end in (film_ranges or []):
         at=start
         while at<end:
@@ -54,7 +77,13 @@ def synthesize_bed(duration: float, scene_starts: list[float], output: Path, fil
             pad *= np.clip(t/2.5, 0, 1) * np.clip((duration-t)/2.0, 0, 1)
             # A restrained low pulse gives scene transitions a documentary rhythm.
             pulse = 0.025 * np.sin(2*np.pi*48*t) * (np.sin(2*np.pi*0.8*t) > 0)
-            chunk = (pad + pulse).astype(np.float32)
+            # Quiet rolling sea/ship-room texture under the dark drone.
+            sea_noise = rng.normal(0, 1, len(t)).astype(np.float32)
+            sea_noise = np.convolve(sea_noise, np.ones(96,dtype=np.float32)/96, mode="same")
+            sea_env = 0.45 + 0.25*np.sin(2*np.pi*t/8.5)
+            sea = 0.018 * sea_noise * sea_env
+            engine = 0.012 * np.sin(2*np.pi*32*t + np.sin(2*np.pi*0.18*t))
+            chunk = (pad + pulse + sea + engine).astype(np.float32)
             for pos, samples, gain in events:
                 if pos >= end:
                     break
