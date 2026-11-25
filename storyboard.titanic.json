@@ -7,7 +7,14 @@
     "visual_rule": "licensed archival still photographs only; no stock video clips",
     "surface": "map_board",
     "photo_search_strategy": "Wikimedia Commons: short title/caption queries with broad fallback",
-    "render_revision": "final-skill-aligned-review-8"
+    "render_revision": "topic-match-preflight",
+    "expected_topic": "Titanic",
+    "expected_topic_keywords": [
+      "Titanic",
+      "iceberg",
+      "Carpathia"
+    ],
+    "minimum_topic_keyword_matches": 2
   },
   "scenes": [
     {
