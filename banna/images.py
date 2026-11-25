@@ -4,6 +4,7 @@ from pathlib import Path
 import requests
 from PIL import Image
 from .map_board import render_map_panel, annotate_map_image, draw_coordinate_grid
+from .free_photos import download_commons_photo
 
 def generate_gemini_image(prompt: str, destination: Path, model: str) -> Path:
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
@@ -47,6 +48,7 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
     photos_dir.mkdir(parents=True, exist_ok=True)
     generated_dir.mkdir(parents=True, exist_ok=True)
     paths = []
+    source_records = []
     for index, scene in enumerate(storyboard["scenes"], 1):
         if scene.get("map_image") or scene.get("map_locations"):
             map_title=str(scene.get("map_title") or scene.get("title") or "LOCATION EVIDENCE")
@@ -83,9 +85,14 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
         elif image_generation_enabled:
             paths.append(generate_gemini_image(prompt, generated_dir / f"{safe}.png", model))
         else:
-            raise RuntimeError(
-                f"Scene {index} ({safe}) has only an image_prompt. BANNA zero-cost mode will not call a paid image API. "
-                "Add a licensed still image path, or use map_locations for a locally generated map. "
-                "To knowingly enable paid Gemini image generation, set BANNA_IMAGE_GENERATION_ENABLED=true."
-            )
+            # Zero-cost default: retrieve a reusable still from Wikimedia Commons and save attribution.
+            commons_path = generated_dir / f"{safe}_commons.jpg"
+            source = download_commons_photo(scene, commons_path)
+            paths.append(commons_path)
+            source_records.append({"scene_id": scene.get("id", safe), **source})
+    if source_records:
+        import json
+        (generated_dir / 'BANNA_photo_sources.json').write_text(
+            json.dumps(source_records, ensure_ascii=False, indent=2), encoding='utf-8'
+        )
     return paths
