@@ -3,27 +3,23 @@ import json, subprocess
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageOps
 from .documentary_engine import _font
+from .media_probe import probe_media
 
 def probe_video(path: Path) -> dict:
-    p=subprocess.run(["ffprobe","-v","error","-show_entries","format=duration:stream=codec_type,codec_name,width,height,duration,r_frame_rate,sample_rate,channels","-of","json",str(path)],capture_output=True,text=True)
-    if p.returncode: raise RuntimeError(p.stderr[-2000:])
-    data=json.loads(p.stdout)
-    streams=data.get("streams",[])
-    video=next((s for s in streams if s.get("codec_type")=="video"),None)
-    audio=next((s for s in streams if s.get("codec_type")=="audio"),None)
-    if not video: raise ValueError("Output has no video stream")
-    fps_text=str(video.get("r_frame_rate","0/1"))
-    try:
-        numerator,denominator=map(int,fps_text.split("/"))
-        fps=numerator/denominator if denominator else 0.0
-    except Exception:
-        fps=0.0
+    data = probe_media(path)
+    video = data.get("video")
+    audio = data.get("audio")
+    if not video:
+        raise ValueError("Output has no video stream")
     return {
-        "duration":float(data["format"]["duration"]),
-        "width":video["width"],"height":video["height"],"codec":video.get("codec_name"),
-        "fps":fps,"audio_codec":audio.get("codec_name") if audio else None,
-        "audio_duration":float(audio.get("duration",data["format"]["duration"])) if audio else None,
-        "audio_channels":audio.get("channels") if audio else None,
+        "duration": float(data["duration"]),
+        "width": video["width"],
+        "height": video["height"],
+        "codec": video.get("codec"),
+        "fps": float(video.get("fps", 0.0)),
+        "audio_codec": audio.get("codec") if audio else None,
+        "audio_duration": float(audio.get("duration", data["duration"])) if audio else None,
+        "audio_channels": audio.get("channels") if audio else None,
     }
 
 def extract_contact_sheet(video: Path, output: Path, samples: int=8) -> Path:
