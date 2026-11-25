@@ -9,7 +9,7 @@ from banna.titanic_graphics import render_titanic_graphic
 class TitanicGraphicTests(unittest.TestCase):
     def test_all_original_titanic_reconstructions_render_1080p_assets(self):
         with tempfile.TemporaryDirectory() as folder:
-            for kind in ("atlantic_route_map", "iceberg_collision", "ship_cross_section", "sinking_ship"):
+            for kind in ("atlantic_route_map", "ship_launch", "passenger_deck", "lookout_night", "iceberg_collision", "ship_cross_section", "sinking_ship"):
                 target = Path(folder) / f"{kind}.jpg"
                 render_titanic_graphic(kind, "Titanic evidence", target)
                 self.assertTrue(target.is_file())
