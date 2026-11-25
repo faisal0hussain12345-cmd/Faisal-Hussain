@@ -207,6 +207,8 @@ def _download_loc_photo(scene: dict, destination: Path, used_sources: set[str] |
             if not ok:
                 continue
             for image_url in _loc_image_urls(item):
+                if image_url in used_sources:
+                    continue
                 if not _download_verified_image(image_url, destination):
                     continue
                 title_text = str(item.get("title") or scene.get("title") or "Library of Congress photograph")
@@ -257,7 +259,7 @@ def download_commons_photo(scene: dict, destination: Path, used_sources: set[str
                 continue
             page_title = str(page.get("title") or "")
             source_page = "https://commons.wikimedia.org/wiki/" + page_title.replace(" ", "_")
-            if source_page in used_sources:
+            if source_page in used_sources or image_url in used_sources:
                 continue
             if not _download_verified_image(image_url, destination):
                 continue
