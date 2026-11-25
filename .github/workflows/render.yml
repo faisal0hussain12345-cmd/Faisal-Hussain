@@ -10,6 +10,7 @@ on:
   push:
     paths:
       - 'storyboard.titanic.json'
+      - 'banna/free_photos.py'
 
 permissions:
   contents: read
