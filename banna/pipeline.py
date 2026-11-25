@@ -93,7 +93,7 @@ def render(storyboard_path: Path | None = None) -> Path:
     photos=resolve_scene_images(storyboard,settings.photos_dir,settings.generated_dir,settings.image_model,settings.image_generation_enabled)
     if len(photos)!=len(storyboard["scenes"]):
         raise RuntimeError("Every scene must resolve to exactly one still image.")
-    expected_photos = int((storyboard.get("project") or {}).get("minimum_unique_archival_photos", 0))
+    expected_photos = int((storyboard.get("project") or {}).get("minimum_unique_archival_photos", 0))\n    if max_scenes>0:\n        expected_photos=min(expected_photos,len(storyboard["scenes"]))
     photo_manifest = settings.generated_dir / "BANNA_photo_sources.json"
     photo_records = json.loads(photo_manifest.read_text(encoding="utf-8")) if photo_manifest.is_file() else []
     if expected_photos:
