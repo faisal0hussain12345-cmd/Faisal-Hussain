@@ -7,7 +7,7 @@
     "visual_rule": "licensed archival still photographs only; no stock video clips",
     "surface": "map_board",
     "photo_search_strategy": "Wikimedia Commons: short title/caption queries with broad fallback",
-    "render_revision": "final-skill-aligned-review-7"
+    "render_revision": "final-skill-aligned-review-8"
   },
   "scenes": [
     {
@@ -36,7 +36,8 @@
         "Belfast / 1909–1912",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "The story began years before"
+      "trigger_words": "The story began years before",
+      "graphic_type": "shipyard_build"
     },
     {
       "id": "launch",
@@ -147,7 +148,8 @@
         "April 14, 1912",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "During April 14th the Titanic received"
+      "trigger_words": "During April 14th the Titanic received",
+      "graphic_type": "warning_telegram"
     },
     {
       "id": "lookout",
@@ -210,7 +212,8 @@
         "TITANIC / HISTORICAL RECORD"
       ],
       "trigger_words": "The Titanic carried only 20 lifeboats",
-      "highlight_sfx": true
+      "highlight_sfx": true,
+      "graphic_type": "lifeboat_launch"
     },
     {
       "id": "evacuation",
@@ -224,7 +227,8 @@
         "After midnight",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "The evacuation was conducted"
+      "trigger_words": "The evacuation was conducted",
+      "graphic_type": "lifeboat_launch"
     },
     {
       "id": "distress",
@@ -239,7 +243,8 @@
         "TITANIC / HISTORICAL RECORD"
       ],
       "trigger_words": "wireless operators Jack Phillips and Harold Bride",
-      "wireless_sfx": true
+      "wireless_sfx": true,
+      "graphic_type": "wireless_room"
     },
     {
       "id": "final_hours",
@@ -268,7 +273,8 @@
         "April 15, 1912",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "The RMS Carpathia had raced"
+      "trigger_words": "The RMS Carpathia had raced",
+      "graphic_type": "carpathia_rescue"
     },
     {
       "id": "aftermath",
@@ -282,7 +288,8 @@
         "Investigations and reforms",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "Investigations followed"
+      "trigger_words": "Investigations followed",
+      "graphic_type": "newspaper_headline"
     },
     {
       "id": "wreck",
