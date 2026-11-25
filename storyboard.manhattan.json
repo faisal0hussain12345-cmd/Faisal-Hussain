@@ -1,0 +1,183 @@
+{
+  "project": {
+    "name": "The Manhattan Project: The Secret Race to Build the Atomic Bomb",
+    "audience": "usa",
+    "language": "en-US",
+    "category": "historical",
+    "visual_rule": "original programmatic historical diagrams and archival-document-style still reconstructions; no stock video clips and no fabricated archival photographs",
+    "surface": "map_board",
+    "render_revision": "manhattan-project-full-production-v1",
+    "expected_topic": "Manhattan Project",
+    "expected_topic_keywords": [
+      "Manhattan Project",
+      "atomic bomb",
+      "Los Alamos"
+    ],
+    "minimum_topic_keyword_matches": 2
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "title": "The Weapon That Changed the World",
+      "year": "1940s",
+      "caption": "A secret wartime project with consequences beyond the war",
+      "graphic_type": "mp_fission",
+      "tags": [
+        "TOP SECRET",
+        "WORLD WAR II"
+      ],
+      "stamp": true
+    },
+    {
+      "id": "fission",
+      "title": "A Discovery Inside the Atom",
+      "year": "December 1938",
+      "caption": "Nuclear fission transformed theoretical physics into a possible weapon",
+      "graphic_type": "mp_fission",
+      "tags": [
+        "NUCLEAR FISSION",
+        "1938"
+      ]
+    },
+    {
+      "id": "einstein-letter",
+      "title": "The Warning to Roosevelt",
+      "year": "August 2, 1939",
+      "caption": "The Einstein–Szilard letter urged attention to the possibility of an atomic weapon",
+      "graphic_type": "mp_letter",
+      "tags": [
+        "WHITE HOUSE",
+        "1939"
+      ],
+      "stamp": true
+    },
+    {
+      "id": "war",
+      "title": "A Race Against Nazi Germany",
+      "year": "1939–1941",
+      "caption": "World war accelerated the effort to turn nuclear science into a weapon",
+      "graphic_type": "mp_wartime",
+      "tags": [
+        "WORLD WAR II",
+        "SECRET RESEARCH"
+      ]
+    },
+    {
+      "id": "birth",
+      "title": "The Manhattan Engineer District",
+      "year": "August 1942",
+      "caption": "A vast federal program assembled scientists, engineers, factories and military command",
+      "graphic_type": "mp_map",
+      "tags": [
+        "MANHATTAN PROJECT",
+        "1942"
+      ],
+      "stamp": true
+    },
+    {
+      "id": "chicago",
+      "title": "The First Controlled Chain Reaction",
+      "year": "December 2, 1942",
+      "caption": "Enrico Fermi's Chicago Pile-1 demonstrated a self-sustaining nuclear chain reaction",
+      "graphic_type": "mp_chicago",
+      "tags": [
+        "CHICAGO PILE-1",
+        "CP-1"
+      ]
+    },
+    {
+      "id": "oak-ridge",
+      "title": "Oak Ridge: Uranium",
+      "year": "Tennessee / 1942–1945",
+      "caption": "Industrial-scale uranium enrichment supplied material for the uranium weapon",
+      "graphic_type": "mp_oakridge",
+      "tags": [
+        "OAK RIDGE",
+        "URANIUM-235"
+      ]
+    },
+    {
+      "id": "hanford",
+      "title": "Hanford: Plutonium",
+      "year": "Washington / 1943–1945",
+      "caption": "Reactors and chemical separation facilities produced plutonium",
+      "graphic_type": "mp_hanford",
+      "tags": [
+        "HANFORD",
+        "PLUTONIUM"
+      ]
+    },
+    {
+      "id": "los-alamos",
+      "title": "Los Alamos: Designing the Bomb",
+      "year": "New Mexico / 1943–1945",
+      "caption": "A remote laboratory brought scientists together to design the weapons",
+      "graphic_type": "mp_losalamos",
+      "tags": [
+        "LOS ALAMOS",
+        "SITE Y"
+      ]
+    },
+    {
+      "id": "leadership",
+      "title": "Oppenheimer and Groves",
+      "year": "1943–1945",
+      "caption": "Scientific leadership and military command coordinated an unprecedented undertaking",
+      "graphic_type": "mp_leadership",
+      "tags": [
+        "SCIENCE",
+        "MILITARY COMMAND"
+      ]
+    },
+    {
+      "id": "trinity",
+      "title": "Trinity: The First Nuclear Explosion",
+      "year": "July 16, 1945",
+      "caption": "The plutonium implosion device was detonated in the New Mexico desert",
+      "graphic_type": "mp_trinity",
+      "tags": [
+        "TRINITY TEST",
+        "5:29:45 AM"
+      ],
+      "vintage_insert": true,
+      "vintage_title": "TRINITY / JULY 16, 1945",
+      "highlight_sfx": true,
+      "stamp": true
+    },
+    {
+      "id": "hiroshima",
+      "title": "Hiroshima",
+      "year": "August 6, 1945",
+      "caption": "The uranium bomb known as Little Boy was used against Hiroshima",
+      "graphic_type": "mp_hiroshima",
+      "tags": [
+        "LITTLE BOY",
+        "AUGUST 6, 1945"
+      ]
+    },
+    {
+      "id": "nagasaki",
+      "title": "Nagasaki",
+      "year": "August 9, 1945",
+      "caption": "The plutonium implosion bomb Fat Man was used against Nagasaki",
+      "graphic_type": "mp_nagasaki",
+      "tags": [
+        "FAT MAN",
+        "AUGUST 9, 1945"
+      ],
+      "highlight_sfx": true
+    },
+    {
+      "id": "legacy",
+      "title": "The Nuclear Age Begins",
+      "year": "After 1945",
+      "caption": "The project ended as a wartime program, but its scientific and ethical consequences endured",
+      "graphic_type": "mp_legacy",
+      "tags": [
+        "LEGACY",
+        "THE NUCLEAR AGE"
+      ],
+      "stamp": true
+    }
+  ]
+}
