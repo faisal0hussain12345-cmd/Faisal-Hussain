@@ -6,7 +6,10 @@ on:
       storyboard:
         description: Storyboard JSON path
         required: false
-        default: storyboard.example.json
+        default: storyboard.titanic.json
+  push:
+    paths:
+      - 'storyboard.titanic.json'
 
 permissions:
   contents: read
@@ -47,7 +50,7 @@ jobs:
           BANNA_WIDTH: "1920"
           BANNA_HEIGHT: "1080"
           BANNA_FPS: "30"
-        run: python main.py render --storyboard "${{ github.event.inputs.storyboard || 'storyboard.example.json' }}"
+        run: python main.py render --storyboard "${{ github.event.inputs.storyboard || 'storyboard.titanic.json' }}"
       - name: Upload finished MP4
         uses: actions/upload-artifact@v4
         with:
