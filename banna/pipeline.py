@@ -19,7 +19,7 @@ def load_storyboard(path: Path) -> dict:
     if len(data["scenes"]) > 60:
         raise ValueError("A storyboard may contain at most 60 visual beats.")
     for i,s in enumerate(data["scenes"],1):
-        if not isinstance(s,dict) or not (s.get("image") or s.get("image_prompt") or s.get("map_image") or s.get("map_locations")):
+        if not isinstance(s,dict) or not (s.get("image") or s.get("image_prompt") or s.get("map_image") or s.get("map_locations") or s.get("graphic_type")):
             raise ValueError(f"Scene {i} must contain image or image_prompt.")
     return data
 
@@ -92,8 +92,13 @@ def render(storyboard_path: Path | None = None) -> Path:
             insert_start=sum(timeline["scene_durations"][:insert_idx])+(scene_duration-insert_duration)/2
             film_ranges.append((insert_start,insert_start+insert_duration))
             insert=work/"vintage_2d_insert.mp4"
-            render_vintage_clip(str(storyboard["scenes"][insert_idx].get("vintage_title") or storyboard["scenes"][insert_idx].get("title") or "THE TURNING POINT"),
-                                insert_duration,insert,settings.fps,(settings.width,settings.height))
+            if str((storyboard.get("project") or {}).get("expected_topic", "")).casefold() == "manhattan project":
+                from .manhattan_vintage import render_manhattan_vintage
+                render_manhattan_vintage(str(storyboard["scenes"][insert_idx].get("vintage_title") or "TRINITY"),
+                                         insert_duration,insert,settings.fps,(settings.width,settings.height))
+            else:
+                render_vintage_clip(str(storyboard["scenes"][insert_idx].get("vintage_title") or storyboard["scenes"][insert_idx].get("title") or "THE TURNING POINT"),
+                                    insert_duration,insert,settings.fps,(settings.width,settings.height))
             spliced=work/"board_with_vintage_insert.mp4"
             post=insert_start+insert_duration
             cmd=["ffmpeg","-y","-hide_banner","-loglevel","error","-i",str(board),"-i",str(insert),
