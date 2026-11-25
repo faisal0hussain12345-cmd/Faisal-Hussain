@@ -37,7 +37,7 @@ jobs:
       - name: Draft with Gemini free text tier
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_TEXT_MODEL: gemini-2.5-flash
+          GEMINI_TEXT_MODEL: auto
         run: |
           if [ -z "$GEMINI_API_KEY" ]; then
             echo "::error::Add GEMINI_API_KEY under repository Actions secrets."
