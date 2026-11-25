@@ -7,7 +7,7 @@ BANNA is a Python documentary production system based on the supplied Priyanshu 
 1. Select an audience profile: Indian/Hindi or USA/US English. Both profiles support Recent News, Historical Documentaries and UFO Documentaries.
 2. Research and verify the selected story, then prepare the clean narration script and a scene-by-scene visual plan.
 3. Record or generate the narration and provide the MP3/WAV plus the approved `storyboard.json`.
-4. Add the Gemini API key as a GitHub Actions secret named `GEMINI_API_KEY`.
+4. Add `GEMINI_API_KEY` and optionally `OPENAI_API_KEY` under GitHub Actions secrets. Never paste keys into source files or chat.
 5. Run **Actions → BANNA Documentary Render**. GitHub-hosted runners perform the rendering; a local GPU is not required.
 6. Download the MP4 and the QC contact sheet/report from the workflow artifact.
 
@@ -29,7 +29,8 @@ The bundled skill's exact-geometry helpers are available in `banna/annotations.p
 - `main.py` — command-line entry point.
 - `banna/config.py` — environment-driven configuration and voice-over discovery.
 - `banna/audio.py`, `banna/timing.py`, `banna/transcription.py` — media probing, silence detection, optional CPU Whisper word timestamps and spoken-cue alignment. The renderer falls back to silence-based timing if Whisper is unavailable. Scene cues can be aligned to transcribed trigger phrases.
-- `banna/images.py` — user-provided stills and Gemini still-image generation.
+- `banna/images.py` — user-provided stills, local map panels and explicitly opt-in Gemini still-image generation.
+- `banna/openai_review.py` — optional OpenAI Responses API script review; it is never called during ordinary rendering.
 - `banna/documentary_engine.py` — continuous evidence-board world and camera renderer.
 - `banna/annotations.py` — exact paper-line geometry, underlines, circles and orange wobble marks.
 - `banna/map_board.py` — coordinate grid and schematic map panels.
@@ -60,7 +61,7 @@ Use `cp` instead of `copy` on macOS/Linux. Put optional user-supplied photos in 
 
 ## Secrets, cost and limits
 
-Never commit API keys. Set `GEMINI_API_KEY` in GitHub → Settings → Secrets and variables → Actions. Image-generation availability, model access, free quota, rate limits and billing are controlled by the provider. GitHub Actions runtime and artifact retention are subject to GitHub plan limits; BANNA does not promise unlimited free usage.
+Never commit API keys. Set `GEMINI_API_KEY` and optionally `OPENAI_API_KEY` in GitHub → Settings → Secrets and variables → Actions. BANNA defaults to zero-cost image mode: scenes must use supplied/licensed stills or locally generated map panels. Paid Gemini image generation is blocked unless `BANNA_IMAGE_GENERATION_ENABLED=true` is deliberately set. OpenAI review is opt-in: `python main.py review-script --input script.txt --output output/review.md`. This sends the script to OpenAI and may incur API charges; OpenAI API billing is separate from ChatGPT. GitHub Actions runtime and artifact retention are subject to GitHub plan limits; BANNA does not promise unlimited free usage.
 
 ## Verification status
 
