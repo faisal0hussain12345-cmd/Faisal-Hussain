@@ -169,7 +169,7 @@ STATIC_TITANIC_ARCHIVE = {
     "distress": ("https://cdn.loc.gov/service/pnp/cph/3b30000/3b37000/3b37100/3b37182r.jpg", "https://www.loc.gov/pictures/item/96514444/", "The great Titanic disaster — wireless operator and rescue montage, 1912", "Library of Congress — no known restrictions on publication"),
     "rescue": ("https://cdn.loc.gov/service/pnp/cph/3c20000/3c21000/3c21000/3c21012r.jpg", "https://www.loc.gov/pictures/item/98509237/", "Carpathia with Titanic lifeboats, circa 1912", "Library of Congress — no known restrictions on publication"),
     "aftermath": ("https://cdn.loc.gov/service/pnp/cph/3a20000/3a27000/3a27400/3a27433r.jpg", "https://www.loc.gov/pictures/item/2001704324/", "Crowd awaiting survivors from the Titanic, April 18, 1912", "Library of Congress — no known restrictions on reproduction"),
-    "wreck": ("https://oceanexplorer.noaa.gov/wp-content/uploads/2021/04/20210415-hires.jpg", "https://oceanexplorer.noaa.gov/multimedia/daily-image-media-20210415/", "Titanic bow wreck photograph, NOAA Expedition 2003", "NOAA image; credit NOAA and Russian Academy of Sciences"),
+    "wreck": ("https://upload.wikimedia.org/wikipedia/commons/9/9c/Titanic_wreck_bow.jpg", "https://commons.wikimedia.org/wiki/File:Titanic_wreck_bow.jpg", "Titanic bow wreck photograph, NOAA Expedition 2003", "Public domain in the United States — NOAA/IFE/URI photograph"),
     "legacy": ("https://oceanexplorer.noaa.gov/wp-content/uploads/2021/04/20210415-hires.jpg", "https://oceanexplorer.noaa.gov/multimedia/daily-image-media-20210415/", "Titanic bow wreck photograph, NOAA Expedition 2003", "NOAA image; credit NOAA and Russian Academy of Sciences"),
 }
 
@@ -188,7 +188,7 @@ def _download_curated_titanic(scene: dict, destination: Path) -> dict | None:
         "image_url": image_url,
         "license": license_label,
         "artist": "",
-        "credit": "Library of Congress" if "loc.gov" in image_url else "NOAA / Russian Academy of Sciences",
+        "credit": "Library of Congress" if "loc.gov" in image_url else "NOAA / Institute for Exploration / University of Rhode Island",
         "attribution": license_label,
         "destination": str(destination),
     }
