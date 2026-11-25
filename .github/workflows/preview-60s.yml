@@ -1,0 +1,50 @@
+name: BANNA 60-Second Documentary Preview
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      BANNA_MAX_DURATION_SECONDS: "60"
+      BANNA_MAX_SCENES: "7"
+      BANNA_WIDTH: "1920"
+      BANNA_HEIGHT: "1080"
+      BANNA_FPS: "30"
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+      - name: Add bundled FFmpeg to PATH
+        run: |
+          python -c "import imageio_ffmpeg,os; print(os.path.dirname(imageio_ffmpeg.get_ffmpeg_exe()))" >> "$GITHUB_PATH"
+      - name: Render first 60 seconds only
+        run: python main.py render --storyboard storyboard.manhattan.json
+      - name: Upload 60-second preview and QC
+        uses: actions/upload-artifact@v4
+        with:
+          name: BANNA-60-Second-Preview
+          path: |
+            output/BANNA_documentary_1080p.mp4
+            output/BANNA_QC_contact_sheet.jpg
+            output/BANNA_Photo_Assets_Contact_Sheet.jpg
+            output/BANNA_QC_report.json
+            output/BANNA_voiceover_transcript.txt
+          if-no-files-found: error
+          retention-days: 7
