@@ -124,7 +124,7 @@ def _download_verified_image(image_url: str, destination: Path) -> bool:
 
 
 def _loc_search(query: str) -> list[dict]:
-    url = "https://www.loc.gov/photos/"
+    url = "https://www.loc.gov/pictures/"
     response = requests.get(
         url,
         params={"fo": "json", "q": query, "c": 40},
@@ -160,7 +160,7 @@ def _download_loc_photo(scene: dict, destination: Path) -> dict | None:
     title = _clean_query(scene.get("title"))
     caption = _clean_query(scene.get("caption"))
     explicit = _clean_query(scene.get("photo_search"))
-    for query in (f"Titanic {title}" if title else "", f"Titanic {caption}" if caption else "", "RMS Titanic 1912"):
+    for query in (f"Titanic {title}" if title else "", f"Titanic {caption}" if caption else "", "Titanic ship 1912"):
         if query and query not in queries:
             queries.append(query)
     for query in queries:
@@ -193,6 +193,11 @@ def _download_loc_photo(scene: dict, destination: Path) -> dict | None:
 def download_commons_photo(scene: dict, destination: Path) -> dict:
     """Find a reusable Wikimedia Commons still and preserve attribution metadata."""
     errors: list[str] = []
+    # Prefer Library of Congress public photo catalog to avoid Commons API throttling.
+    loc_result = _download_loc_photo(scene, destination)
+    if loc_result:
+        return loc_result
+
     for active_query in _query_candidates(scene):
         try:
             pages = _commons_search(active_query)
@@ -230,11 +235,6 @@ def download_commons_photo(scene: dict, destination: Path) -> dict:
 
         # Be polite to Commons and avoid hammering its API between fallback searches.
         time.sleep(0.15)
-
-    # Secondary public archive fallback: Library of Congress JSON photo API.
-    loc_result = _download_loc_photo(scene, destination)
-    if loc_result:
-        return loc_result
 
     detail = (" Search errors: " + " | ".join(errors[:3])) if errors else ""
     raise RuntimeError(
