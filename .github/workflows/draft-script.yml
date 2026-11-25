@@ -1,0 +1,53 @@
+name: BANNA Gemini Free Script Draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: Documentary topic
+        required: true
+      audience:
+        description: Target audience
+        required: true
+        default: USA audience
+      language:
+        description: Narration language
+        required: true
+        default: English
+      duration:
+        description: Target duration in minutes
+        required: true
+        default: "10"
+
+permissions:
+  contents: read
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Draft with Gemini free text tier
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_TEXT_MODEL: gemini-2.5-flash
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "::error::Add GEMINI_API_KEY under repository Actions secrets."
+            exit 1
+          fi
+          python main.py draft-script --topic "${{ inputs.topic }}" --audience "${{ inputs.audience }}" --language "${{ inputs.language }}" --duration "${{ inputs.duration }}" --output output/BANNA_narration_draft.md
+      - name: Upload draft
+        uses: actions/upload-artifact@v4
+        with:
+          name: BANNA-Gemini-Free-Draft
+          path: output/BANNA_narration_draft.md
+          if-no-files-found: error
+          retention-days: 7
