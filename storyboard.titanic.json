@@ -7,7 +7,7 @@
     "visual_rule": "licensed archival still photographs only; no stock video clips",
     "surface": "map_board",
     "photo_search_strategy": "Wikimedia Commons: short title/caption queries with broad fallback",
-    "render_revision": "final-skill-aligned-review-4"
+    "render_revision": "final-skill-aligned-review-5"
   },
   "scenes": [
     {
@@ -50,7 +50,8 @@
         "May 31, 1911",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "Construction began in 1909"
+      "trigger_words": "Construction began in 1909",
+      "graphic_type": "ship_launch"
     },
     {
       "id": "luxury",
@@ -131,7 +132,8 @@
         "Southampton to New York",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "More than 2200 passengers"
+      "trigger_words": "More than 2200 passengers",
+      "graphic_type": "passenger_deck"
     },
     {
       "id": "warnings",
@@ -159,7 +161,8 @@
         "11:40 PM",
         "TITANIC / HISTORICAL RECORD"
       ],
-      "trigger_words": "Lookouts Frederick Fleet and Reginald Lee"
+      "trigger_words": "Lookouts Frederick Fleet and Reginald Lee",
+      "graphic_type": "lookout_night"
     },
     {
       "id": "collision",
