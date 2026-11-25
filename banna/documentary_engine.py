@@ -19,7 +19,7 @@ PAPER = (232, 236, 240)
 INK = (22, 30, 46)
 ORANGE = (255, 107, 0)
 STEEL = (62, 84, 110)
-WORLD_W = 3840
+WORLD_W = 6000
 
 
 def _font(size: int, bold: bool = False, mono: bool = False):
@@ -62,7 +62,7 @@ def _fit_photo(path: Path, size: tuple[int, int]) -> Image.Image:
     return im.filter(ImageFilter.UnsharpMask(radius=1.1, percent=105, threshold=3))
 
 
-def _card_layer(photo: Path, scene: dict, number: int, total: int, card_w: int = 760) -> Image.Image:
+def _card_layer(photo: Path, scene: dict, number: int, total: int, card_w: int = 1650) -> Image.Image:
     ratio = 16 / 9
     photo_h = int(card_w / ratio)
     pad = 34
@@ -106,7 +106,7 @@ def _build_world(photos: list[Path], scenes: list[dict], surface: str="map_board
     }
     if surface not in palette: raise ValueError(f"Unknown documentary surface: {surface}")
     bg,grid,header=palette[surface]
-    world_h = max(2160, 500 + ((len(scenes) + 2) // 3) * 900)
+    world_h = max(2700, 650 + ((len(scenes) + 2) // 3) * 1350)
     world = Image.new("RGB", (WORLD_W, world_h), bg)
     d = ImageDraw.Draw(world)
     for x in range(0, WORLD_W, 100):
@@ -117,11 +117,11 @@ def _build_world(photos: list[Path], scenes: list[dict], surface: str="map_board
     d.line((150, 155, WORLD_W - 150, 155), fill=ORANGE, width=4)
     cards = []
     cols = 3
-    cell_w, cell_h = 1120, 900
+    cell_w, cell_h = 2000, 1350
     for i, (photo, scene) in enumerate(zip(photos, scenes)):
         row, col = divmod(i, cols)
-        cx = 620 + col * cell_w
-        cy = 570 + row * cell_h
+        cx = 1000 + col * cell_w
+        cy = 650 + row * cell_h
         rotation = [-2.2, 1.4, -1.0, 2.0, -1.6, 1.0][i % 6]
         card = {"x": cx, "y": cy, "w": 828, "h": 640, "rotation": rotation,
                 "scene": scene, "index": i}
@@ -149,7 +149,7 @@ def _build_world(photos: list[Path], scenes: list[dict], surface: str="map_board
 def _camera_center(index: int, total: int) -> tuple[float, float]:
     cols = 3
     row, col = divmod(index, cols)
-    return (620 + col * 1120, 570 + row * 900)
+    return (1000 + col * 2000, 650 + row * 1350)
 
 
 def _draw_wobble(draw: ImageDraw.ImageDraw, box, color=(255,107,0,245), width=5):
@@ -247,7 +247,7 @@ def _render_chunk(photos: list[Path], scenes: list[dict], durations: list[float]
                 q=min(1.0,local/1.2); q=q*q*(3-2*q)
                 cx,cy=px+(cx-px)*q,py+(cy-py)*q
             progress=min(1.0,local/max(2.0,durations[idx]))
-            zoom=1.85+0.08*progress
+            zoom=3.0+0.10*progress
             reveal=0.0
             if idx==len(scenes)-1 and local>max(0.0,durations[idx]-2.5):
                 reveal=min(1.0,(local-max(0.0,durations[idx]-2.5))/2.5)
@@ -258,7 +258,7 @@ def _render_chunk(photos: list[Path], scenes: list[dict], durations: list[float]
             cx+=math.sin(local*0.19)*16
             cy+=math.cos(local*0.15)*12
             world_w,world_h=world.size
-            crop_w,crop_h=int(world_w/zoom),int(world_h/zoom)
+            crop_w=int(world_w/zoom)\n            crop_h=int(crop_w*height/width)
             left=max(0,min(world_w-crop_w,int(cx-crop_w/2)))
             top=max(0,min(world_h-crop_h,int(cy-crop_h/2)))
             if reveal>=0.995 and world_h>world_w*9/16:
