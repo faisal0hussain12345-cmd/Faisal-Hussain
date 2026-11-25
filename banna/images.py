@@ -51,6 +51,7 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
     generated_dir.mkdir(parents=True, exist_ok=True)
     paths = []
     source_records = []
+    used_sources: set[str] = set()
     for index, scene in enumerate(storyboard["scenes"], 1):
         if scene.get("map_image") or scene.get("map_locations"):
             map_title=str(scene.get("map_title") or scene.get("title") or "LOCATION EVIDENCE")
@@ -69,16 +70,11 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
             paths.append(map_path)
             continue
         graphic_type = scene.get("graphic_type")
-        if graphic_type:
-            safe_graphic = re.sub(r"[^a-zA-Z0-9_-]+", "-", scene.get("id", f"graphic-{index}")).strip("-")
-            graphic_path = generated_dir / f"{safe_graphic}_original_graphic.jpg"
-            if str(graphic_type).startswith("mp_"):
-                render_manhattan_graphic(str(graphic_type), str(scene.get("title") or "MANHATTAN PROJECT / EVIDENCE"), graphic_path)
-            else:
-                render_titanic_graphic(str(graphic_type), str(scene.get("title") or "TITANIC / EVIDENCE"), graphic_path)
-            paths.append(graphic_path)
-            source_records.append({"scene_id": scene.get("id", safe_graphic), "file_title": f"BANNA original vector reconstruction: {graphic_type}", "license": "Original BANNA-generated illustration", "destination": str(graphic_path)})
-            continue
+        if graphic_type and not scene.get("photo_search"):
+            raise ValueError(
+                f"Scene {scene.get('id', index)} uses graphic_type without photo_search. "
+                "For this photographic documentary, each beat must resolve to a distinct archival still."
+            )
         supplied = scene.get("image")
         if supplied:
             p = Path(supplied)
@@ -100,7 +96,14 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
         else:
             # Zero-cost default: use curated LOC/NOAA stills first, then public-archive search; save attribution.
             commons_path = generated_dir / f"{safe}_commons.jpg"
-            source = download_commons_photo(scene, commons_path)
+            source = download_commons_photo(scene, commons_path, used_sources)
+            source_page = str(source.get("source_page") or "")
+            image_url = str(source.get("image_url") or "")
+            if not source_page or source_page in used_sources or (image_url and image_url in used_sources):
+                raise RuntimeError(f"Duplicate or untraceable archival image for scene {scene.get('id', safe)}.")
+            used_sources.add(source_page)
+            if image_url:
+                used_sources.add(image_url)
             paths.append(commons_path)
             source_records.append({"scene_id": scene.get("id", safe), **source})
     if source_records:
