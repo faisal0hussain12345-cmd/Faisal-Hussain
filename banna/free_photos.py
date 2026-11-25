@@ -155,6 +155,45 @@ def _loc_image_urls(item: dict) -> list[str]:
     return result
 
 
+STATIC_TITANIC_ARCHIVE = {
+    "opening": ("https://cdn.loc.gov/service/pnp/cph/3b00000/3b04000/3b04400/3b04419r.jpg", "https://www.loc.gov/pictures/item/2001704335/", "The TITANIC, 1911", "Library of Congress — no known restrictions on reproduction"),
+    "shipyard": ("https://cdn.loc.gov/service/pnp/cph/3b10000/3b14000/3b14800/3b14835r.jpg", "https://www.loc.gov/item/2002721382/", "OLYMPIC and TITANIC — shipyard construction, 1909–1911", "Library of Congress — no known restrictions on reproduction"),
+    "launch": ("https://cdn.loc.gov/service/pnp/cph/3a40000/3a40000/3a40700/3a40727r.jpg", "https://www.loc.gov/pictures/item/2001704333/", "TITANIC stern and rudder in drydock, circa 1912", "Library of Congress — no known restrictions on reproduction"),
+    "luxury": ("https://cdn.loc.gov/service/pnp/ds/11000/11022v.jpg", "https://www.loc.gov/pictures/item/96503948/", "The veranda cafe and palm court of the Titanic, 1912", "Library of Congress — no known restrictions on publication"),
+    "maiden": ("https://cdn.loc.gov/service/pnp/cph/3b00000/3b04000/3b04400/3b04419r.jpg", "https://www.loc.gov/pictures/item/2001704335/", "The TITANIC, 1911", "Library of Congress — no known restrictions on reproduction"),
+    "passengers": ("https://cdn.loc.gov/service/pnp/cph/3b30000/3b39000/3b39700/3b39746r.jpg", "https://www.loc.gov/pictures/item/93510852/", "Titanic survivors on way to rescue ship Carpathia, 1912", "Library of Congress — no known restrictions on publication"),
+    "warnings": ("https://cdn.loc.gov/service/pnp/cph/3b30000/3b37000/3b37100/3b37182r.jpg", "https://www.loc.gov/pictures/item/96514444/", "The great Titanic disaster — wireless operator and rescue montage, 1912", "Library of Congress — no known restrictions on publication"),
+    "lookout": ("https://tile.loc.gov/storage-services/service/pnp/cph/3b30000/3b31000/3b31900/3b31920r.jpg", "https://www.loc.gov/pictures/item/2002714434/", "Harold Bride, surviving Titanic wireless operator, 1912", "Library of Congress — no known restrictions on publication"),
+    "lifeboats": ("https://cdn.loc.gov/service/pnp/cph/3a30000/3a33000/3a33900/3a33939r.jpg", "https://www.loc.gov/pictures/item/2001704327/", "Titanic lifeboats on way to Carpathia, April 15, 1912", "Library of Congress — no known restrictions on reproduction"),
+    "evacuation": ("https://cdn.loc.gov/service/pnp/cph/3b30000/3b39000/3b39700/3b39746r.jpg", "https://www.loc.gov/pictures/item/93510852/", "Titanic survivors in a lifeboat, 1912", "Library of Congress — no known restrictions on publication"),
+    "distress": ("https://cdn.loc.gov/service/pnp/cph/3b30000/3b37000/3b37100/3b37182r.jpg", "https://www.loc.gov/pictures/item/96514444/", "The great Titanic disaster — wireless operator and rescue montage, 1912", "Library of Congress — no known restrictions on publication"),
+    "rescue": ("https://cdn.loc.gov/service/pnp/cph/3c10000/3c16000/3c16000/3c16095v.jpg", "https://www.loc.gov/pictures/item/96503948/", "Carpathia and Titanic-related archival photograph, 1912", "Library of Congress — no known restrictions on publication"),
+    "aftermath": ("https://cdn.loc.gov/service/pnp/cph/3a20000/3a27000/3a27400/3a27433r.jpg", "https://www.loc.gov/pictures/item/2001704324/", "Crowd awaiting survivors from the Titanic, April 18, 1912", "Library of Congress — no known restrictions on reproduction"),
+    "wreck": ("https://oceanexplorer.noaa.gov/wp-content/uploads/2021/04/20210415-hires.jpg", "https://oceanexplorer.noaa.gov/multimedia/daily-image-media-20210415/", "Titanic bow wreck photograph, NOAA Expedition 2003", "NOAA image; credit NOAA and Russian Academy of Sciences"),
+    "legacy": ("https://oceanexplorer.noaa.gov/wp-content/uploads/2021/04/20210415-hires.jpg", "https://oceanexplorer.noaa.gov/multimedia/daily-image-media-20210415/", "Titanic bow wreck photograph, NOAA Expedition 2003", "NOAA image; credit NOAA and Russian Academy of Sciences"),
+}
+
+
+def _download_curated_titanic(scene: dict, destination: Path) -> dict | None:
+    item = STATIC_TITANIC_ARCHIVE.get(str(scene.get("id") or ""))
+    if not item:
+        return None
+    image_url, source_page, title, license_label = item
+    if not _download_verified_image(image_url, destination):
+        return None
+    return {
+        "query": "curated Titanic archival collection",
+        "file_title": title,
+        "source_page": source_page,
+        "image_url": image_url,
+        "license": license_label,
+        "artist": "",
+        "credit": "Library of Congress" if "loc.gov" in image_url else "NOAA / Russian Academy of Sciences",
+        "attribution": license_label,
+        "destination": str(destination),
+    }
+
+
 def _download_loc_photo(scene: dict, destination: Path) -> dict | None:
     queries = []
     title = _clean_query(scene.get("title"))
@@ -193,7 +232,13 @@ def _download_loc_photo(scene: dict, destination: Path) -> dict | None:
 def download_commons_photo(scene: dict, destination: Path) -> dict:
     """Find a reusable Wikimedia Commons still and preserve attribution metadata."""
     errors: list[str] = []
-    # Prefer Library of Congress public photo catalog to avoid Commons API throttling.
+    # Curated, verified Titanic-specific LOC/NOAA records first; avoids search API
+    # rate limits and keeps each scene tied to a relevant primary-source image.
+    curated = _download_curated_titanic(scene, destination)
+    if curated:
+        return curated
+
+    # Then search the Library of Congress public photo catalog.
     loc_result = _download_loc_photo(scene, destination)
     if loc_result:
         return loc_result
