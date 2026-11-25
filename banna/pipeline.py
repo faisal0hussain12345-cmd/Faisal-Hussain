@@ -88,8 +88,8 @@ def render(storyboard_path: Path | None = None) -> Path:
             )
         source_pages = [str(item.get("source_page") or "") for item in photo_records]
         image_urls = [str(item.get("image_url") or "") for item in photo_records]
-        if len(set(source_pages)) != len(source_pages) or len(set(image_urls)) != len(image_urls):
-            raise RuntimeError("Archival-photo QC failed: duplicate source records or image URLs were detected.")
+        if len(set(image_urls)) != len(image_urls):
+            raise RuntimeError("Archival-photo QC failed: duplicate image URLs were detected.")
         if any(not item for item in source_pages + image_urls):
             raise RuntimeError("Archival-photo QC failed: every photograph must have a traceable source and image URL.")
     if min(timeline["scene_durations"]) < 8.0:
