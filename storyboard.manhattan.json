@@ -6,7 +6,7 @@
     "category": "historical",
     "visual_rule": "original programmatic historical diagrams and archival-document-style still reconstructions; no stock video clips and no fabricated archival photographs",
     "surface": "map_board",
-    "render_revision": "manhattan-project-full-production-v1",
+    "render_revision": "manhattan-project-full-production-v2-word-cue-alignment",
     "expected_topic": "Manhattan Project",
     "expected_topic_keywords": [
       "Manhattan Project",
@@ -37,7 +37,8 @@
       "tags": [
         "NUCLEAR FISSION",
         "1938"
-      ]
+      ],
+      "trigger_words": "fission"
     },
     {
       "id": "einstein-letter",
@@ -49,7 +50,8 @@
         "WHITE HOUSE",
         "1939"
       ],
-      "stamp": true
+      "stamp": true,
+      "trigger_words": "Einstein"
     },
     {
       "id": "war",
@@ -60,7 +62,8 @@
       "tags": [
         "WORLD WAR II",
         "SECRET RESEARCH"
-      ]
+      ],
+      "trigger_words": "Pearl Harbor"
     },
     {
       "id": "birth",
@@ -72,7 +75,8 @@
         "MANHATTAN PROJECT",
         "1942"
       ],
-      "stamp": true
+      "stamp": true,
+      "trigger_words": "Manhattan Project"
     },
     {
       "id": "chicago",
@@ -83,7 +87,8 @@
       "tags": [
         "CHICAGO PILE-1",
         "CP-1"
-      ]
+      ],
+      "trigger_words": "Chicago Pile"
     },
     {
       "id": "oak-ridge",
@@ -94,7 +99,8 @@
       "tags": [
         "OAK RIDGE",
         "URANIUM-235"
-      ]
+      ],
+      "trigger_words": "Oak Ridge"
     },
     {
       "id": "hanford",
@@ -105,7 +111,8 @@
       "tags": [
         "HANFORD",
         "PLUTONIUM"
-      ]
+      ],
+      "trigger_words": "Hanford"
     },
     {
       "id": "los-alamos",
@@ -116,7 +123,8 @@
       "tags": [
         "LOS ALAMOS",
         "SITE Y"
-      ]
+      ],
+      "trigger_words": "Los Alamos"
     },
     {
       "id": "leadership",
@@ -127,7 +135,8 @@
       "tags": [
         "SCIENCE",
         "MILITARY COMMAND"
-      ]
+      ],
+      "trigger_words": "Oppenheimer"
     },
     {
       "id": "trinity",
@@ -142,7 +151,8 @@
       "vintage_insert": true,
       "vintage_title": "TRINITY / JULY 16, 1945",
       "highlight_sfx": true,
-      "stamp": true
+      "stamp": true,
+      "trigger_words": "Trinity"
     },
     {
       "id": "hiroshima",
@@ -153,7 +163,8 @@
       "tags": [
         "LITTLE BOY",
         "AUGUST 6, 1945"
-      ]
+      ],
+      "trigger_words": "Hiroshima"
     },
     {
       "id": "nagasaki",
@@ -165,7 +176,8 @@
         "FAT MAN",
         "AUGUST 9, 1945"
       ],
-      "highlight_sfx": true
+      "highlight_sfx": true,
+      "trigger_words": "Nagasaki"
     },
     {
       "id": "legacy",
@@ -177,7 +189,8 @@
         "LEGACY",
         "THE NUCLEAR AGE"
       ],
-      "stamp": true
+      "stamp": true,
+      "trigger_words": "nuclear age"
     }
   ]
 }
