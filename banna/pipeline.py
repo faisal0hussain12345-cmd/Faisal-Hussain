@@ -90,8 +90,25 @@ def render(storyboard_path: Path | None = None) -> Path:
             if result.returncode: raise RuntimeError(f"Vintage insert splice failed: {result.stderr[-3000:]}")
             board=spliced
             print(f"[BANNA] Inserted cyanotype 2D sequence at {insert_start:.2f}s",flush=True)
+    # Cue sheet follows the narration-aligned scene starts and marked visual beats.
+    sound_cues=[]
+    for i, scene in enumerate(storyboard["scenes"]):
+        at=float(timeline["boundaries"][i])
+        if i>0:
+            sound_cues.append({"time":at,"type":"transition_whoosh","scene":scene.get("id")})
+            sound_cues.append({"time":at+0.08,"type":"typing","scene":scene.get("id")})
+        if scene.get("stamp"):
+            sound_cues.append({"time":at+0.9,"type":"stamp","scene":scene.get("id")})
+        if scene.get("vintage_insert"):
+            sound_cues.append({"time":at+0.2,"type":"impact","scene":scene.get("id")})
+        if scene.get("wireless_sfx"):
+            sound_cues.append({"time":at+0.25,"type":"wireless","scene":scene.get("id")})
+        if scene.get("highlight_sfx"):
+            sound_cues.append({"time":at+0.5,"type":"circle","scene":scene.get("id")})
+    cue_path=work/"cues.json"
+    cue_path.write_text(json.dumps(sound_cues,indent=2),encoding="utf-8")
     bed=work/"sound_bed.wav"
-    synthesize_bed(duration,timeline["boundaries"][:-1],bed,film_ranges=film_ranges)
+    synthesize_bed(duration,timeline["boundaries"][:-1],bed,film_ranges=film_ranges,cues=sound_cues)
     output=settings.output_dir/"BANNA_documentary_1080p.mp4"
     concat_and_mux([board],voice,bed,output,duration)
     qc=validate_final_video(output,duration)
@@ -100,6 +117,9 @@ def render(storyboard_path: Path | None = None) -> Path:
             "video_codec":qc["codec"],"scene_count":len(photos),"scene_durations":timeline["scene_durations"],
             "silence_ranges":timeline["silences"],"map_grid_inspections":[str(x) for x in sorted(settings.generated_dir.glob("*_map_grid.jpg"))],"word_alignment_language":detected_language,"word_alignment_count":len(word_times),"contact_sheet":str(contact),"visual_source":"still photographs and generated still illustrations only"}
     (settings.output_dir/"BANNA_word_timing.json").write_text(json.dumps({"language":detected_language,"words":word_times},indent=2),encoding="utf-8")
+    (settings.output_dir/"BANNA_sound_cues.json").write_text(json.dumps(sound_cues,indent=2),encoding="utf-8")
+    if transcript_path.is_file():
+        (settings.output_dir/"BANNA_voiceover_transcript.txt").write_text(transcript_path.read_text(encoding="utf-8"),encoding="utf-8")
     (settings.output_dir/"BANNA_QC_report.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
     print(f"[BANNA] QC passed: {qc['width']}x{qc['height']} / {qc['duration']:.2f}s",flush=True)
     print(f"[BANNA] Contact sheet: {contact}",flush=True)
