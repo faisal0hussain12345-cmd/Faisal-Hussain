@@ -29,7 +29,8 @@ The bundled skill's exact-geometry helpers are available in `banna/annotations.p
 - `main.py` — command-line entry point.
 - `banna/config.py` — environment-driven configuration and voice-over discovery.
 - `banna/audio.py`, `banna/timing.py`, `banna/transcription.py` — media probing, silence detection, optional CPU Whisper word timestamps and spoken-cue alignment. The renderer falls back to silence-based timing if Whisper is unavailable. Scene cues can be aligned to transcribed trigger phrases.
-- `banna/images.py` — user-provided stills and local map panels. Paid Gemini image generation is disabled in free mode.
+- `banna/images.py` — user-provided stills, Wikimedia Commons still-photo fallback and local map panels. Paid Gemini image generation is disabled in free mode.
+- `banna/free_photos.py` — searches Wikimedia Commons for public-domain/CC BY/CC BY-SA photographs, filters restrictive licenses and records attribution in `BANNA_photo_sources.json`.
 - `banna/gemini_text.py` — Gemini free-tier text drafting.
 - `banna/openrouter_review.py` — OpenRouter free-only script review.
 - `banna/documentary_engine.py` — continuous evidence-board world and camera renderer.
@@ -68,7 +69,7 @@ Add these GitHub Actions repository secrets:
 
 No OpenAI API key is needed. BANNA's OpenRouter adapter accepts only `openrouter/free` or a model ID ending in `:free`, and rejects paid model IDs. Free model availability and quotas can change; OpenRouter's free plan currently lists 50 requests per day and 20 requests per minute for free models. If the free endpoint is unavailable or quota is exhausted, the workflow fails rather than switching to a paid model.
 
-Paid Gemini image generation is disabled. Use supplied/licensed still photos and locally rendered maps, evidence boards, annotations and transitions. Gemini free text is not the same as free image generation. GitHub Actions also has plan-dependent usage limits, so no hosted service can guarantee unlimited free rendering.
+Paid Gemini image generation is disabled. If a scene has no supplied image, BANNA searches Wikimedia Commons for a reusable public-domain or permissively licensed still and saves its license/artist/source attribution. If no suitable photo is found, provide a more specific `photo_search` field or a licensed image. Maps, evidence boards, annotations and transitions are rendered locally. Gemini free text is not the same as free image generation. GitHub Actions also has plan-dependent usage limits, so no hosted service can guarantee unlimited free rendering.
 
 Actions workflows:
 - **BANNA API Connection Test** — safely test both API secrets.
