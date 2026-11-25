@@ -51,6 +51,9 @@ def resolve_scene_images(storyboard: dict, photos_dir: Path, generated_dir: Path
     generated_dir.mkdir(parents=True, exist_ok=True)
     paths = []
     source_records = []
+    project_name = str((storyboard.get("project") or {}).get("name") or "")
+    for scene in storyboard["scenes"]:
+        scene["project_name"] = project_name
     used_sources: set[str] = set()\n    used_image_hashes: set[str] = set()
     for index, scene in enumerate(storyboard["scenes"], 1):
         if scene.get("map_image") or scene.get("map_locations"):
