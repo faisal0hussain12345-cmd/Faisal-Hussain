@@ -7,7 +7,7 @@ BANNA is a Python documentary production system based on the supplied Priyanshu 
 1. Select an audience profile: Indian/Hindi or USA/US English. Both profiles support Recent News, Historical Documentaries and UFO Documentaries.
 2. Research and verify the selected story, then prepare the clean narration script and a scene-by-scene visual plan.
 3. Record or generate the narration and provide the MP3/WAV plus the approved `storyboard.json`.
-4. Add `GEMINI_API_KEY` and `OPENROUTER_API_KEY` under GitHub Actions secrets. Never paste keys into source files or chat.
+4. Add `GEMINI_API_KEY` and `OPENROUTER_API_KEY` under GitHub Actions secrets. Run **Actions → BANNA API Connection Test** to verify both without printing the keys.
 5. Run **Actions → BANNA Documentary Render**. GitHub-hosted runners perform the rendering; a local GPU is not required.
 6. Download the MP4 and the QC contact sheet/report from the workflow artifact.
 
@@ -71,6 +71,7 @@ No OpenAI API key is needed. BANNA's OpenRouter adapter accepts only `openrouter
 Paid Gemini image generation is disabled. Use supplied/licensed still photos and locally rendered maps, evidence boards, annotations and transitions. Gemini free text is not the same as free image generation. GitHub Actions also has plan-dependent usage limits, so no hosted service can guarantee unlimited free rendering.
 
 Actions workflows:
+- **BANNA API Connection Test** — safely test both API secrets.
 - **BANNA Gemini Free Script Draft** — generate a narration draft.
 - **BANNA Free Script Review** — review a script using OpenRouter free models only.
 - **BANNA Documentary Render** — render a supplied storyboard and voice-over.
@@ -85,4 +86,4 @@ python main.py render --storyboard storyboard.json
 
 ## Verification status
 
-The CI suite runs on GitHub Actions and checks core timing, sound-bed output, storyboard validation, Gemini response parsing (mocked), exact annotation geometry, map image generation, vintage insert encoding, parallel chunk assembly and FFmpeg rendering smoke tests. It also runs a 60-second audio-to-MP4 pipeline integration test using fixture audio and mocked visual-render providers, then verifies 1080p resolution, duration and QC outputs. The render artifact contains the final contact sheet, QC report, word timing JSON and map coordinate-grid inspection images. A real documentary render still requires a valid story-specific storyboard and configured image-generation credentials. Final acceptance also requires inspecting the generated QC contact sheet; automated tests do not prove pixel-perfect results for every future story.
+The CI suite runs on GitHub Actions and checks core timing, sound-bed output, storyboard validation, Gemini response parsing (mocked), exact annotation geometry, map image generation, vintage insert encoding, parallel chunk assembly and FFmpeg rendering smoke tests. It also runs a 60-second audio-to-MP4 pipeline integration test using fixture audio and mocked visual-render providers, then verifies 1080p resolution, duration and QC outputs. The render artifact contains the final contact sheet, QC report, word timing JSON and map coordinate-grid inspection images. A real documentary render still requires a story-specific storyboard with supplied/licensed still-photo files or local map panels. The zero-cost renderer does not require image-generation credentials. Final acceptance also requires inspecting the generated QC contact sheet; automated tests do not prove pixel-perfect results for every future story.
