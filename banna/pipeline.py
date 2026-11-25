@@ -23,6 +23,22 @@ def load_storyboard(path: Path) -> dict:
             raise ValueError(f"Scene {i} must contain image or image_prompt.")
     return data
 
+def validate_voiceover_topic(transcript: str, project: dict) -> None:
+    expected = project.get("expected_topic_keywords") or []
+    if not expected or not transcript.strip():
+        return
+    normalized = transcript.casefold()
+    matches = [str(term) for term in expected if str(term).casefold() in normalized]
+    minimum = int(project.get("minimum_topic_keyword_matches", min(2, len(expected))))
+    if len(matches) < minimum:
+        topic = str(project.get("expected_topic") or "the selected documentary topic")
+        raise ValueError(
+            f"Voice-over topic mismatch: this storyboard expects '{topic}', "
+            f"but the supplied recording did not contain enough matching topic terms "
+            f"({len(matches)}/{minimum}). Refusing to render unrelated audio against this story."
+        )
+
+
 def render(storyboard_path: Path | None = None) -> Path:
     settings=Settings.from_env()
     if (settings.width,settings.height)!=(1920,1080):
@@ -51,6 +67,7 @@ def render(storyboard_path: Path | None = None) -> Path:
         transcript_path.parent.mkdir(parents=True,exist_ok=True)
         transcript_path.write_text(transcript_text,encoding="utf-8")
         print("[BANNA] Voice-over transcript (first 2200 chars): "+transcript_text[:2200],flush=True)
+        validate_voiceover_topic(transcript_text,storyboard.get("project") or {})
         timeline["boundaries"]=align_scenes_to_words(word_times,storyboard["scenes"],duration,timeline["boundaries"])
         timeline["scene_durations"]=[b-a for a,b in zip(timeline["boundaries"],timeline["boundaries"][1:])]
         print(f"[BANNA] Whisper word alignment active ({detected_language}, {len(word_times)} words)",flush=True)
