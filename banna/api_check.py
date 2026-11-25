@@ -24,10 +24,11 @@ def _gemini_models(key: str) -> list[str]:
         methods = item.get("supportedGenerationMethods") or []
         if name and "generateContent" in methods and "flash" in name.lower():
             candidates.append(name)
+    # Prefer the smallest currently available free-tier Flash model first.
     priority = (
-        "gemini-3.8-flash",
         "gemini-3.5-flash-lite",
         "gemini-3.1-flash-lite",
+        "gemini-3.8-flash",
         "gemini-3.1-flash",
         "gemini-3-flash",
         "gemini-2.5-flash-lite",
