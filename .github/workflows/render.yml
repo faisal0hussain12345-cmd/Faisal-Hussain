@@ -31,7 +31,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: banna-render
+  group: banna-render-archival-photo-v3
   cancel-in-progress: true
 
 jobs:
