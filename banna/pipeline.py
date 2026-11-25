@@ -35,6 +35,7 @@ def render(storyboard_path: Path | None = None) -> Path:
         raise FileNotFoundError("storyboard.json is missing. Prepare a story-specific visual plan before rendering.")
     storyboard=load_storyboard(storyboard_path)
     duration=probe_audio(voice)["duration"]
+    print(f"[BANNA] Original voice-over duration: {duration:.2f}s ({duration/60:.2f} min)",flush=True)
     if not 60.0 <= duration <= 1200.0:
         raise ValueError(f"The documentary skill supports 60 seconds to 20 minutes; voice-over is {duration:.2f} seconds.")
     timeline=narration_timeline(voice,len(storyboard["scenes"]))
@@ -44,6 +45,11 @@ def render(storyboard_path: Path | None = None) -> Path:
         word_times,detected_language=[], "fallback"
         print(f"[BANNA] Whisper failed; using silence-based timing: {exc}",flush=True)
     if word_times:
+        transcript_text=" ".join(str(item.get("word","")).strip() for item in word_times if item.get("word")).strip()
+        transcript_path=Path("work/render/voiceover_transcript.txt")
+        transcript_path.parent.mkdir(parents=True,exist_ok=True)
+        transcript_path.write_text(transcript_text,encoding="utf-8")
+        print("[BANNA] Voice-over transcript (first 2200 chars): "+transcript_text[:2200],flush=True)
         timeline["boundaries"]=align_scenes_to_words(word_times,storyboard["scenes"],duration,timeline["boundaries"])
         timeline["scene_durations"]=[b-a for a,b in zip(timeline["boundaries"],timeline["boundaries"][1:])]
         print(f"[BANNA] Whisper word alignment active ({detected_language}, {len(word_times)} words)",flush=True)
