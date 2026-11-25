@@ -35,7 +35,7 @@ jobs:
           target.unlink(missing_ok=True)
           target.symlink_to(source)
           with open(os.environ["GITHUB_PATH"], "a", encoding="utf-8") as handle:
-              handle.write(str(target.parent) + "\\n")
+              handle.write(str(target.parent) + "\n")
           PY
           "$HOME/.local/bin/ffmpeg" -version
       - name: Compile all Python modules
