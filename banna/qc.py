@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json, subprocess
 from pathlib import Path
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageOps
 from .documentary_engine import _font
 
 def probe_video(path: Path) -> dict:
