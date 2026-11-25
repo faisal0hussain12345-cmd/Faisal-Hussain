@@ -6,10 +6,12 @@ on:
       storyboard:
         description: Storyboard JSON path
         required: false
-        default: storyboard.titanic.json
+        default: storyboard.manhattan.json
   push:
     paths:
-      - 'storyboard.titanic.json'
+      - 'storyboard.manhattan.json'
+      - 'banna/manhattan_graphics.py'
+      - 'banna/manhattan_vintage.py'
       - 'banna/free_photos.py'
       - 'banna/pipeline.py'
       - 'banna/vintage.py'
@@ -58,11 +60,11 @@ jobs:
           BANNA_WIDTH: "1920"
           BANNA_HEIGHT: "1080"
           BANNA_FPS: "30"
-        run: python main.py render --storyboard "${{ github.event.inputs.storyboard || 'storyboard.titanic.json' }}"
+        run: python main.py render --storyboard "${{ github.event.inputs.storyboard || 'storyboard.manhattan.json' }}"
       - name: Upload finished MP4
         uses: actions/upload-artifact@v4
         with:
-          name: BANNA-1080p-documentary
+          name: BANNA-Manhattan-Project-1080p
           path: |
             output/BANNA_documentary_1080p.mp4
             output/BANNA_QC_contact_sheet.jpg
