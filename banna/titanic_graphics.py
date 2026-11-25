@@ -85,6 +85,85 @@ def render_titanic_graphic(kind: str, title: str, output: Path,
             d.text((x+18,y-28),label,font=_font(19,mono=True),fill=PAPER)
         d.text((95,h-100),"NORTH ATLANTIC / APRIL 1912",font=_font(26,True),fill=ORANGE)
 
+    elif kind == "shipyard_build":
+        d.rectangle((90,650,w-90,710),fill=(88,103,116),outline=PAPER,width=3)
+        _ship(d,790,650,0.78,pitch=0.0)
+        for cx in (180,360,1260,1450):
+            d.line((cx,155,cx,625),fill=(158,176,190),width=10)
+            d.line((cx,180,cx+170,300),fill=(158,176,190),width=7)
+            d.line((cx,300,cx+170,300),fill=ORANGE,width=4)
+        for x in range(170,1450,110):
+            d.line((x,370,x,620),fill=(128,151,168),width=4)
+            d.line((x,370,x+95,620),fill=(128,151,168),width=3)
+        d.text((100,225),"HARLAND & WOLFF / BELFAST",font=_font(30,mono=True),fill=PAPER)
+        d.text((100,275),"CONSTRUCTION RECORD / 1909–1912",font=_font(23,mono=True),fill=ORANGE)
+
+    elif kind == "warning_telegram":
+        d.rectangle((230,190,1370,760),fill=(221,215,192),outline=PAPER,width=5)
+        d.rectangle((260,220,1340,730),outline=(120,111,90),width=2)
+        d.text((320,260),"WIRELESS MESSAGE / NORTH ATLANTIC",font=_font(29,mono=True),fill=INK)
+        d.line((320,315,1270,315),fill=ORANGE,width=5)
+        lines=["ICE REPORTED IN THE AREA","LOOKOUTS ADVISED TO MAINTAIN WATCH","APRIL 14, 1912 / SHIP-TO-SHIP TRAFFIC"]
+        for i,line in enumerate(lines):
+            d.text((340,390+i*78),line,font=_font(24,mono=True),fill=INK)
+        d.text((340,660),"ARCHIVAL-STYLE RECONSTRUCTION",font=_font(18,mono=True),fill=(110,100,82))
+
+    elif kind == "lifeboat_launch":
+        d.rectangle((0,680,w,h-40),fill=SEA)
+        for yy in range(720,h-60,48):
+            pts=[(xx,yy+int(7*math.sin(xx*.018+yy))) for xx in range(0,w,28)]
+            d.line(pts,fill=CYAN,width=3)
+        d.rectangle((120,350,1470,500),fill=(190,204,214),outline=PAPER,width=4)
+        d.line((160,350,1420,350),fill=INK,width=9)
+        for bx in (230,590,950,1260):
+            d.line((bx,350,bx+65,640),fill=ORANGE,width=6)
+            d.line((bx+170,350,bx+110,640),fill=ORANGE,width=6)
+            d.polygon([(bx+35,650),(bx+205,650),(bx+178,695),(bx+62,695)],fill=(224,229,232),outline=INK)
+            for px in (bx+75,bx+130):
+                d.ellipse((px,612,px+17,629),fill=INK)
+                d.line((px+8,628,px+8,651),fill=INK,width=4)
+        d.text((115,205),"EVACUATION / LIMITED CAPACITY",font=_font(30,mono=True),fill=PAPER)
+
+    elif kind == "wireless_room":
+        d.rectangle((130,220,1470,730),fill=(185,197,205),outline=PAPER,width=5)
+        d.rectangle((210,310,820,690),fill=(44,59,76),outline=INK,width=5)
+        d.text((270,350),"MARCONI WIRELESS",font=_font(27,mono=True),fill=PAPER)
+        d.line((270,455,760,455),fill=ORANGE,width=5)
+        for i in range(24):
+            x=280+i*19
+            height=(35,70,25,90,45,20)[i%6]
+            d.line((x,560-height,x,560+height),fill=ORANGE,width=4)
+        d.rectangle((930,335,1320,610),fill=(220,226,230),outline=INK,width=4)
+        d.text((990,380),"CQD / SOS",font=_font(39,True,mono=True),fill=INK)
+        d.text((990,460),"DISTRESS CALL",font=_font(24,mono=True),fill=ORANGE)
+        d.text((170,770),"WIRELESS OPERATORS / APRIL 14–15, 1912",font=_font(22,mono=True),fill=PAPER)
+
+    elif kind == "carpathia_rescue":
+        d.rectangle((0,665,w,h-40),fill=SEA)
+        for i in range(70):
+            x=(i*113)%w; y=150+(i*67)%430
+            d.ellipse((x,y,x+3,y+3),fill=(160,184,199))
+        _ship(d,1150,640,0.50,pitch=0.0,color=(26,38,52))
+        for bx,by in ((220,720),(510,760),(790,715)):
+            d.polygon([(bx,by),(bx+170,by),(bx+145,by+35),(bx+25,by+35)],fill=(218,226,232),outline=INK)
+            for px in (bx+50,bx+115):
+                d.ellipse((px,by-25,px+16,by-9),fill=INK)
+                d.line((px+8,by-9,px+8,by+2),fill=INK,width=3)
+        d.text((105,210),"RMS CARPATHIA / SURVIVORS RECOVERED",font=_font(28,mono=True),fill=ORANGE)
+
+    elif kind == "newspaper_headline":
+        d.rectangle((240,165,1360,780),fill=(224,219,199),outline=PAPER,width=5)
+        d.text((315,205),"THE ATLANTIC DISASTER",font=_font(24,mono=True),fill=INK)
+        d.line((300,250,1300,250),fill=INK,width=4)
+        d.text((310,285),"TITANIC LOST",font=_font(62,True),fill=INK)
+        d.text((315,370),"APRIL 15, 1912 / MORE THAN 1,500 LOST",font=_font(22,mono=True),fill=ORANGE)
+        for col in range(3):
+            x=315+col*320
+            for row in range(10):
+                y=450+row*24
+                d.line((x,y,x+270-(row%3)*22,y),fill=(100,98,88),width=4)
+        d.text((315,710),"HISTORICAL NEWSPAPER-STYLE RECONSTRUCTION",font=_font(16,mono=True),fill=(105,98,84))
+
     elif kind == "ship_launch":
         # Shipyard launch-day reconstruction with slipway, cranes and crowd silhouettes.
         d.rectangle((0,690,w,h-40),fill=(52,83,105))
