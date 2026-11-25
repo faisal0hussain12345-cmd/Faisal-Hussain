@@ -12,6 +12,7 @@ class Settings:
     fps: int = 30
     image_model: str = "gemini-2.5-flash-image"
     image_provider: str = "gemini"
+    image_generation_enabled: bool = False
     output_dir: Path = ROOT / "output"
     photos_dir: Path = ROOT / "media" / "photos"
     generated_dir: Path = ROOT / "work" / "generated"
@@ -26,6 +27,7 @@ class Settings:
             fps=int(os.getenv("BANNA_FPS", "30")),
             image_model=os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image"),
             image_provider=os.getenv("BANNA_IMAGE_PROVIDER", "gemini").lower(),
+            image_generation_enabled=os.getenv("BANNA_IMAGE_GENERATION_ENABLED", "false").lower() in {"1", "true", "yes", "on"},
             output_dir=Path(os.getenv("BANNA_OUTPUT_DIR", str(ROOT / "output"))),
             photos_dir=Path(os.getenv("BANNA_PHOTOS_DIR", str(ROOT / "media" / "photos"))),
             generated_dir=Path(os.getenv("BANNA_GENERATED_DIR", str(ROOT / "work" / "generated"))),
@@ -40,7 +42,5 @@ def find_voiceover(settings: Settings) -> Path:
         candidates.extend(p for p in ROOT.glob(pattern) if p.is_file())
     candidates = [p for p in candidates if p.name.lower() not in {"sample.mp3"}]
     if not candidates:
-        raise FileNotFoundError(
-            "No voice-over found. Add an MP3/WAV to the repository root or set BANNA_VOICEOVER."
-        )
+        raise FileNotFoundError("No voice-over found. Add an MP3/WAV to the repository root or set BANNA_VOICEOVER.")
     return max(candidates, key=lambda p: p.stat().st_mtime)
