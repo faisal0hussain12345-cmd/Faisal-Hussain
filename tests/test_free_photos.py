@@ -1,6 +1,6 @@
 import unittest
 
-from banna.free_photos import _allowed_license, _query_for_scene, STATIC_TITANIC_ARCHIVE
+from banna.free_photos import _allowed_license, _query_for_scene, _is_titanic_scene, STATIC_TITANIC_ARCHIVE
 
 
 class FreePhotoTests(unittest.TestCase):
@@ -22,6 +22,17 @@ class FreePhotoTests(unittest.TestCase):
             self.assertTrue(source_page.startswith("https://"))
             self.assertTrue(title)
             self.assertTrue(rights)
+
+    def test_titanic_curated_images_do_not_leak_into_manhattan_project(self):
+        self.assertFalse(_is_titanic_scene({
+            "id": "opening",
+            "project_name": "The Manhattan Project",
+            "photo_search": "Manhattan Project workers Oak Ridge 1944",
+        }))
+        self.assertTrue(_is_titanic_scene({
+            "id": "opening",
+            "project_name": "Titanic documentary",
+        }))
 
     def test_prefers_explicit_search_phrase(self):
         self.assertEqual(
