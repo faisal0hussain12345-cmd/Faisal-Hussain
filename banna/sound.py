@@ -79,9 +79,8 @@ def synthesize_bed(duration: float, scene_starts: list[float], output: Path, fil
             pulse = 0.025 * np.sin(2*np.pi*48*t) * (np.sin(2*np.pi*0.8*t) > 0)
             # Quiet rolling sea/ship-room texture under the dark drone.
             sea_noise = rng.normal(0, 1, len(t)).astype(np.float32)
-            sea_noise = np.convolve(sea_noise, np.ones(96,dtype=np.float32)/96, mode="same")
             sea_env = 0.45 + 0.25*np.sin(2*np.pi*t/8.5)
-            sea = 0.018 * sea_noise * sea_env
+            sea = 0.004 * sea_noise * sea_env
             engine = 0.012 * np.sin(2*np.pi*32*t + np.sin(2*np.pi*0.18*t))
             chunk = (pad + pulse + sea + engine).astype(np.float32)
             for pos, samples, gain in events:
