@@ -4,193 +4,324 @@
     "audience": "usa",
     "language": "en-US",
     "category": "historical",
-    "visual_rule": "original programmatic historical diagrams and archival-document-style still reconstructions; no stock video clips and no fabricated archival photographs",
-    "surface": "map_board",
-    "render_revision": "manhattan-project-full-production-v2-word-cue-alignment",
+    "visual_rule": "Use distinct, authentic archival photographs and primary-source documents for every beat. Never substitute repeated vector diagrams or generated fake archival photographs. Use original schematic graphics only as brief overlays/inserts, never as the main visual for a photo beat.",
+    "surface": "scrapbook_dossier",
+    "render_revision": "manhattan-project-archival-photo-remaster-v3",
     "expected_topic": "Manhattan Project",
     "expected_topic_keywords": [
       "Manhattan Project",
       "atomic bomb",
       "Los Alamos"
     ],
-    "minimum_topic_keyword_matches": 2
+    "minimum_topic_keyword_matches": 2,
+    "minimum_unique_archival_photos": 25
   },
   "scenes": [
     {
       "id": "opening",
-      "title": "The Weapon That Changed the World",
-      "year": "1940s",
-      "caption": "A secret wartime project with consequences beyond the war",
-      "graphic_type": "mp_fission",
+      "title": "The Secret Project",
+      "caption": "An ordinary workforce inside a secret wartime operation",
+      "photo_search": "Manhattan Project workers Oak Ridge 1944",
+      "image_prompt": "Authentic historical archival photograph related to The Secret Project, Manhattan Project era 1938–1945. Do not invent a photograph.",
       "tags": [
         "TOP SECRET",
-        "WORLD WAR II"
-      ],
-      "stamp": true
+        "1940s"
+      ]
     },
     {
       "id": "fission",
-      "title": "A Discovery Inside the Atom",
-      "year": "December 1938",
-      "caption": "Nuclear fission transformed theoretical physics into a possible weapon",
-      "graphic_type": "mp_fission",
+      "title": "The Discovery of Nuclear Fission",
+      "caption": "The 1938 discovery that made an atomic weapon conceivable",
+      "photo_search": "Otto Hahn Fritz Strassmann nuclear fission 1938",
+      "image_prompt": "Authentic historical archival photograph related to The Discovery of Nuclear Fission, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "December 1938",
       "tags": [
-        "NUCLEAR FISSION",
-        "1938"
-      ],
-      "trigger_words": "fission"
+        "SCIENCE",
+        "DEC 1938"
+      ]
+    },
+    {
+      "id": "chain-reaction",
+      "title": "The Power Inside the Atom",
+      "caption": "Scientists investigate the possibility of a self-sustaining chain reaction",
+      "photo_search": "early nuclear fission research scientists 1939",
+      "image_prompt": "Authentic historical archival photograph related to The Power Inside the Atom, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "nuclear fission",
+      "tags": [
+        "CHAIN REACTION",
+        "1939"
+      ]
+    },
+    {
+      "id": "german-threat",
+      "title": "The Fear of Nazi Germany",
+      "caption": "The possibility that Germany could build an atomic weapon first",
+      "photo_search": "German nuclear research World War II uranium scientists",
+      "image_prompt": "Authentic historical archival photograph related to The Fear of Nazi Germany, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "Nazi Germany",
+      "tags": [
+        "EUROPE",
+        "1939–1941"
+      ]
     },
     {
       "id": "einstein-letter",
-      "title": "The Warning to Roosevelt",
-      "year": "August 2, 1939",
-      "caption": "The Einstein–Szilard letter urged attention to the possibility of an atomic weapon",
-      "graphic_type": "mp_letter",
+      "title": "The Letter to President Roosevelt",
+      "caption": "Leo Szilard and Albert Einstein warn the White House",
+      "photo_search": "Einstein Szilard letter Roosevelt 1939",
+      "image_prompt": "Authentic historical archival photograph related to The Letter to President Roosevelt, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "August 1939",
       "tags": [
         "WHITE HOUSE",
-        "1939"
-      ],
-      "stamp": true,
-      "trigger_words": "Einstein"
+        "AUG 1939"
+      ]
     },
     {
-      "id": "war",
-      "title": "A Race Against Nazi Germany",
-      "year": "1939–1941",
-      "caption": "World war accelerated the effort to turn nuclear science into a weapon",
-      "graphic_type": "mp_wartime",
+      "id": "pearl-harbor",
+      "title": "America Enters the War",
+      "caption": "The attack on Pearl Harbor accelerates wartime mobilization",
+      "photo_search": "Pearl Harbor attack December 7 1941 archival photograph",
+      "image_prompt": "Authentic historical archival photograph related to America Enters the War, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "Pearl Harbor",
       "tags": [
-        "WORLD WAR II",
-        "SECRET RESEARCH"
+        "WAR",
+        "DEC 1941"
       ],
-      "trigger_words": "Pearl Harbor"
+      "stamp": "HISTORIC TURNING POINT"
     },
     {
-      "id": "birth",
+      "id": "district",
       "title": "The Manhattan Engineer District",
-      "year": "August 1942",
-      "caption": "A vast federal program assembled scientists, engineers, factories and military command",
-      "graphic_type": "mp_map",
+      "caption": "The Army creates the organization overseeing the secret project",
+      "photo_search": "Manhattan Engineer District headquarters 1942 US Army Corps Engineers",
+      "image_prompt": "Authentic historical archival photograph related to The Manhattan Engineer District, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "August 13 1942",
       "tags": [
-        "MANHATTAN PROJECT",
+        "MANHATTAN DISTRICT",
         "1942"
-      ],
-      "stamp": true,
-      "trigger_words": "Manhattan Project"
+      ]
     },
     {
-      "id": "chicago",
-      "title": "The First Controlled Chain Reaction",
-      "year": "December 2, 1942",
-      "caption": "Enrico Fermi's Chicago Pile-1 demonstrated a self-sustaining nuclear chain reaction",
-      "graphic_type": "mp_chicago",
+      "id": "groves",
+      "title": "General Leslie Groves",
+      "caption": "The military commander responsible for the vast engineering effort",
+      "photo_search": "General Leslie Groves portrait Manhattan Project 1944",
+      "image_prompt": "Authentic historical archival photograph related to General Leslie Groves, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "Leslie Groves",
       "tags": [
-        "CHICAGO PILE-1",
-        "CP-1"
-      ],
-      "trigger_words": "Chicago Pile"
+        "MILITARY COMMAND",
+        "1942–1945"
+      ]
+    },
+    {
+      "id": "oppenheimer",
+      "title": "J. Robert Oppenheimer",
+      "caption": "The scientific director assembles the research team at Los Alamos",
+      "photo_search": "J Robert Oppenheimer Los Alamos 1944 archival portrait",
+      "image_prompt": "Authentic historical archival photograph related to J. Robert Oppenheimer, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "scientific leadership",
+      "tags": [
+        "SCIENTIFIC DIRECTOR",
+        "1943"
+      ]
     },
     {
       "id": "oak-ridge",
-      "title": "Oak Ridge: Uranium",
-      "year": "Tennessee / 1942–1945",
-      "caption": "Industrial-scale uranium enrichment supplied material for the uranium weapon",
-      "graphic_type": "mp_oakridge",
+      "title": "Oak Ridge, Tennessee",
+      "caption": "A secret industrial city built to enrich uranium",
+      "photo_search": "Oak Ridge Tennessee Manhattan Project aerial photograph 1944",
+      "image_prompt": "Authentic historical archival photograph related to Oak Ridge, Tennessee, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "Oak Ridge Tennessee",
       "tags": [
-        "OAK RIDGE",
-        "URANIUM-235"
-      ],
-      "trigger_words": "Oak Ridge"
+        "SITE X",
+        "1942–1945"
+      ]
+    },
+    {
+      "id": "calutron-workers",
+      "title": "The Calutron Operators",
+      "caption": "Workers monitor the machines that separate uranium isotopes",
+      "photo_search": "Y-12 calutron operators Oak Ridge 1944 women workers",
+      "image_prompt": "Authentic historical archival photograph related to The Calutron Operators, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "uranium isotopes",
+      "tags": [
+        "Y-12",
+        "1944"
+      ]
     },
     {
       "id": "hanford",
-      "title": "Hanford: Plutonium",
-      "year": "Washington / 1943–1945",
-      "caption": "Reactors and chemical separation facilities produced plutonium",
-      "graphic_type": "mp_hanford",
+      "title": "Hanford, Washington",
+      "caption": "The B Reactor complex produces plutonium for the project",
+      "photo_search": "Hanford B Reactor plutonium production complex 1944 1945",
+      "image_prompt": "Authentic historical archival photograph related to Hanford, Washington, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "Hanford Washington",
       "tags": [
-        "HANFORD",
-        "PLUTONIUM"
-      ],
-      "trigger_words": "Hanford"
+        "SITE W",
+        "1943–1945"
+      ]
     },
     {
       "id": "los-alamos",
-      "title": "Los Alamos: Designing the Bomb",
-      "year": "New Mexico / 1943–1945",
-      "caption": "A remote laboratory brought scientists together to design the weapons",
-      "graphic_type": "mp_losalamos",
+      "title": "Los Alamos, New Mexico",
+      "caption": "A remote laboratory becomes the center of weapons design",
+      "photo_search": "Los Alamos laboratory Manhattan Project 1945 archival photograph",
+      "image_prompt": "Authentic historical archival photograph related to Los Alamos, New Mexico, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "Los Alamos New Mexico",
       "tags": [
-        "LOS ALAMOS",
-        "SITE Y"
-      ],
-      "trigger_words": "Los Alamos"
+        "SITE Y",
+        "1943–1945"
+      ]
     },
     {
-      "id": "leadership",
-      "title": "Oppenheimer and Groves",
-      "year": "1943–1945",
-      "caption": "Scientific leadership and military command coordinated an unprecedented undertaking",
-      "graphic_type": "mp_leadership",
+      "id": "chicago-pile",
+      "title": "Chicago Pile-1",
+      "caption": "Enrico Fermi's team achieves the first controlled chain reaction",
+      "photo_search": "Chicago Pile 1 Enrico Fermi December 2 1942 photograph",
+      "image_prompt": "Authentic historical archival photograph related to Chicago Pile-1, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "Chicago",
       "tags": [
-        "SCIENCE",
-        "MILITARY COMMAND"
-      ],
-      "trigger_words": "Oppenheimer"
+        "CP-1",
+        "DEC 2 1942"
+      ]
     },
     {
-      "id": "trinity",
-      "title": "Trinity: The First Nuclear Explosion",
-      "year": "July 16, 1945",
-      "caption": "The plutonium implosion device was detonated in the New Mexico desert",
-      "graphic_type": "mp_trinity",
+      "id": "workforce",
+      "title": "More Than 130,000 People",
+      "caption": "Thousands of workers, including women, support the secret program",
+      "photo_search": "Manhattan Project women workers Oak Ridge Hanford 1944",
+      "image_prompt": "Authentic historical archival photograph related to More Than 130,000 People, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "women played important roles",
+      "tags": [
+        "THE WORKFORCE",
+        "1943–1945"
+      ]
+    },
+    {
+      "id": "secrecy",
+      "title": "A Network Built on Secrecy",
+      "caption": "Security rules keep workers from seeing the full project",
+      "photo_search": "Manhattan Project security badge workers classified documents 1944",
+      "image_prompt": "Authentic historical archival photograph related to A Network Built on Secrecy, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "secrecy",
+      "tags": [
+        "CLASSIFIED",
+        "1944"
+      ]
+    },
+    {
+      "id": "bomb-designs",
+      "title": "Two Different Bomb Designs",
+      "caption": "The uranium gun-type design and plutonium implosion system",
+      "photo_search": "Little Boy Fat Man atomic bomb components assembly 1945 archival",
+      "image_prompt": "Authentic historical archival photograph related to Two Different Bomb Designs, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "gun type design",
+      "tags": [
+        "WEAPON DESIGN",
+        "1945"
+      ]
+    },
+    {
+      "id": "truman",
+      "title": "A New President, a Historic Decision",
+      "caption": "Harry Truman is briefed after Roosevelt's death",
+      "photo_search": "Harry S Truman Manhattan Project briefing 1945 portrait",
+      "image_prompt": "Authentic historical archival photograph related to A New President, a Historic Decision, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "April 1945",
+      "tags": [
+        "WHITE HOUSE",
+        "1945"
+      ]
+    },
+    {
+      "id": "trinity-tower",
+      "title": "Preparing the Gadget",
+      "caption": "Technicians prepare the device at the Trinity test site",
+      "photo_search": "Trinity test Gadget bomb tower preparations July 1945 photograph",
+      "image_prompt": "Authentic historical archival photograph related to Preparing the Gadget, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "July 1945",
       "tags": [
         "TRINITY TEST",
-        "5:29:45 AM"
+        "JUL 1945"
+      ]
+    },
+    {
+      "id": "trinity-fireball",
+      "title": "The First Nuclear Explosion",
+      "caption": "The Trinity test detonates in the New Mexico desert",
+      "photo_search": "Trinity test fireball July 16 1945 Berlyn Brixner photograph",
+      "image_prompt": "Authentic historical archival photograph related to The First Nuclear Explosion, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "July 16 1945",
+      "tags": [
+        "FIRST DETONATION",
+        "5:29 AM"
       ],
       "vintage_insert": true,
       "vintage_title": "TRINITY / JULY 16, 1945",
       "highlight_sfx": true,
-      "stamp": true,
-      "trigger_words": "Trinity"
+      "stamp": "FIRST LIGHT"
+    },
+    {
+      "id": "potsdam",
+      "title": "The Potsdam Declaration",
+      "caption": "Allied leaders demand Japan's surrender",
+      "photo_search": "Potsdam Conference 1945 Truman Churchill Stalin archival photo",
+      "image_prompt": "Authentic historical archival photograph related to The Potsdam Declaration, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "July 26 1945",
+      "tags": [
+        "ULTIMATUM",
+        "JUL 1945"
+      ]
     },
     {
       "id": "hiroshima",
-      "title": "Hiroshima",
-      "year": "August 6, 1945",
-      "caption": "The uranium bomb known as Little Boy was used against Hiroshima",
-      "graphic_type": "mp_hiroshima",
+      "title": "Hiroshima, August 6, 1945",
+      "caption": "The uranium bomb Little Boy is dropped over Hiroshima",
+      "photo_search": "Hiroshima aftermath 1945 aerial photograph public domain",
+      "image_prompt": "Authentic historical archival photograph related to Hiroshima, August 6, 1945, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "August 6 1945",
       "tags": [
         "LITTLE BOY",
-        "AUGUST 6, 1945"
+        "AUG 6 1945"
       ],
-      "trigger_words": "Hiroshima"
+      "stamp": "HISTORIC TURNING POINT"
     },
     {
       "id": "nagasaki",
-      "title": "Nagasaki",
-      "year": "August 9, 1945",
-      "caption": "The plutonium implosion bomb Fat Man was used against Nagasaki",
-      "graphic_type": "mp_nagasaki",
+      "title": "Nagasaki, August 9, 1945",
+      "caption": "The plutonium bomb Fat Man is used against Nagasaki",
+      "photo_search": "Nagasaki atomic bombing aftermath 1945 photograph",
+      "image_prompt": "Authentic historical archival photograph related to Nagasaki, August 9, 1945, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "August 9 1945",
       "tags": [
         "FAT MAN",
-        "AUGUST 9, 1945"
+        "AUG 9 1945"
       ],
-      "highlight_sfx": true,
-      "trigger_words": "Nagasaki"
+      "stamp": "HISTORIC TURNING POINT"
+    },
+    {
+      "id": "surrender",
+      "title": "The End of World War II",
+      "caption": "Japan formally signs the surrender documents aboard USS Missouri",
+      "photo_search": "Japanese surrender ceremony USS Missouri September 2 1945 photograph",
+      "image_prompt": "Authentic historical archival photograph related to The End of World War II, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "September 2",
+      "tags": [
+        "SURRENDER",
+        "SEP 1945"
+      ]
     },
     {
       "id": "legacy",
-      "title": "The Nuclear Age Begins",
-      "year": "After 1945",
-      "caption": "The project ended as a wartime program, but its scientific and ethical consequences endured",
-      "graphic_type": "mp_legacy",
+      "title": "The Beginning of the Nuclear Age",
+      "caption": "The project reshapes science, geopolitics, and the future of humanity",
+      "photo_search": "Manhattan Project scientists nuclear age 1945 archival photograph",
+      "image_prompt": "Authentic historical archival photograph related to The Beginning of the Nuclear Age, Manhattan Project era 1938–1945. Do not invent a photograph.",
+      "trigger_words": "nuclear age",
       "tags": [
-        "LEGACY",
-        "THE NUCLEAR AGE"
-      ],
-      "stamp": true,
-      "trigger_words": "nuclear age"
+        "THE LEGACY",
+        "AFTER 1945"
+      ]
     }
   ]
 }
