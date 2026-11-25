@@ -2,7 +2,7 @@ import json
 import unittest
 from pathlib import Path
 
-from banna.free_photos import _query_candidates, _query_for_scene
+from banna.free_photos import _query_candidates, _query_for_scene, STATIC_MANHATTAN_ARCHIVE
 from banna.timing import align_scenes_to_words
 
 
@@ -14,6 +14,10 @@ class ArchivalStoryboardTests(unittest.TestCase):
         self.assertGreaterEqual(data["project"]["minimum_unique_archival_photos"], 24)
         self.assertEqual(len({scene["photo_search"] for scene in scenes}), len(scenes))
         self.assertTrue(all("graphic_type" not in scene for scene in scenes))
+        self.assertEqual({scene["id"] for scene in scenes}, set(STATIC_MANHATTAN_ARCHIVE))
+        image_urls = [entry["image_url"] for entry in STATIC_MANHATTAN_ARCHIVE.values()]
+        self.assertEqual(len(image_urls), len(set(image_urls)))
+        self.assertTrue(all(entry.get("source_page") and entry.get("credit") for entry in STATIC_MANHATTAN_ARCHIVE.values()))
 
     def test_photo_search_never_injects_titanic_as_default(self):
         queries = _query_candidates({
