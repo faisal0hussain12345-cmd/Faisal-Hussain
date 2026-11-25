@@ -85,6 +85,47 @@ def render_titanic_graphic(kind: str, title: str, output: Path,
             d.text((x+18,y-28),label,font=_font(19,mono=True),fill=PAPER)
         d.text((95,h-100),"NORTH ATLANTIC / APRIL 1912",font=_font(26,True),fill=ORANGE)
 
+    elif kind == "ship_launch":
+        # Shipyard launch-day reconstruction with slipway, cranes and crowd silhouettes.
+        d.rectangle((0,690,w,h-40),fill=(52,83,105))
+        d.polygon([(0,610),(w,610),(w,690),(0,690)],fill=(102,124,139))
+        _ship(d,790,650,0.72,pitch=0.0)
+        for cx in (180,340,1280,1450):
+            d.line((cx,155,cx,620),fill=(172,185,195),width=9)
+            d.line((cx,180,cx+150,290),fill=(172,185,195),width=7)
+            d.line((cx,290,cx+150,290),fill=ORANGE,width=4)
+        for px in range(80,w-50,38):
+            d.ellipse((px,735,px+13,748),fill=PAPER)
+            d.line((px+6,748,px+6,790),fill=PAPER,width=4)
+        d.text((95,220),"BELFAST / MAY 31, 1911",font=_font(29,mono=True),fill=ORANGE)
+
+    elif kind == "passenger_deck":
+        # Non-identifiable silhouettes represent the many lives aboard.
+        d.rectangle((90,620,w-90,700),fill=(188,202,214),outline=PAPER,width=4)
+        d.rectangle((140,400,w-140,620),fill=(75,100,120),outline=PAPER,width=4)
+        for i in range(22):
+            x=190+(i%11)*112
+            y=520+(i//11)*65
+            d.ellipse((x,y-52,x+24,y-28),fill=INK)
+            d.polygon([(x-7,y-28),(x+31,y-28),(x+42,y+42),(x-17,y+42)],fill=INK)
+        d.text((125,230),"MORE THAN 2,200 PEOPLE ABOARD",font=_font(32,True),fill=PAPER)
+        d.text((125,285),"PASSENGERS / CREW / FAMILIES / IMMIGRANTS",font=_font(22,mono=True),fill=ORANGE)
+
+    elif kind == "lookout_night":
+        # Crow's-nest silhouette and two anonymous lookouts scanning a calm sea.
+        d.rectangle((0,650,w,h-40),fill=(30,54,77))
+        for i in range(80):
+            x=(i*97)%w; y=150+(i*53)%430
+            d.ellipse((x,y,x+3,y+3),fill=(165,190,205))
+        d.line((w//2,130,w//2,600),fill=(175,190,201),width=18)
+        d.line((w//2-360,300,w//2+360,300),fill=(175,190,201),width=15)
+        d.rectangle((w//2-250,250,w//2+250,330),outline=ORANGE,width=6)
+        for x in (w//2-120,w//2+120):
+            d.ellipse((x-22,180,x+22,224),fill=INK)
+            d.polygon([(x-34,225),(x+34,225),(x+54,295),(x-54,295)],fill=INK)
+        d.text((105,720),"CROW'S NEST / LOOKOUTS ON WATCH",font=_font(27,mono=True),fill=PAPER)
+        d.text((105,775),"DARK SKY / CALM SEA / LIMITED VISIBILITY",font=_font(22,mono=True),fill=ORANGE)
+
     elif kind == "iceberg_collision":
         # Non-graphic reconstruction of the collision moment.
         for i in range(70):
