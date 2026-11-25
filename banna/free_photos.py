@@ -94,6 +94,102 @@ def _commons_search(query: str) -> list[dict]:
     return response.json().get("query", {}).get("pages", [])
 
 
+def _download_verified_image(image_url: str, destination: Path) -> bool:
+    try:
+        response = requests.get(image_url, headers=HEADERS, timeout=60, stream=True)
+        response.raise_for_status()
+        if not response.headers.get("Content-Type", "").lower().startswith("image/"):
+            return False
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        total = 0
+        with destination.open("wb") as output:
+            for chunk in response.iter_content(chunk_size=256 * 1024):
+                if not chunk:
+                    continue
+                total += len(chunk)
+                if total > 25 * 1024 * 1024:
+                    destination.unlink(missing_ok=True)
+                    return False
+                output.write(chunk)
+        if not destination.is_file() or destination.stat().st_size == 0:
+            return False
+        with Image.open(destination) as im:
+            im.verify()
+        with Image.open(destination) as im:
+            im.convert("RGB").save(destination, format="JPEG", quality=92, optimize=True)
+        return True
+    except Exception:
+        destination.unlink(missing_ok=True)
+        return False
+
+
+def _loc_search(query: str) -> list[dict]:
+    url = "https://www.loc.gov/photos/"
+    response = requests.get(
+        url,
+        params={"fo": "json", "q": query, "c": 40},
+        headers=HEADERS,
+        timeout=45,
+    )
+    response.raise_for_status()
+    return response.json().get("results", [])
+
+
+def _loc_rights_ok(item: dict) -> tuple[bool, str]:
+    rights = " ".join(str(item.get(key) or "") for key in ("rights", "rights_information", "rights_advisory"))
+    clean = re.sub(r"<[^>]+>", " ", rights).lower()
+    if "no known restrictions" in clean or "public domain" in clean or "no restrictions" in clean:
+        return True, "Library of Congress — no known restrictions noted"
+    return False, rights[:300] or "Rights status not stated"
+
+
+def _loc_image_urls(item: dict) -> list[str]:
+    urls = item.get("image_url") or item.get("image") or []
+    if isinstance(urls, str):
+        urls = [urls]
+    if isinstance(urls, dict):
+        urls = list(urls.values())
+    result = [str(url) for url in urls if isinstance(url, str) and url.startswith("http")]
+    # Prefer the largest common image derivative when the API returns multiple sizes.
+    result.sort(key=lambda u: (("full" in u.lower()) or ("large" in u.lower()), len(u)), reverse=True)
+    return result
+
+
+def _download_loc_photo(scene: dict, destination: Path) -> dict | None:
+    queries = []
+    title = _clean_query(scene.get("title"))
+    caption = _clean_query(scene.get("caption"))
+    explicit = _clean_query(scene.get("photo_search"))
+    for query in (f"Titanic {title}" if title else "", f"Titanic {caption}" if caption else "", "RMS Titanic 1912"):
+        if query and query not in queries:
+            queries.append(query)
+    for query in queries:
+        try:
+            results = _loc_search(query)
+        except requests.RequestException:
+            continue
+        for item in results:
+            ok, rights_label = _loc_rights_ok(item)
+            if not ok:
+                continue
+            for image_url in _loc_image_urls(item):
+                if not _download_verified_image(image_url, destination):
+                    continue
+                title_text = str(item.get("title") or scene.get("title") or "Library of Congress photograph")
+                return {
+                    "query": query,
+                    "file_title": title_text,
+                    "source_page": str(item.get("url") or item.get("id") or "https://www.loc.gov/"),
+                    "image_url": image_url,
+                    "license": rights_label,
+                    "artist": "",
+                    "credit": "Library of Congress",
+                    "attribution": "Library of Congress",
+                    "destination": str(destination),
+                }
+    return None
+
+
 def download_commons_photo(scene: dict, destination: Path) -> dict:
     """Find a reusable Wikimedia Commons still and preserve attribution metadata."""
     errors: list[str] = []
@@ -102,6 +198,10 @@ def download_commons_photo(scene: dict, destination: Path) -> dict:
             pages = _commons_search(active_query)
         except requests.RequestException as exc:
             errors.append(f"{active_query}: {exc}")
+            # Wikimedia Commons can temporarily rate-limit GitHub-hosted runners.
+            # Stop querying it on HTTP errors and use the Library of Congress fallback.
+            if isinstance(exc, requests.HTTPError) and exc.response is not None and exc.response.status_code in (429, 403):
+                break
             continue
 
         for page in pages:
@@ -111,38 +211,7 @@ def download_commons_photo(scene: dict, destination: Path) -> dict:
             image_url = info.get("thumburl") or info.get("url")
             if not allowed or not image_url:
                 continue
-            try:
-                image_response = requests.get(image_url, headers=HEADERS, timeout=60, stream=True)
-                image_response.raise_for_status()
-                content_type = image_response.headers.get("Content-Type", "").lower()
-                if not content_type.startswith("image/"):
-                    continue
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                total = 0
-                too_large = False
-                with destination.open("wb") as output:
-                    for chunk in image_response.iter_content(chunk_size=1024 * 256):
-                        if not chunk:
-                            continue
-                        total += len(chunk)
-                        if total > 25 * 1024 * 1024:
-                            too_large = True
-                            break
-                        output.write(chunk)
-                if too_large or not destination.is_file() or destination.stat().st_size == 0:
-                    destination.unlink(missing_ok=True)
-                    continue
-                try:
-                    with Image.open(destination) as im:
-                        im.verify()
-                    with Image.open(destination) as im:
-                        im.convert("RGB").save(destination, format="JPEG", quality=92, optimize=True)
-                except Exception:
-                    destination.unlink(missing_ok=True)
-                    continue
-            except requests.RequestException as exc:
-                destination.unlink(missing_ok=True)
-                errors.append(f"{active_query}: {exc}")
+            if not _download_verified_image(image_url, destination):
                 continue
 
             page_title = str(page.get("title") or "")
@@ -162,9 +231,14 @@ def download_commons_photo(scene: dict, destination: Path) -> dict:
         # Be polite to Commons and avoid hammering its API between fallback searches.
         time.sleep(0.15)
 
+    # Secondary public archive fallback: Library of Congress JSON photo API.
+    loc_result = _download_loc_photo(scene, destination)
+    if loc_result:
+        return loc_result
+
     detail = (" Search errors: " + " | ".join(errors[:3])) if errors else ""
     raise RuntimeError(
-        f"No reusable Wikimedia Commons photo found for scene '{scene.get('title', 'untitled')}'. "
-        "Tried the scene title, caption, and broader Titanic archive terms. "
-        "Provide a licensed image or refine this scene's photo_search." + detail
+        f"No reusable archival still found for scene '{scene.get('title', 'untitled')}'. "
+        "Wikimedia Commons and the Library of Congress fallback returned no image with "
+        "a usable rights statement." + detail
     )
