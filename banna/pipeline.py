@@ -110,8 +110,18 @@ def render(storyboard_path: Path | None = None) -> Path:
             raise RuntimeError("Archival-photo QC failed: duplicate image URLs were detected.")
         if any(not item for item in source_pages + image_urls):
             raise RuntimeError("Archival-photo QC failed: every photograph must have a traceable source and image URL.")
-    if min(timeline["scene_durations"]) < 8.0:
-        raise RuntimeError("Narration timing QC failed: a visual beat is shorter than eight seconds.")
+    beat_lengths=timeline["scene_durations"]
+    if min(beat_lengths) < 2.0 or max(beat_lengths) > 7.0:
+        raise RuntimeError(
+            "Narration timing QC failed: each visual beat must remain between 2 and 7 seconds; "
+            f"observed {min(beat_lengths):.2f}s–{max(beat_lengths):.2f}s."
+        )
+    first_half=beat_lengths[:max(1,(len(beat_lengths)+1)//2)]
+    if max(first_half) > 5.5:
+        raise RuntimeError(
+            "Narration timing QC failed: early visual beats must stay close to the Skill guide’s 3–5 second rhythm; "
+            f"longest early beat was {max(first_half):.2f}s."
+        )
     work=Path("work/render"); work.mkdir(parents=True,exist_ok=True)
     photo_contact=extract_photo_contact_sheet(photos,storyboard["scenes"],settings.output_dir/"BANNA_Photo_Assets_Contact_Sheet.jpg")
     board=work/"continuous_evidence_board.mp4"
