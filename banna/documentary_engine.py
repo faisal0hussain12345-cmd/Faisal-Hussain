@@ -258,7 +258,8 @@ def _render_chunk(photos: list[Path], scenes: list[dict], durations: list[float]
             cx+=math.sin(local*0.19)*16
             cy+=math.cos(local*0.15)*12
             world_w,world_h=world.size
-            crop_w=int(world_w/zoom)\n            crop_h=int(crop_w*height/width)
+            crop_w=int(world_w/zoom)
+            crop_h=int(crop_w*height/width)
             left=max(0,min(world_w-crop_w,int(cx-crop_w/2)))
             top=max(0,min(world_h-crop_h,int(cy-crop_h/2)))
             if reveal>=0.995 and world_h>world_w*9/16:
