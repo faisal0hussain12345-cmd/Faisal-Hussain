@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 35
     env:
       BANNA_MAX_DURATION_SECONDS: "60"
-      BANNA_MAX_SCENES: "7"
+      BANNA_MAX_SCENES: "14"
       BANNA_WIDTH: "1920"
       BANNA_HEIGHT: "1080"
       BANNA_FPS: "30"
@@ -35,7 +35,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
-      - name: Render first 60 seconds only
+      - name: Compile every Python source before rendering
+        run: python -m compileall -q banna main.py tests
+      - name: Run automated unit tests before rendering
+        run: python -m unittest discover -s tests -v
+      - name: Render first 60 seconds only after all code checks pass
         run: python main.py render --storyboard storyboard.manhattan.json
       - name: Upload 60-second preview and QC
         uses: actions/upload-artifact@v4
